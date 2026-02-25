@@ -2,8 +2,8 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "MKGest <noreply@mkgest.pt>";
-const APP_NAME = "MKGest";
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "SIGA180 <noreply@siga180.pt>";
+const APP_NAME = "SIGA180";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 // ─── Base HTML wrapper ───

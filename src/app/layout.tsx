@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MKGest - Gestão para Personal Trainers",
+  title: "SIGA180 - Gestão para Personal Trainers",
   description: "Plataforma SaaS de gestão completa para Personal Trainers. Gerir clientes, treinos, nutrição e muito mais.",
 };
 

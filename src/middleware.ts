@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "mkgest-secret-key-change-in-production"
+  process.env.JWT_SECRET || "siga180-secret-key-change-in-production"
 );
 
 async function verifyTokenEdge(token: string): Promise<boolean> {

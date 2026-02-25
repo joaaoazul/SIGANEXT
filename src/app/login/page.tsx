@@ -53,7 +53,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500 shadow-lg shadow-emerald-500/20 mb-4">
             <Dumbbell className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">MKGest</h1>
+          <h1 className="text-3xl font-bold text-gray-900">SIGA180</h1>
           <p className="text-gray-500 mt-2">Plataforma de Gestão para Personal Trainers</p>
         </div>
 

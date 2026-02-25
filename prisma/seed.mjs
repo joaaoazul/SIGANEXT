@@ -31,27 +31,27 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: "João Silva",
-      email: "admin@mkgest.pt",
+      email: "admin@siga180.pt",
       password: hashedPassword,
       role: "admin",
       phone: "+351 912 345 678",
     },
   });
-  console.log("✅ Admin criado: admin@mkgest.pt / admin123");
+  console.log("✅ Admin criado: admin@siga180.pt / admin123");
 
   // Create employee
   const empPassword = await bcrypt.hash("emp123", 10);
   await prisma.user.create({
     data: {
       name: "Ana Costa",
-      email: "ana@mkgest.pt",
+      email: "ana@siga180.pt",
       password: empPassword,
       role: "employee",
       phone: "+351 913 456 789",
       permissions: JSON.stringify(["clients", "exercises", "training", "bookings"]),
     },
   });
-  console.log("✅ Funcionária criada: ana@mkgest.pt / emp123");
+  console.log("✅ Funcionária criada: ana@siga180.pt / emp123");
 
   // Create clients
   const clients = await Promise.all([
@@ -283,7 +283,7 @@ async function main() {
   console.log("✅ Conteúdos criados");
 
   console.log("\n🎉 Seed concluído com sucesso!");
-  console.log("📧 Login: admin@mkgest.pt");
+  console.log("📧 Login: admin@siga180.pt");
   console.log("🔑 Password: admin123");
 }
 

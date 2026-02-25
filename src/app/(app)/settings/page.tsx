@@ -146,7 +146,7 @@ export default function SettingsPage() {
                 <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 mb-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="text-lg font-bold text-emerald-600">MKGest Pro</h4>
+                      <h4 className="text-lg font-bold text-emerald-600">SIGA180 Pro</h4>
                       <p className="text-sm text-gray-500 mt-1">Plataforma Core + Todos os Módulos</p>
                     </div>
                     <div className="text-right">

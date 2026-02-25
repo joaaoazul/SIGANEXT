@@ -247,7 +247,7 @@ function OnboardingForm() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-emerald-500 shadow-lg shadow-emerald-500/20 mb-3">
             <Dumbbell className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Bem-vindo ao MKGest</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Bem-vindo ao SIGA180</h1>
           <p className="text-gray-500 mt-1">Completa o teu perfil de atleta</p>
         </div>
 

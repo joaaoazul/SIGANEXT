@@ -31,7 +31,7 @@ export default function TopBar() {
 
   const pageName = Object.entries(pageNames).find(([path]) =>
     pathname === path || (path !== "/dashboard" && pathname.startsWith(path))
-  )?.[1] || "MKGest";
+  )?.[1] || "SIGA180";
 
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.json()).then(d => {

@@ -1,7 +1,7 @@
 import { sign, verify, JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = process.env.JWT_SECRET || "mkgest-secret-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET || "siga180-secret-key-change-in-production";
 
 export interface UserPayload {
   id: string;
