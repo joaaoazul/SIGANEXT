@@ -1,0 +1,457 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== AUTH & USERS ====================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          String    @default("admin") // admin, employee, client
+  avatar        String?
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Admin/Employee relations
+  managedClients Client[]  @relation("ManagedBy")
+  sentNotifications Notification[] @relation("SentNotifications")
+  sentFeedbacks  Feedback[] @relation("SentFeedbacks")
+  
+  // Employee-specific
+  permissions    String?   // JSON string of permissions
+  
+  // Bookings created by admin
+  bookingSlots  BookingSlot[]
+}
+
+// ==================== CLIENTS ====================
+
+model Client {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String?   // Hashed password for athlete login
+  phone         String?
+  dateOfBirth   DateTime?
+  gender        String?
+  avatar        String?
+  status        String    @default("active") // active, inactive, pending
+  
+  // ==================== ANAMNESE ====================
+  
+  // Dados Físicos Base
+  height        Float?    // cm
+  weight        Float?    // kg
+  bodyFat       Float?    // %
+  
+  // Historial Médico
+  medicalConditions   String?   // Condições médicas conhecidas
+  medications         String?   // Medicação atual
+  allergies           String?   // Alergias
+  injuries            String?   // Lesões passadas ou atuais
+  surgeries           String?   // Cirurgias
+  familyHistory       String?   // Historial familiar relevante
+  bloodPressure       String?   // Tensão arterial (e.g. "120/80")
+  heartRate           Int?      // BPM em repouso
+  
+  // Estilo de Vida
+  occupation          String?   // Profissão
+  sleepHours          Float?    // Horas de sono por noite
+  stressLevel         Int?      // 1-5
+  smokingStatus       String?   // never, former, current
+  alcoholConsumption  String?   // none, occasional, moderate, heavy
+  activityLevel       String?   // sedentary, light, moderate, active, very_active
+  
+  // Historial Desportivo
+  trainingExperience  String?   // none, beginner, intermediate, advanced
+  trainingFrequency   Int?      // Dias por semana
+  preferredTraining   String?   // Tipo de treino preferido
+  sportHistory        String?   // Desportos praticados
+  
+  // Objetivos
+  primaryGoal         String?   // weight_loss, muscle_gain, maintenance, performance, health, rehabilitation
+  secondaryGoal       String?   // Objetivo secundário
+  targetWeight        Float?    // Peso alvo (kg)
+  motivation          String?   // Motivação / expectativas
+  
+  // Nutrição
+  dietaryRestrictions String?   // Restrições alimentares
+  foodAllergies       String?   // Alergias alimentares
+  mealsPerDay         Int?      // Refeições por dia
+  waterIntake         Float?    // Litros de água por dia
+  supplementsUsed     String?   // Suplementos utilizados
+  
+  // Notas gerais
+  notes         String?
+  
+  // Subscription
+  plan          String?
+  planStartDate DateTime?
+  planEndDate   DateTime?
+  paymentStatus String    @default("pending") // paid, pending, overdue
+  
+  managerId     String?
+  manager       User?     @relation("ManagedBy", fields: [managerId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  trainingPlans      TrainingPlanAssignment[]
+  nutritionPlans     NutritionPlanAssignment[]
+  feedbacks          Feedback[]
+  notifications      Notification[]    @relation("ClientNotifications")
+  bodyAssessments    BodyAssessment[]
+  bookings           Booking[]
+  checkIns           CheckIn[]
+}
+
+model BodyAssessment {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date        DateTime  @default(now())
+  weight      Float?
+  bodyFat     Float?
+  muscleMass  Float?
+  chest       Float?
+  waist       Float?
+  hips        Float?
+  arms        Float?
+  thighs      Float?
+  notes       String?
+  createdAt   DateTime  @default(now())
+}
+
+// ==================== EXERCISES ====================
+
+model Exercise {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  muscleGroup   String
+  equipment     String?
+  videoUrl      String?
+  thumbnailUrl  String?
+  difficulty    String    @default("intermediate")
+  instructions  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  trainingExercises TrainingExercise[]
+}
+
+// ==================== TRAINING PLANS ====================
+
+model TrainingPlan {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  duration    Int?
+  goal        String?
+  difficulty  String    @default("intermediate")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  workouts    Workout[]
+  assignments TrainingPlanAssignment[]
+}
+
+model Workout {
+  id              String    @id @default(cuid())
+  trainingPlanId  String
+  trainingPlan    TrainingPlan @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  name            String
+  dayOfWeek       Int?
+  order           Int        @default(0)
+  notes           String?
+  
+  exercises       TrainingExercise[]
+}
+
+model TrainingExercise {
+  id          String    @id @default(cuid())
+  workoutId   String
+  workout     Workout   @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseId  String
+  exercise    Exercise  @relation(fields: [exerciseId], references: [id])
+  sets        Int       @default(3)
+  reps        String    @default("12")
+  restSeconds Int       @default(60)
+  weight      String?
+  notes       String?
+  order       Int       @default(0)
+}
+
+model TrainingPlanAssignment {
+  id              String    @id @default(cuid())
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  trainingPlanId  String
+  trainingPlan    TrainingPlan @relation(fields: [trainingPlanId], references: [id], onDelete: Cascade)
+  startDate       DateTime  @default(now())
+  endDate         DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+}
+
+// ==================== NUTRITION ====================
+
+model Food {
+  id            String    @id @default(cuid())
+  name          String
+  category      String
+  calories      Float
+  protein       Float
+  carbs         Float
+  fat           Float
+  fiber         Float?
+  sugar         Float?
+  sodium        Float?
+  isSupplement  Boolean   @default(false)
+  brand         String?
+  servingSize   Float?
+  servingUnit   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  mealFoods     MealFood[]
+}
+
+model NutritionPlan {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  totalCalories   Float?
+  totalProtein    Float?
+  totalCarbs      Float?
+  totalFat        Float?
+  goal            String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  meals           Meal[]
+  assignments     NutritionPlanAssignment[]
+}
+
+model Meal {
+  id              String    @id @default(cuid())
+  nutritionPlanId String
+  nutritionPlan   NutritionPlan @relation(fields: [nutritionPlanId], references: [id], onDelete: Cascade)
+  name            String
+  time            String?
+  order           Int        @default(0)
+  notes           String?
+  
+  foods           MealFood[]
+}
+
+model MealFood {
+  id        String    @id @default(cuid())
+  mealId    String
+  meal      Meal      @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  foodId    String
+  food      Food      @relation(fields: [foodId], references: [id])
+  quantity  Float
+  unit      String    @default("g")
+  notes     String?
+  order     Int       @default(0)
+}
+
+model NutritionPlanAssignment {
+  id              String    @id @default(cuid())
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  nutritionPlanId String
+  nutritionPlan   NutritionPlan @relation(fields: [nutritionPlanId], references: [id], onDelete: Cascade)
+  startDate       DateTime  @default(now())
+  endDate         DateTime?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+}
+
+// ==================== FEEDBACK ====================
+
+model Feedback {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  senderId    String?
+  sender      User?     @relation("SentFeedbacks", fields: [senderId], references: [id])
+  type        String    @default("general")
+  subject     String
+  message     String
+  rating      Int?
+  status      String    @default("pending")
+  response    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ==================== NOTIFICATIONS ====================
+
+model Notification {
+  id          String    @id @default(cuid())
+  clientId    String?
+  client      Client?   @relation("ClientNotifications", fields: [clientId], references: [id], onDelete: Cascade)
+  senderId    String?
+  sender      User?     @relation("SentNotifications", fields: [senderId], references: [id])
+  title       String
+  message     String
+  type        String    @default("info")
+  isRead      Boolean   @default(false)
+  isGlobal    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+}
+
+// ==================== BOOKINGS / AGENDA ====================
+
+model BookingSlot {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  title       String
+  type        String    @default("individual")
+  dayOfWeek   Int?
+  date        DateTime?
+  startTime   String
+  endTime     String
+  maxClients  Int       @default(1)
+  price       Float?
+  isRecurring Boolean   @default(false)
+  isActive    Boolean   @default(true)
+  location    String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  
+  bookings    Booking[]
+}
+
+model Booking {
+  id            String    @id @default(cuid())
+  bookingSlotId String
+  bookingSlot   BookingSlot @relation(fields: [bookingSlotId], references: [id], onDelete: Cascade)
+  clientId      String
+  client        Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date          DateTime
+  status        String    @default("confirmed")
+  paymentStatus String    @default("pending")
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// ==================== CONTENT ====================
+
+model Content {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  type        String
+  url         String?
+  fileUrl     String?
+  thumbnailUrl String?
+  category    String?
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ==================== MAGIC LINKS / INVITES ====================
+
+model Invite {
+  id          String    @id @default(cuid())
+  email       String
+  code        String    @unique
+  type        String    @default("magic_link") // magic_link, magic_code
+  role        String    @default("client") // client, employee
+  invitedBy   String
+  status      String    @default("pending") // pending, accepted, expired
+  expiresAt   DateTime
+  clientId    String?   // Pre-created client to link on accept
+  createdAt   DateTime  @default(now())
+  
+  @@index([code])
+  @@index([email])
+}
+
+// ==================== DAILY CHECK-INS ====================
+
+model CheckIn {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date        DateTime  @default(now())
+  
+  // Wellness metrics (1-5 scale)
+  mood        Int?      // 1-5
+  energy      Int?      // 1-5
+  sleep       Int?      // 1-5 (hours quality)
+  soreness    Int?      // 1-5 (muscle soreness)
+  stress      Int?      // 1-5
+  
+  // Training compliance
+  trainedToday    Boolean   @default(false)
+  followedDiet    Boolean   @default(false)
+  waterLiters     Float?
+  
+  // Body
+  weight      Float?
+  
+  // Free text
+  notes       String?
+  photos      String?   // JSON array of URLs
+  
+  createdAt   DateTime  @default(now())
+  
+  @@unique([clientId, date])
+  @@index([clientId])
+}
+
+// ==================== MESSAGES ====================
+
+model Conversation {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  participants ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  id              String    @id @default(cuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId          String?
+  clientId        String?
+  lastReadAt      DateTime?
+  
+  @@unique([conversationId, userId])
+  @@unique([conversationId, clientId])
+  @@index([userId])
+  @@index([clientId])
+}
+
+model Message {
+  id              String    @id @default(cuid())
+  conversationId  String
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderType      String    // "user" or "client"
+  senderId        String    // userId or clientId
+  content         String
+  type            String    @default("text") // text, image, file
+  fileUrl         String?
+  isRead          Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  
+  @@index([conversationId])
+}
