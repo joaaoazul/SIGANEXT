@@ -13,15 +13,9 @@ import {
   Zap,
   ArrowUpRight,
   Clock,
-  BookOpen,
-  Calculator,
-  ClipboardList,
-  Activity,
-  Send,
-  UserPlus,
-  Wrench,
 } from "lucide-react";
 import Link from "next/link";
+import ToolsWidget from "@/components/ToolsWidget";
 
 async function getStats() {
   try {
@@ -381,89 +375,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Ferramentas Rápidas */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-2 p-5 pb-0">
-          <Wrench className="w-5 h-5 text-emerald-500" />
-          <h2 className="text-base font-semibold text-gray-900">Ferramentas Rápidas</h2>
-        </div>
-        <div className="p-5">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <Link href="/clients" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-                <UserPlus className="w-5 h-5 text-emerald-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Novo Atleta</span>
-            </Link>
-            <Link href="/training" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                <ClipboardList className="w-5 h-5 text-blue-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Criar Plano Treino</span>
-            </Link>
-            <Link href="/nutrition" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-orange-200 hover:bg-orange-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
-                <UtensilsCrossed className="w-5 h-5 text-orange-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Plano Nutrição</span>
-            </Link>
-            <Link href="/exercises" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-                <Dumbbell className="w-5 h-5 text-purple-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Exercícios</span>
-            </Link>
-            <Link href="/bookings" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                <CalendarDays className="w-5 h-5 text-indigo-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Agendar Sessão</span>
-            </Link>
-            <Link href="/content" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-rose-200 hover:bg-rose-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-rose-50 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
-                <BookOpen className="w-5 h-5 text-rose-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Conteúdos</span>
-            </Link>
-            <Link href="/messages" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-teal-200 hover:bg-teal-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center group-hover:bg-teal-100 transition-colors">
-                <Send className="w-5 h-5 text-teal-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Mensagens</span>
-            </Link>
-            <Link href="/checkins" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-amber-200 hover:bg-amber-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                <Activity className="w-5 h-5 text-amber-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Check-ins</span>
-            </Link>
-            <Link href="/feedback" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-pink-200 hover:bg-pink-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-pink-50 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
-                <MessageSquare className="w-5 h-5 text-pink-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Feedback</span>
-            </Link>
-            <Link href="/foods" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-lime-200 hover:bg-lime-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-lime-50 flex items-center justify-center group-hover:bg-lime-100 transition-colors">
-                <Calculator className="w-5 h-5 text-lime-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Alimentos</span>
-            </Link>
-            <Link href="/notifications" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-sky-200 hover:bg-sky-50/50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center group-hover:bg-sky-100 transition-colors">
-                <AlertCircle className="w-5 h-5 text-sky-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Notificações</span>
-            </Link>
-            <Link href="/settings" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                <Wrench className="w-5 h-5 text-gray-600" />
-              </div>
-              <span className="text-xs font-medium text-gray-600 text-center">Definições</span>
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* Ferramentas do PT */}
+      <ToolsWidget />
     </div>
   );
 }

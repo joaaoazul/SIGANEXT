@@ -58,9 +58,15 @@ const goals = [
   { value: "flexibility", label: "Flexibilidade" },
 ];
 
-const muscleGroups = [
-  "Peito", "Costas", "Ombros", "Bíceps", "Tríceps", "Pernas",
-  "Quadríceps", "Glúteos", "Gémeos", "Abdominais", "Core", "Cardio", "Full Body", "Outro",
+const muscleGroupFilters = [
+  { value: "chest", label: "Peito" },
+  { value: "back", label: "Costas" },
+  { value: "shoulders", label: "Ombros" },
+  { value: "arms", label: "Braços" },
+  { value: "legs", label: "Pernas" },
+  { value: "core", label: "Core" },
+  { value: "cardio", label: "Cardio" },
+  { value: "full_body", label: "Corpo Inteiro" },
 ];
 
 export default function TrainingPage() {
@@ -200,6 +206,7 @@ export default function TrainingPage() {
   };
 
   const getGoalLabel = (value: string | null) => goals.find(g => g.value === value)?.label || value || "—";
+  const getMuscleLabel = (value: string) => muscleGroupFilters.find(m => m.value === value)?.label || value;
 
   const filtered = plans.filter(p =>
     !search || p.name.toLowerCase().includes(search.toLowerCase())
@@ -327,7 +334,7 @@ export default function TrainingPage() {
                                 <span className="text-xs font-medium text-gray-400 w-5">{idx + 1}</span>
                                 <div className="flex-1 min-w-0">
                                   <span className="text-sm font-medium text-gray-800">{ex.exercise.name}</span>
-                                  <span className="text-xs text-gray-400 ml-2">{ex.exercise.muscleGroup}</span>
+                                  <span className="text-xs text-gray-400 ml-2">{getMuscleLabel(ex.exercise.muscleGroup)}</span>
                                 </div>
                                 <div className="flex items-center gap-2 flex-shrink-0">
                                   <input
@@ -489,7 +496,7 @@ export default function TrainingPage() {
               className="input-field w-40"
             >
               <option value="">Todos os grupos</option>
-              {muscleGroups.map((g) => <option key={g} value={g}>{g}</option>)}
+              {muscleGroupFilters.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
             </select>
           </div>
 
@@ -511,7 +518,7 @@ export default function TrainingPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-800">{ex.name}</p>
-                      <p className="text-xs text-gray-400">{ex.muscleGroup}{ex.equipment ? ` • ${ex.equipment}` : ""}</p>
+                      <p className="text-xs text-gray-400">{getMuscleLabel(ex.muscleGroup)}{ex.equipment ? ` • ${ex.equipment}` : ""}</p>
                     </div>
                   </div>
                   <Plus className="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition" />

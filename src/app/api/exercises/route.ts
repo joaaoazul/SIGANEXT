@@ -10,11 +10,15 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = {};
     if (search) {
       where.OR = [
-        { name: { contains: search } },
-        { description: { contains: search } },
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        { equipment: { contains: search, mode: "insensitive" } },
       ];
     }
     if (muscleGroup) where.muscleGroup = muscleGroup;
+
+    const difficulty = searchParams.get("difficulty") || "";
+    if (difficulty) where.difficulty = difficulty;
 
     const exercises = await prisma.exercise.findMany({
       where,
