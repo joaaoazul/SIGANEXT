@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
 }
 
 // ==================== AUTH & USERS ====================
@@ -127,7 +127,18 @@ model BodyAssessment {
   hips        Float?
   arms        Float?
   thighs      Float?
+  calves      Float?
+  shoulders   Float?
+  neck        Float?
+  abdomen     Float?
+  visceralFat Float?    // Gordura visceral (nível)
+  bmi         Float?    // IMC calculado
+  bmr         Float?    // TMB calculado
+  waterPct    Float?    // % de água corporal
+  boneMass    Float?    // Massa óssea (kg)
+  metabolicAge Int?     // Idade metabólica
   notes       String?
+  photos      String?   // JSON array: [{url, label, path}]
   createdAt   DateTime  @default(now())
 }
 

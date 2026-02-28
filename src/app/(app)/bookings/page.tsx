@@ -33,16 +33,22 @@ export default function BookingsPage() {
 
   const fetchSlots = useCallback(async () => {
     setLoading(true);
-    const res = await fetch(`/api/bookings`);
-    const data = await res.json();
-    setSlots(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch(`/api/bookings`);
+      if (!res.ok) throw new Error("Erro ao carregar slots");
+      const data = await res.json();
+      setSlots(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setSlots([]); }
     setLoading(false);
   }, []);
 
   const fetchClients = useCallback(async () => {
-    const res = await fetch("/api/clients");
-    const data = await res.json();
-    setClients(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch("/api/clients");
+      if (!res.ok) throw new Error("Erro ao carregar clientes");
+      const data = await res.json();
+      setClients(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); }
   }, []);
 
   useEffect(() => { fetchSlots(); fetchClients(); }, [fetchSlots, fetchClients]);

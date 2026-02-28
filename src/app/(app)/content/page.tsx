@@ -26,12 +26,15 @@ export default function ContentPage() {
 
   const fetchContents = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (typeFilter) params.set("type", typeFilter);
-    const res = await fetch(`/api/content?${params}`);
-    const data = await res.json();
-    setContents(Array.isArray(data) ? data : []);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (typeFilter) params.set("type", typeFilter);
+      const res = await fetch(`/api/content?${params}`);
+      if (!res.ok) throw new Error("Erro ao carregar conteúdo");
+      const data = await res.json();
+      setContents(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setContents([]); }
     setLoading(false);
   }, [search, typeFilter]);
 

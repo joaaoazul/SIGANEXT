@@ -38,7 +38,9 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(clients);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const sanitized = clients.map(({ password, ...rest }) => rest);
+    return NextResponse.json(sanitized);
   } catch {
     return NextResponse.json({ error: "Erro ao buscar clientes" }, { status: 500 });
   }
@@ -69,80 +71,90 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(plainPassword, 12);
 
-    // Create client with full anamnesis
-    const client = await prisma.client.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        password: hashedPassword,
-        phone: data.phone || null,
-        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-        gender: data.gender || null,
-        status: data.status || "active",
-        height: data.height ? parseFloat(data.height) : null,
-        weight: data.weight ? parseFloat(data.weight) : null,
-        bodyFat: data.bodyFat ? parseFloat(data.bodyFat) : null,
-        // Medical
-        medicalConditions: data.medicalConditions || null,
-        medications: data.medications || null,
-        allergies: data.allergies || null,
-        injuries: data.injuries || null,
-        surgeries: data.surgeries || null,
-        familyHistory: data.familyHistory || null,
-        bloodPressure: data.bloodPressure || null,
-        heartRate: data.heartRate ? parseInt(data.heartRate) : null,
-        // Lifestyle
-        occupation: data.occupation || null,
-        sleepHours: data.sleepHours ? parseFloat(data.sleepHours) : null,
-        stressLevel: data.stressLevel ? parseInt(data.stressLevel) : null,
-        smokingStatus: data.smokingStatus || null,
-        alcoholConsumption: data.alcoholConsumption || null,
-        activityLevel: data.activityLevel || null,
-        // Sports
-        trainingExperience: data.trainingExperience || null,
-        trainingFrequency: data.trainingFrequency ? parseInt(data.trainingFrequency) : null,
-        preferredTraining: data.preferredTraining || null,
-        sportHistory: data.sportHistory || null,
-        // Goals
-        primaryGoal: data.primaryGoal || null,
-        secondaryGoal: data.secondaryGoal || null,
-        targetWeight: data.targetWeight ? parseFloat(data.targetWeight) : null,
-        motivation: data.motivation || null,
-        // Nutrition
-        dietaryRestrictions: data.dietaryRestrictions || null,
-        foodAllergies: data.foodAllergies || null,
-        mealsPerDay: data.mealsPerDay ? parseInt(data.mealsPerDay) : null,
-        waterIntake: data.waterIntake ? parseFloat(data.waterIntake) : null,
-        supplementsUsed: data.supplementsUsed || null,
-        notes: data.notes || null,
-        plan: data.plan || null,
-        paymentStatus: data.paymentStatus || "pending",
-        managerId: user?.id || null,
-      },
-    });
+    // Use transaction so Client + User are created atomically
+    const result = await prisma.$transaction(async (tx) => {
+      // Check for existing email in both tables first
+      const existingClient = await tx.client.findUnique({ where: { email: data.email } });
+      if (existingClient) throw new Error("UNIQUE_EMAIL");
+      const existingUser = await tx.user.findUnique({ where: { email: data.email } });
+      if (existingUser) throw new Error("UNIQUE_EMAIL");
 
-    // Create User record so the athlete can log in
-    await prisma.user.create({
-      data: {
-        name: data.name,
-        email: data.email,
-        password: hashedPassword,
-        role: "client",
-      },
-    });
-
-    // Create initial body assessment if weight provided
-    if (data.weight) {
-      await prisma.bodyAssessment.create({
+      const client = await tx.client.create({
         data: {
-          clientId: client.id,
-          weight: parseFloat(data.weight),
-          bodyFat: data.bodyFat ? parseFloat(data.bodyFat) : undefined,
+          name: data.name,
+          email: data.email,
+          password: hashedPassword,
+          phone: data.phone || null,
+          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+          gender: data.gender || null,
+          status: data.status || "active",
+          height: data.height ? parseFloat(data.height) : null,
+          weight: data.weight ? parseFloat(data.weight) : null,
+          bodyFat: data.bodyFat ? parseFloat(data.bodyFat) : null,
+          // Medical
+          medicalConditions: data.medicalConditions || null,
+          medications: data.medications || null,
+          allergies: data.allergies || null,
+          injuries: data.injuries || null,
+          surgeries: data.surgeries || null,
+          familyHistory: data.familyHistory || null,
+          bloodPressure: data.bloodPressure || null,
+          heartRate: data.heartRate ? parseInt(data.heartRate) : null,
+          // Lifestyle
+          occupation: data.occupation || null,
+          sleepHours: data.sleepHours ? parseFloat(data.sleepHours) : null,
+          stressLevel: data.stressLevel ? parseInt(data.stressLevel) : null,
+          smokingStatus: data.smokingStatus || null,
+          alcoholConsumption: data.alcoholConsumption || null,
+          activityLevel: data.activityLevel || null,
+          // Sports
+          trainingExperience: data.trainingExperience || null,
+          trainingFrequency: data.trainingFrequency ? parseInt(data.trainingFrequency) : null,
+          preferredTraining: data.preferredTraining || null,
+          sportHistory: data.sportHistory || null,
+          // Goals
+          primaryGoal: data.primaryGoal || null,
+          secondaryGoal: data.secondaryGoal || null,
+          targetWeight: data.targetWeight ? parseFloat(data.targetWeight) : null,
+          motivation: data.motivation || null,
+          // Nutrition
+          dietaryRestrictions: data.dietaryRestrictions || null,
+          foodAllergies: data.foodAllergies || null,
+          mealsPerDay: data.mealsPerDay ? parseInt(data.mealsPerDay) : null,
+          waterIntake: data.waterIntake ? parseFloat(data.waterIntake) : null,
+          supplementsUsed: data.supplementsUsed || null,
+          notes: data.notes || null,
+          plan: data.plan || null,
+          paymentStatus: data.paymentStatus || "pending",
+          managerId: user?.id || null,
         },
       });
-    }
 
-    // Send welcome email (non-blocking)
+      // Create User record so the athlete can log in
+      await tx.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          password: hashedPassword,
+          role: "client",
+        },
+      });
+
+      // Create initial body assessment if weight provided
+      if (data.weight) {
+        await tx.bodyAssessment.create({
+          data: {
+            clientId: client.id,
+            weight: parseFloat(data.weight),
+            bodyFat: data.bodyFat ? parseFloat(data.bodyFat) : undefined,
+          },
+        });
+      }
+
+      return client;
+    });
+
+    // Send welcome email (non-blocking, outside transaction)
     try {
       const trainer = user ? await prisma.user.findUnique({ where: { id: user.id } }) : null;
       await sendWelcomeEmail({
@@ -153,12 +165,13 @@ export async function POST(request: NextRequest) {
     } catch { /* email failure is not critical */ }
 
     return NextResponse.json({
-      ...client,
+      ...result,
       generatedPassword: autoGenerated ? plainPassword : undefined,
     }, { status: 201 });
   } catch (error: unknown) {
+    console.error("Client creation error:", error);
     const msg = error instanceof Error ? error.message : "Erro ao criar cliente";
-    if (msg.includes("Unique constraint")) {
+    if (msg.includes("Unique constraint") || msg === "UNIQUE_EMAIL") {
       return NextResponse.json({ error: "Email já registado" }, { status: 400 });
     }
     return NextResponse.json({ error: msg }, { status: 500 });

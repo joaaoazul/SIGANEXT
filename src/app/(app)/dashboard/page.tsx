@@ -13,99 +13,116 @@ import {
   Zap,
   ArrowUpRight,
   Clock,
+  BookOpen,
+  Calculator,
+  ClipboardList,
+  Activity,
+  Send,
+  UserPlus,
+  Wrench,
 } from "lucide-react";
 import Link from "next/link";
 
 async function getStats() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-  const [
-    totalClients,
-    activeClients,
-    pendingPayments,
-    overduePayments,
-    totalExercises,
-    totalTrainingPlans,
-    totalNutritionPlans,
-    pendingFeedbacks,
-    upcomingBookings,
-    todayBookings,
-    recentClients,
-    recentFeedbacks,
-    todayCheckins,
-    totalCheckins,
-  ] = await Promise.all([
-    prisma.client.count(),
-    prisma.client.count({ where: { status: "active" } }),
-    prisma.client.count({ where: { paymentStatus: "pending" } }),
-    prisma.client.count({ where: { paymentStatus: "overdue" } }),
-    prisma.exercise.count(),
-    prisma.trainingPlan.count(),
-    prisma.nutritionPlan.count(),
-    prisma.feedback.count({ where: { status: "pending" } }),
-    prisma.booking.count({
-      where: {
-        date: { gte: new Date() },
-        status: "confirmed",
-      },
-    }),
-    prisma.booking.findMany({
-      where: {
-        date: { gte: today, lt: tomorrow },
-        status: "confirmed",
-      },
-      include: {
-        client: { select: { name: true, avatar: true } },
-        bookingSlot: { select: { startTime: true, endTime: true } },
-      },
-      orderBy: { date: "asc" },
-      take: 8,
-    }),
-    prisma.client.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      select: { id: true, name: true, email: true, status: true, createdAt: true },
-    }),
-    prisma.feedback.findMany({
-      take: 5,
-      orderBy: { createdAt: "desc" },
-      include: { client: { select: { name: true } } },
-    }),
-    prisma.checkIn.findMany({
-      where: { date: { gte: today, lt: tomorrow } },
-      include: { client: { select: { name: true, avatar: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 6,
-    }),
-    prisma.checkIn.count({ where: { date: { gte: today, lt: tomorrow } } }),
-  ]);
+    const [
+      totalClients,
+      activeClients,
+      pendingPayments,
+      overduePayments,
+      totalExercises,
+      totalTrainingPlans,
+      totalNutritionPlans,
+      pendingFeedbacks,
+      upcomingBookings,
+      todayBookings,
+      recentClients,
+      recentFeedbacks,
+      todayCheckins,
+      totalCheckins,
+    ] = await Promise.all([
+      prisma.client.count(),
+      prisma.client.count({ where: { status: "active" } }),
+      prisma.client.count({ where: { paymentStatus: "pending" } }),
+      prisma.client.count({ where: { paymentStatus: "overdue" } }),
+      prisma.exercise.count(),
+      prisma.trainingPlan.count(),
+      prisma.nutritionPlan.count(),
+      prisma.feedback.count({ where: { status: "pending" } }),
+      prisma.booking.count({
+        where: {
+          date: { gte: new Date() },
+          status: "confirmed",
+        },
+      }),
+      prisma.booking.findMany({
+        where: {
+          date: { gte: today, lt: tomorrow },
+          status: "confirmed",
+        },
+        include: {
+          client: { select: { name: true, avatar: true } },
+          bookingSlot: { select: { startTime: true, endTime: true } },
+        },
+        orderBy: { date: "asc" },
+        take: 8,
+      }),
+      prisma.client.findMany({
+        take: 5,
+        orderBy: { createdAt: "desc" },
+        select: { id: true, name: true, email: true, status: true, createdAt: true },
+      }),
+      prisma.feedback.findMany({
+        take: 5,
+        orderBy: { createdAt: "desc" },
+        include: { client: { select: { name: true } } },
+      }),
+      prisma.checkIn.findMany({
+        where: { date: { gte: today, lt: tomorrow } },
+        include: { client: { select: { name: true, avatar: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 6,
+      }),
+      prisma.checkIn.count({ where: { date: { gte: today, lt: tomorrow } } }),
+    ]);
 
-  // Compute avg wellness from today's checkins
-  const wellnessCheckins = todayCheckins.filter(c => c.mood);
-  const avgMood = wellnessCheckins.length ? (wellnessCheckins.reduce((s, c) => s + (c.mood || 0), 0) / wellnessCheckins.length) : 0;
-  const avgEnergy = wellnessCheckins.length ? (wellnessCheckins.reduce((s, c) => s + (c.energy || 0), 0) / wellnessCheckins.length) : 0;
+    // Compute avg wellness from today's checkins
+    const wellnessCheckins = todayCheckins.filter(c => c.mood);
+    const avgMood = wellnessCheckins.length ? (wellnessCheckins.reduce((s, c) => s + (c.mood || 0), 0) / wellnessCheckins.length) : 0;
+    const avgEnergy = wellnessCheckins.length ? (wellnessCheckins.reduce((s, c) => s + (c.energy || 0), 0) / wellnessCheckins.length) : 0;
 
-  return {
-    totalClients,
-    activeClients,
-    pendingPayments,
-    overduePayments,
-    totalExercises,
-    totalTrainingPlans,
-    totalNutritionPlans,
-    pendingFeedbacks,
-    upcomingBookings,
-    todayBookings,
-    recentClients,
-    recentFeedbacks,
-    todayCheckins,
-    totalCheckins,
-    avgMood: avgMood.toFixed(1),
-    avgEnergy: avgEnergy.toFixed(1),
-  };
+    return {
+      totalClients,
+      activeClients,
+      pendingPayments,
+      overduePayments,
+      totalExercises,
+      totalTrainingPlans,
+      totalNutritionPlans,
+      pendingFeedbacks,
+      upcomingBookings,
+      todayBookings,
+      recentClients,
+      recentFeedbacks,
+      todayCheckins,
+      totalCheckins,
+      avgMood: avgMood.toFixed(1),
+      avgEnergy: avgEnergy.toFixed(1),
+    };
+  } catch (error) {
+    console.error("Dashboard stats error:", error);
+    return {
+      totalClients: 0, activeClients: 0, pendingPayments: 0, overduePayments: 0,
+      totalExercises: 0, totalTrainingPlans: 0, totalNutritionPlans: 0, pendingFeedbacks: 0,
+      upcomingBookings: 0, todayBookings: [], recentClients: [], recentFeedbacks: [],
+      todayCheckins: [], totalCheckins: 0, avgMood: "0", avgEnergy: "0",
+    };
+  }
 }
 
 export default async function DashboardPage() {
@@ -360,6 +377,90 @@ export default async function DashboardPage() {
               </div>
               <span className="text-sm font-semibold text-gray-900">{stats.totalNutritionPlans}</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ferramentas Rápidas */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
+        <div className="flex items-center gap-2 p-5 pb-0">
+          <Wrench className="w-5 h-5 text-emerald-500" />
+          <h2 className="text-base font-semibold text-gray-900">Ferramentas Rápidas</h2>
+        </div>
+        <div className="p-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <Link href="/clients" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                <UserPlus className="w-5 h-5 text-emerald-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Novo Atleta</span>
+            </Link>
+            <Link href="/training" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                <ClipboardList className="w-5 h-5 text-blue-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Criar Plano Treino</span>
+            </Link>
+            <Link href="/nutrition" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-orange-200 hover:bg-orange-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors">
+                <UtensilsCrossed className="w-5 h-5 text-orange-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Plano Nutrição</span>
+            </Link>
+            <Link href="/exercises" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center group-hover:bg-purple-100 transition-colors">
+                <Dumbbell className="w-5 h-5 text-purple-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Exercícios</span>
+            </Link>
+            <Link href="/bookings" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                <CalendarDays className="w-5 h-5 text-indigo-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Agendar Sessão</span>
+            </Link>
+            <Link href="/content" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-rose-200 hover:bg-rose-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-rose-50 flex items-center justify-center group-hover:bg-rose-100 transition-colors">
+                <BookOpen className="w-5 h-5 text-rose-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Conteúdos</span>
+            </Link>
+            <Link href="/messages" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-teal-200 hover:bg-teal-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center group-hover:bg-teal-100 transition-colors">
+                <Send className="w-5 h-5 text-teal-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Mensagens</span>
+            </Link>
+            <Link href="/checkins" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-amber-200 hover:bg-amber-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+                <Activity className="w-5 h-5 text-amber-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Check-ins</span>
+            </Link>
+            <Link href="/feedback" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-pink-200 hover:bg-pink-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-pink-50 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
+                <MessageSquare className="w-5 h-5 text-pink-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Feedback</span>
+            </Link>
+            <Link href="/foods" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-lime-200 hover:bg-lime-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-lime-50 flex items-center justify-center group-hover:bg-lime-100 transition-colors">
+                <Calculator className="w-5 h-5 text-lime-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Alimentos</span>
+            </Link>
+            <Link href="/notifications" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-sky-200 hover:bg-sky-50/50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center group-hover:bg-sky-100 transition-colors">
+                <AlertCircle className="w-5 h-5 text-sky-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Notificações</span>
+            </Link>
+            <Link href="/settings" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 hover:border-gray-300 hover:bg-gray-50 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                <Wrench className="w-5 h-5 text-gray-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-600 text-center">Definições</span>
+            </Link>
           </div>
         </div>
       </div>

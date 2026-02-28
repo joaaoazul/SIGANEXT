@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft, Edit, Trash2, Save, X, Mail, Phone, Calendar, Ruler, Weight,
   Activity, Dumbbell, UtensilsCrossed, MessageSquare, Plus, Heart,
-  Target, Utensils, User, Briefcase,
+  Target, Utensils, User, Briefcase, ClipboardCheck, AlertTriangle,
+  Camera, Image, Droplets, Flame, Calculator, Upload, Eye, ChevronDown, ChevronUp,
 } from "lucide-react";
 import Modal from "@/components/Modal";
 
@@ -63,10 +64,21 @@ interface ClientDetail {
   bodyAssessments: {
     id: string; date: string; weight: number | null; bodyFat: number | null;
     muscleMass: number | null; chest: number | null; waist: number | null; hips: number | null;
+    arms: number | null; thighs: number | null; calves: number | null;
+    shoulders: number | null; neck: number | null; abdomen: number | null;
+    visceralFat: number | null; bmi: number | null; bmr: number | null;
+    waterPct: number | null; boneMass: number | null; metabolicAge: number | null;
+    photos: string | null; notes: string | null;
+  }[];
+  checkIns: {
+    id: string; date: string; mood: number | null; energy: number | null;
+    sleep: number | null; soreness: number | null; stress: number | null;
+    trainedToday: boolean; followedDiet: boolean; waterLiters: number | null;
+    weight: number | null; notes: string | null;
   }[];
 }
 
-type TabKey = "resumo" | "medico" | "lifestyle" | "desporto" | "objetivos" | "nutricao" | "avaliacoes" | "planos";
+type TabKey = "resumo" | "medico" | "lifestyle" | "desporto" | "objetivos" | "nutricao" | "avaliacoes" | "ferramentas" | "checkins" | "planos";
 
 const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "resumo", label: "Resumo", icon: User },
@@ -76,8 +88,22 @@ const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?
   { key: "objetivos", label: "Objetivos", icon: Target },
   { key: "nutricao", label: "Nutrição", icon: Utensils },
   { key: "avaliacoes", label: "Avaliações", icon: Activity },
+  { key: "ferramentas", label: "Ferramentas", icon: Calculator },
+  { key: "checkins", label: "Check-ins", icon: ClipboardCheck },
   { key: "planos", label: "Planos", icon: UtensilsCrossed },
 ];
+
+const PHOTO_LABELS = [
+  { value: "front", label: "Frente" },
+  { value: "back", label: "Costas" },
+  { value: "side_left", label: "Lado Esquerdo" },
+  { value: "side_right", label: "Lado Direito" },
+  { value: "front_flex", label: "Frente (Flexão)" },
+  { value: "back_flex", label: "Costas (Flexão)" },
+];
+
+const photoLabelMap: Record<string, string> = {};
+PHOTO_LABELS.forEach(p => { photoLabelMap[p.value] = p.label; });
 
 // Labels
 const goalLabels: Record<string, string> = {
@@ -106,8 +132,15 @@ export default function ClientDetailPage() {
 
   const [showAssessment, setShowAssessment] = useState(false);
   const [assessmentForm, setAssessmentForm] = useState({
-    weight: "", bodyFat: "", muscleMass: "", chest: "", waist: "", hips: "", arms: "", thighs: "", notes: "",
+    weight: "", bodyFat: "", muscleMass: "", chest: "", waist: "", hips: "", arms: "", thighs: "",
+    calves: "", shoulders: "", neck: "", abdomen: "",
+    visceralFat: "", waterPct: "", boneMass: "", metabolicAge: "",
+    notes: "",
   });
+  const [assessmentPhotos, setAssessmentPhotos] = useState<{url: string; label: string; path: string}[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [selectedGalleryAssessment, setSelectedGalleryAssessment] = useState<string | null>(null);
+  const [expandedAssessment, setExpandedAssessment] = useState<string | null>(null);
 
   const fetchClient = useCallback(async () => {
     const res = await fetch(`/api/clients/${params.id}`);
@@ -142,24 +175,114 @@ export default function ClientDetailPage() {
     setSaving(false);
   };
 
+  const handleUploadPhoto = async (file: File, label: string) => {
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", `clients/${params.id}/assessments`);
+      formData.append("label", label);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (res.ok) {
+        const data = await res.json();
+        setAssessmentPhotos(prev => [...prev, { url: data.url, label: data.label, path: data.path }]);
+      } else {
+        const err = await res.json();
+        alert(err.error || "Erro ao fazer upload");
+      }
+    } catch { alert("Erro ao fazer upload da foto"); }
+    setUploadingPhoto(false);
+  };
+
   const handleAddAssessment = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await fetch(`/api/clients/${params.id}/assessments`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(assessmentForm),
+      body: JSON.stringify({ ...assessmentForm, photos: assessmentPhotos.length > 0 ? assessmentPhotos : undefined }),
     });
     if (res.ok) {
       setShowAssessment(false);
-      setAssessmentForm({ weight: "", bodyFat: "", muscleMass: "", chest: "", waist: "", hips: "", arms: "", thighs: "", notes: "" });
+      setAssessmentForm({
+        weight: "", bodyFat: "", muscleMass: "", chest: "", waist: "", hips: "", arms: "", thighs: "",
+        calves: "", shoulders: "", neck: "", abdomen: "",
+        visceralFat: "", waterPct: "", boneMass: "", metabolicAge: "",
+        notes: "",
+      });
+      setAssessmentPhotos([]);
       fetchClient();
     }
   };
 
+  // ─── Fitness Calculator Helpers ───
+  const calcIMC = () => {
+    const w = client?.weight; const h = client?.height;
+    if (!w || !h) return null;
+    return Math.round((w / Math.pow(h / 100, 2)) * 10) / 10;
+  };
+  const imcCategory = (imc: number) => {
+    if (imc < 18.5) return { label: "Abaixo do peso", color: "text-blue-600", bg: "bg-blue-50" };
+    if (imc < 25) return { label: "Peso normal", color: "text-emerald-600", bg: "bg-emerald-50" };
+    if (imc < 30) return { label: "Sobrepeso", color: "text-yellow-600", bg: "bg-yellow-50" };
+    if (imc < 35) return { label: "Obesidade I", color: "text-orange-600", bg: "bg-orange-50" };
+    if (imc < 40) return { label: "Obesidade II", color: "text-red-600", bg: "bg-red-50" };
+    return { label: "Obesidade III", color: "text-red-700", bg: "bg-red-100" };
+  };
+  const calcTMB = () => {
+    const w = client?.weight; const h = client?.height;
+    if (!w || !h || !client?.dateOfBirth || !client?.gender) return null;
+    const age = Math.floor((Date.now() - new Date(client.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    if (client.gender === "male") return Math.round(10 * w + 6.25 * h - 5 * age + 5);
+    return Math.round(10 * w + 6.25 * h - 5 * age - 161);
+  };
+  const activityMultipliers: Record<string, { label: string; factor: number }> = {
+    sedentary: { label: "Sedentário", factor: 1.2 },
+    light: { label: "Lev. ativo", factor: 1.375 },
+    moderate: { label: "Mod. ativo", factor: 1.55 },
+    active: { label: "Ativo", factor: 1.725 },
+    very_active: { label: "Muito ativo", factor: 1.9 },
+  };
+  const calcTDEE = () => {
+    const tmb = calcTMB();
+    if (!tmb || !client?.activityLevel) return null;
+    const mult = activityMultipliers[client.activityLevel];
+    return mult ? Math.round(tmb * mult.factor) : null;
+  };
+  const calcWater = () => {
+    const w = client?.weight;
+    if (!w) return null;
+    return Math.round(w * 0.035 * 10) / 10;
+  };
+  const calcMacros = () => {
+    const tdee = calcTDEE();
+    if (!tdee || !client?.primaryGoal) return null;
+    let cal = tdee;
+    if (client.primaryGoal === "weight_loss") cal = Math.round(tdee * 0.8);
+    else if (client.primaryGoal === "muscle_gain") cal = Math.round(tdee * 1.15);
+    const w = client.weight || 70;
+    const protein = Math.round(w * (client.primaryGoal === "muscle_gain" ? 2.2 : 1.8));
+    const fat = Math.round(cal * 0.25 / 9);
+    const carbsCal = cal - (protein * 4) - (fat * 9);
+    const carbs = Math.round(carbsCal / 4);
+    return { calories: cal, protein, carbs, fat };
+  };
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
   const handleDelete = async () => {
-    if (!confirm("Tens a certeza que queres eliminar este cliente?")) return;
-    await fetch(`/api/clients/${params.id}`, { method: "DELETE" });
-    router.push("/clients");
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/clients/${params.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Falha ao eliminar");
+      router.push("/clients");
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao eliminar o cliente.");
+      setDeleting(false);
+    }
   };
 
   if (loading) {
@@ -354,7 +477,7 @@ export default function ClientDetailPage() {
                 <EditField label="Cirurgias" field="surgeries" type="textarea" />
                 <EditField label="Historial Familiar" field="familyHistory" type="textarea" />
                 <EditField label="Tensão Arterial" field="bloodPressure" />
-                <EditField label="Freq. Cardíaca (BPM)" field="heartRate" type="number" />
+                <EditField label="Freq. Cardíaca em Repouso (BPM)" field="heartRate" type="number" />
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -483,42 +606,325 @@ export default function ClientDetailPage() {
 
       case "avaliacoes":
         return (
-          <SectionCard title="Avaliações Físicas">
-            <div className="flex justify-end mb-4">
-              <button onClick={() => setShowAssessment(true)} className="btn-primary text-xs py-1.5 px-3">
-                <Plus className="w-3.5 h-3.5" /> Nova Avaliação
-              </button>
+          <div className="space-y-6">
+            <SectionCard title="Avaliações Físicas">
+              <div className="flex justify-end mb-4">
+                <button onClick={() => setShowAssessment(true)} className="btn-primary text-xs py-1.5 px-3">
+                  <Plus className="w-3.5 h-3.5" /> Nova Avaliação
+                </button>
+              </div>
+              {client.bodyAssessments.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-4">Nenhuma avaliação registada</p>
+              ) : (
+                <div className="space-y-3">
+                  {client.bodyAssessments.map((a) => {
+                    const photos: {url: string; label: string}[] = a.photos ? JSON.parse(a.photos) : [];
+                    const isExpanded = expandedAssessment === a.id;
+                    return (
+                      <div key={a.id} className="rounded-xl border border-gray-100 bg-gray-50 overflow-hidden">
+                        <button onClick={() => setExpandedAssessment(isExpanded ? null : a.id)} className="w-full flex items-center justify-between p-4 hover:bg-gray-100 transition">
+                          <div className="flex items-center gap-4">
+                            <p className="text-sm font-semibold text-gray-900">{new Date(a.date).toLocaleDateString("pt-PT")}</p>
+                            <div className="flex items-center gap-3 text-xs text-gray-500">
+                              {a.weight && <span>{a.weight}kg</span>}
+                              {a.bodyFat && <span>{a.bodyFat}%</span>}
+                              {a.bmi && <span>IMC {a.bmi}</span>}
+                              {photos.length > 0 && <span className="flex items-center gap-1"><Camera className="w-3 h-3" />{photos.length}</span>}
+                            </div>
+                          </div>
+                          {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                        </button>
+                        {isExpanded && (
+                          <div className="px-4 pb-4 space-y-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+                              {[
+                                { label: "Peso", value: a.weight, unit: "kg" },
+                                { label: "% Gordura", value: a.bodyFat, unit: "%" },
+                                { label: "Massa Musc.", value: a.muscleMass, unit: "kg" },
+                                { label: "IMC", value: a.bmi, unit: "" },
+                                { label: "TMB", value: a.bmr, unit: "kcal" },
+                                { label: "% Água", value: a.waterPct, unit: "%" },
+                                { label: "Gord. Visceral", value: a.visceralFat, unit: "" },
+                                { label: "Massa Óssea", value: a.boneMass, unit: "kg" },
+                                { label: "Idade Metab.", value: a.metabolicAge, unit: "" },
+                                { label: "Peito", value: a.chest, unit: "cm" },
+                                { label: "Ombros", value: a.shoulders, unit: "cm" },
+                                { label: "Cintura", value: a.waist, unit: "cm" },
+                                { label: "Abdómen", value: a.abdomen, unit: "cm" },
+                                { label: "Anca", value: a.hips, unit: "cm" },
+                                { label: "Braços", value: a.arms, unit: "cm" },
+                                { label: "Coxas", value: a.thighs, unit: "cm" },
+                                { label: "Gémeos", value: a.calves, unit: "cm" },
+                                { label: "Pescoço", value: a.neck, unit: "cm" },
+                              ].filter(m => m.value != null).map(m => (
+                                <div key={m.label} className="bg-white rounded-lg p-2.5 border border-gray-100 text-center">
+                                  <p className="text-xs text-gray-400">{m.label}</p>
+                                  <p className="text-sm font-semibold text-gray-900">{m.value}{m.unit}</p>
+                                </div>
+                              ))}
+                            </div>
+                            {photos.length > 0 && (
+                              <div>
+                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Fotografias</p>
+                                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                                  {photos.map((p, i) => (
+                                    <div key={i} className="relative group cursor-pointer" onClick={() => setSelectedGalleryAssessment(p.url)}>
+                                      <img src={p.url} alt={photoLabelMap[p.label] || p.label} className="w-full h-24 object-cover rounded-lg border border-gray-200" />
+                                      <p className="text-[10px] text-gray-500 mt-0.5 text-center">{photoLabelMap[p.label] || p.label}</p>
+                                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-lg transition flex items-center justify-center">
+                                        <Eye className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition" />
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {a.notes && <p className="text-sm text-gray-600 italic">{a.notes}</p>}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </SectionCard>
+
+            {/* Photo Evolution - Compare across assessments */}
+            {client.bodyAssessments.filter(a => a.photos).length >= 2 && (
+              <SectionCard title="Evolução Fotográfica">
+                <div className="space-y-4">
+                  {PHOTO_LABELS.map(({ value, label }) => {
+                    const timeline = client.bodyAssessments
+                      .map(a => ({ date: a.date, photos: a.photos ? JSON.parse(a.photos) as {url: string; label: string}[] : [] }))
+                      .filter(a => a.photos.some(p => p.label === value))
+                      .map(a => ({ date: a.date, url: a.photos.find(p => p.label === value)!.url }));
+                    if (timeline.length < 2) return null;
+                    return (
+                      <div key={value}>
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{label}</p>
+                        <div className="flex gap-3 overflow-x-auto pb-2">
+                          {timeline.map((t, i) => (
+                            <div key={i} className="flex-shrink-0 cursor-pointer" onClick={() => setSelectedGalleryAssessment(t.url)}>
+                              <img src={t.url} alt={label} className="w-24 h-32 object-cover rounded-lg border border-gray-200" />
+                              <p className="text-[10px] text-gray-400 text-center mt-1">{new Date(t.date).toLocaleDateString("pt-PT")}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }).filter(Boolean)}
+                </div>
+              </SectionCard>
+            )}
+
+            {/* Lightbox */}
+            {selectedGalleryAssessment && (
+              <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setSelectedGalleryAssessment(null)}>
+                <img src={selectedGalleryAssessment} alt="Foto" className="max-w-full max-h-[90vh] object-contain rounded-xl" />
+                <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70" onClick={() => setSelectedGalleryAssessment(null)}>
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            )}
+          </div>
+        );
+
+      case "ferramentas": {
+        const imc = calcIMC();
+        const tmb = calcTMB();
+        const tdee = calcTDEE();
+        const water = calcWater();
+        const macros = calcMacros();
+        const imcCat = imc ? imcCategory(imc) : null;
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* IMC */}
+              <div className={`rounded-2xl p-5 border ${imcCat ? imcCat.bg : "bg-gray-50"} border-gray-200`}>
+                <div className="flex items-center gap-2 mb-3">
+                  <Calculator className="w-5 h-5 text-gray-500" />
+                  <span className="text-xs font-semibold text-gray-500 uppercase">IMC</span>
+                </div>
+                {imc ? (
+                  <>
+                    <p className="text-3xl font-bold text-gray-900">{imc}</p>
+                    <p className={`text-sm font-medium ${imcCat?.color}`}>{imcCat?.label}</p>
+                    <p className="text-xs text-gray-400 mt-1">{client.weight}kg / {client.height}cm</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-gray-400">Peso e altura necessários</p>
+                )}
+              </div>
+
+              {/* TMB */}
+              <div className="rounded-2xl p-5 border bg-orange-50 border-gray-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Flame className="w-5 h-5 text-orange-500" />
+                  <span className="text-xs font-semibold text-gray-500 uppercase">TMB</span>
+                </div>
+                {tmb ? (
+                  <>
+                    <p className="text-3xl font-bold text-gray-900">{tmb}</p>
+                    <p className="text-sm text-gray-500">kcal/dia (repouso)</p>
+                    <p className="text-xs text-gray-400 mt-1">Mifflin-St Jeor</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-gray-400">Peso, altura, idade e género necessários</p>
+                )}
+              </div>
+
+              {/* TDEE */}
+              <div className="rounded-2xl p-5 border bg-purple-50 border-gray-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Activity className="w-5 h-5 text-purple-500" />
+                  <span className="text-xs font-semibold text-gray-500 uppercase">TDEE</span>
+                </div>
+                {tdee ? (
+                  <>
+                    <p className="text-3xl font-bold text-gray-900">{tdee}</p>
+                    <p className="text-sm text-gray-500">kcal/dia (atividade)</p>
+                    <p className="text-xs text-gray-400 mt-1">{activityMultipliers[client.activityLevel || ""]?.label || ""}</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-gray-400">TMB + nível de atividade necessários</p>
+                )}
+              </div>
+
+              {/* Água */}
+              <div className="rounded-2xl p-5 border bg-cyan-50 border-gray-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Droplets className="w-5 h-5 text-cyan-500" />
+                  <span className="text-xs font-semibold text-gray-500 uppercase">Água Diária</span>
+                </div>
+                {water ? (
+                  <>
+                    <p className="text-3xl font-bold text-gray-900">{water}L</p>
+                    <p className="text-sm text-gray-500">recomendado/dia</p>
+                    <p className="text-xs text-gray-400 mt-1">~35ml × {client.weight}kg</p>
+                    {client.waterIntake && (
+                      <p className={`text-xs mt-1 font-medium ${client.waterIntake >= water ? "text-emerald-600" : "text-amber-600"}`}>
+                        Atual: {client.waterIntake}L {client.waterIntake >= water ? "✓" : "↑"}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-sm text-gray-400">Peso necessário</p>
+                )}
+              </div>
             </div>
-            {client.bodyAssessments.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-4">Nenhuma avaliação registada</p>
+
+            {/* Macros Calculator */}
+            {macros && (
+              <SectionCard title="Macronutrientes Recomendados">
+                <div className="mb-3">
+                  <p className="text-sm text-gray-500">
+                    Baseado no TDEE ({tdee} kcal) e objetivo: <strong>{goalLabels[client.primaryGoal || ""] || client.primaryGoal}</strong>
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">{macros.calories} kcal/dia</p>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-4 rounded-xl bg-red-50 border border-red-100">
+                    <p className="text-2xl font-bold text-red-600">{macros.protein}g</p>
+                    <p className="text-xs text-gray-500 mt-1">Proteína</p>
+                    <p className="text-xs text-gray-400">{macros.protein * 4} kcal ({Math.round(macros.protein * 4 / macros.calories * 100)}%)</p>
+                  </div>
+                  <div className="text-center p-4 rounded-xl bg-amber-50 border border-amber-100">
+                    <p className="text-2xl font-bold text-amber-600">{macros.carbs}g</p>
+                    <p className="text-xs text-gray-500 mt-1">Hidratos</p>
+                    <p className="text-xs text-gray-400">{macros.carbs * 4} kcal ({Math.round(macros.carbs * 4 / macros.calories * 100)}%)</p>
+                  </div>
+                  <div className="text-center p-4 rounded-xl bg-blue-50 border border-blue-100">
+                    <p className="text-2xl font-bold text-blue-600">{macros.fat}g</p>
+                    <p className="text-xs text-gray-500 mt-1">Gordura</p>
+                    <p className="text-xs text-gray-400">{macros.fat * 9} kcal ({Math.round(macros.fat * 9 / macros.calories * 100)}%)</p>
+                  </div>
+                </div>
+              </SectionCard>
+            )}
+
+            {/* Body Fat Categories Info */}
+            <SectionCard title="Referência — Percentagem de Gordura Corporal">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center">
+                {[
+                  { range: client.gender === "female" ? "10-13%" : "2-5%", label: "Essencial", color: "bg-blue-50 text-blue-700" },
+                  { range: client.gender === "female" ? "14-20%" : "6-13%", label: "Atleta", color: "bg-emerald-50 text-emerald-700" },
+                  { range: client.gender === "female" ? "21-24%" : "14-17%", label: "Fitness", color: "bg-green-50 text-green-700" },
+                  { range: client.gender === "female" ? "25-31%" : "18-24%", label: "Média", color: "bg-yellow-50 text-yellow-700" },
+                  { range: client.gender === "female" ? "32%+" : "25%+", label: "Acima", color: "bg-red-50 text-red-700" },
+                ].map(c => (
+                  <div key={c.label} className={`${c.color} rounded-lg p-3`}>
+                    <p className="text-xs font-medium">{c.label}</p>
+                    <p className="text-sm font-bold">{c.range}</p>
+                  </div>
+                ))}
+              </div>
+              {client.bodyFat && (
+                <p className="text-sm text-gray-600 mt-3 text-center">Atual: <strong>{client.bodyFat}%</strong> gordura corporal</p>
+              )}
+            </SectionCard>
+          </div>
+        );
+      }
+
+      case "checkins":
+        return (
+          <SectionCard title="Check-ins Diários">
+            {!client.checkIns || client.checkIns.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-4">Nenhum check-in registado</p>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-gray-400 text-xs uppercase">
-                      <th className="text-left py-2 px-3">Data</th>
-                      <th className="text-left py-2 px-3">Peso</th>
-                      <th className="text-left py-2 px-3">% Gordura</th>
-                      <th className="text-left py-2 px-3">Massa Muscular</th>
-                      <th className="text-left py-2 px-3">Peito</th>
-                      <th className="text-left py-2 px-3">Cintura</th>
-                      <th className="text-left py-2 px-3">Anca</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {client.bodyAssessments.map((a) => (
-                      <tr key={a.id} className="border-t border-gray-100">
-                        <td className="py-2 px-3 text-gray-600">{new Date(a.date).toLocaleDateString("pt-PT")}</td>
-                        <td className="py-2 px-3 text-gray-600">{a.weight ? `${a.weight}kg` : "—"}</td>
-                        <td className="py-2 px-3 text-gray-600">{a.bodyFat ? `${a.bodyFat}%` : "—"}</td>
-                        <td className="py-2 px-3 text-gray-600">{a.muscleMass ? `${a.muscleMass}kg` : "—"}</td>
-                        <td className="py-2 px-3 text-gray-600">{a.chest ? `${a.chest}cm` : "—"}</td>
-                        <td className="py-2 px-3 text-gray-600">{a.waist ? `${a.waist}cm` : "—"}</td>
-                        <td className="py-2 px-3 text-gray-600">{a.hips ? `${a.hips}cm` : "—"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="space-y-3">
+                {client.checkIns.map((ci) => {
+                  const moodEmoji = ci.mood ? ["", "😞", "😕", "😐", "🙂", "😄"][ci.mood] : "";
+                  const energyEmoji = ci.energy ? ["", "🔋", "🔋🔋", "⚡", "⚡⚡", "🚀"][ci.energy] : "";
+                  return (
+                    <div key={ci.id} className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-sm font-semibold text-gray-900">
+                          {new Date(ci.date).toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}
+                        </p>
+                        <div className="flex gap-2">
+                          {ci.trainedToday && (
+                            <span className="badge bg-emerald-50 text-emerald-600 text-xs">Treinou</span>
+                          )}
+                          {ci.followedDiet && (
+                            <span className="badge bg-blue-50 text-blue-600 text-xs">Dieta OK</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Humor</p>
+                          <p className="text-sm text-gray-700">{moodEmoji} {ci.mood ? `${ci.mood}/5` : "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Energia</p>
+                          <p className="text-sm text-gray-700">{energyEmoji} {ci.energy ? `${ci.energy}/5` : "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Sono</p>
+                          <p className="text-sm text-gray-700">{ci.sleep ? `${ci.sleep}/5` : "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Dor Muscular</p>
+                          <p className="text-sm text-gray-700">{ci.soreness ? `${ci.soreness}/5` : "—"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400 mb-0.5">Stress</p>
+                          <p className="text-sm text-gray-700">{ci.stress ? `${ci.stress}/5` : "—"}</p>
+                        </div>
+                      </div>
+                      {(ci.weight || ci.waterLiters) && (
+                        <div className="flex gap-4 mt-3 pt-3 border-t border-gray-200">
+                          {ci.weight && <p className="text-xs text-gray-500">Peso: <span className="font-medium text-gray-700">{ci.weight}kg</span></p>}
+                          {ci.waterLiters && <p className="text-xs text-gray-500">Água: <span className="font-medium text-gray-700">{ci.waterLiters}L</span></p>}
+                        </div>
+                      )}
+                      {ci.notes && (
+                        <p className="text-xs text-gray-500 mt-2 italic">&quot;{ci.notes}&quot;</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </SectionCard>
@@ -619,7 +1025,7 @@ export default function ClientDetailPage() {
           ) : (
             <>
               <button onClick={startEdit} className="btn-secondary"><Edit className="w-4 h-4" /> Editar</button>
-              <button onClick={handleDelete} className="btn-danger"><Trash2 className="w-4 h-4" /> Eliminar</button>
+              <button onClick={() => { setShowDeleteModal(true); setDeleteConfirmText(""); }} className="btn-danger"><Trash2 className="w-4 h-4" /> Eliminar</button>
             </>
           )}
         </div>
@@ -644,40 +1050,141 @@ export default function ClientDetailPage() {
       {renderTab()}
 
       {/* Assessment Modal */}
-      <Modal isOpen={showAssessment} onClose={() => setShowAssessment(false)} title="Nova Avaliação Física" size="lg">
-        <form onSubmit={handleAddAssessment} className="space-y-4">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { label: "Peso (kg)", field: "weight" },
-              { label: "% Gordura", field: "bodyFat" },
-              { label: "Massa Muscular (kg)", field: "muscleMass" },
-              { label: "Peito (cm)", field: "chest" },
-              { label: "Cintura (cm)", field: "waist" },
-              { label: "Anca (cm)", field: "hips" },
-              { label: "Braços (cm)", field: "arms" },
-              { label: "Coxas (cm)", field: "thighs" },
-            ].map(({ label, field }) => (
-              <div key={field}>
-                <label className="block text-sm text-gray-500 mb-1">{label}</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={(assessmentForm as Record<string, string>)[field]}
-                  onChange={(e) => setAssessmentForm({ ...assessmentForm, [field]: e.target.value })}
-                  className="input-field"
-                />
-              </div>
-            ))}
+      <Modal isOpen={showAssessment} onClose={() => setShowAssessment(false)} title="Nova Avaliação Física" size="xl">
+        <form onSubmit={handleAddAssessment} className="space-y-5">
+          {/* Composição Corporal */}
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Composição Corporal</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "Peso (kg)", field: "weight" },
+                { label: "% Gordura", field: "bodyFat" },
+                { label: "Massa Muscular (kg)", field: "muscleMass" },
+                { label: "% Água", field: "waterPct" },
+                { label: "Gord. Visceral", field: "visceralFat" },
+                { label: "Massa Óssea (kg)", field: "boneMass" },
+                { label: "Idade Metabólica", field: "metabolicAge" },
+              ].map(({ label, field }) => (
+                <div key={field}>
+                  <label className="block text-sm text-gray-500 mb-1">{label}</label>
+                  <input type="number" step="0.1" value={(assessmentForm as Record<string, string>)[field]} onChange={(e) => setAssessmentForm({ ...assessmentForm, [field]: e.target.value })} className="input-field" />
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Medidas */}
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Medidas Corporais (cm)</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "Peito", field: "chest" },
+                { label: "Ombros", field: "shoulders" },
+                { label: "Cintura", field: "waist" },
+                { label: "Abdómen", field: "abdomen" },
+                { label: "Anca", field: "hips" },
+                { label: "Braços", field: "arms" },
+                { label: "Coxas", field: "thighs" },
+                { label: "Gémeos", field: "calves" },
+                { label: "Pescoço", field: "neck" },
+              ].map(({ label, field }) => (
+                <div key={field}>
+                  <label className="block text-sm text-gray-500 mb-1">{label}</label>
+                  <input type="number" step="0.1" value={(assessmentForm as Record<string, string>)[field]} onChange={(e) => setAssessmentForm({ ...assessmentForm, [field]: e.target.value })} className="input-field" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Fotografias */}
+          <div>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              <Camera className="w-3.5 h-3.5 inline mr-1" />Fotografias do Corpo
+            </p>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+              {PHOTO_LABELS.map(({ value, label }) => {
+                const existing = assessmentPhotos.find(p => p.label === value);
+                return (
+                  <div key={value} className="text-center">
+                    {existing ? (
+                      <div className="relative group">
+                        <img src={existing.url} alt={label} className="w-full h-20 object-cover rounded-lg border border-emerald-200" />
+                        <button type="button" onClick={() => setAssessmentPhotos(prev => prev.filter(p => p.label !== value))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">×</button>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center h-20 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/50 transition">
+                        {uploadingPhoto ? (
+                          <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Upload className="w-4 h-4 text-gray-400" />
+                            <span className="text-[10px] text-gray-400 mt-1">Upload</span>
+                          </>
+                        )}
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUploadPhoto(f, value); }} />
+                      </label>
+                    )}
+                    <p className="text-[10px] text-gray-500 mt-1">{label}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm text-gray-500 mb-1">Notas</label>
             <textarea value={assessmentForm.notes} onChange={(e) => setAssessmentForm({ ...assessmentForm, notes: e.target.value })} className="input-field min-h-[60px]" />
           </div>
           <div className="flex justify-end gap-3">
             <button type="button" onClick={() => setShowAssessment(false)} className="btn-secondary">Cancelar</button>
-            <button type="submit" className="btn-primary">Guardar</button>
+            <button type="submit" className="btn-primary">Guardar Avaliação</button>
           </div>
         </form>
+      </Modal>
+
+      {/* ─── Delete Confirmation Modal ───────────────────── */}
+      <Modal isOpen={showDeleteModal} onClose={() => { setShowDeleteModal(false); setDeleteConfirmText(""); }} title="Eliminar Cliente" size="sm">
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-red-800">
+              <p className="font-semibold mb-1">Esta ação é irreversível!</p>
+              <p>Ao eliminar <strong>{client?.name}</strong>, todos os dados serão permanentemente apagados:</p>
+              <ul className="mt-2 ml-4 list-disc space-y-0.5 text-red-700">
+                <li>Conta de acesso (login)</li>
+                <li>Planos de treino e nutrição atribuídos</li>
+                <li>Check-ins e avaliações corporais</li>
+                <li>Reservas e agendamentos</li>
+                <li>Mensagens e conversas</li>
+                <li>Feedbacks e notificações</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Escreve <span className="font-bold text-red-600">APAGAR</span> para confirmar:
+            </label>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="APAGAR"
+              className="input-field text-center font-mono text-lg tracking-widest"
+              autoFocus
+            />
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(""); }} className="btn-secondary flex-1 justify-center">Cancelar</button>
+            <button
+              onClick={handleDelete}
+              disabled={deleteConfirmText !== "APAGAR" || deleting}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-xl font-medium transition hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Trash2 className="w-4 h-4" />
+              {deleting ? "A eliminar..." : "Eliminar Permanentemente"}
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

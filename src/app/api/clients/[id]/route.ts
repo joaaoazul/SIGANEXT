@@ -20,6 +20,7 @@ export async function GET(
         },
         feedbacks: { orderBy: { createdAt: "desc" }, take: 10 },
         bodyAssessments: { orderBy: { date: "desc" } },
+        checkIns: { orderBy: { date: "desc" }, take: 30 },
         bookings: {
           include: { bookingSlot: true },
           orderBy: { date: "desc" },
@@ -32,7 +33,9 @@ export async function GET(
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     }
 
-    return NextResponse.json(client);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...sanitized } = client;
+    return NextResponse.json(sanitized);
   } catch {
     return NextResponse.json({ error: "Erro ao buscar cliente" }, { status: 500 });
   }
@@ -108,9 +111,34 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    await prisma.client.delete({ where: { id } });
+
+    // Find client to get their email (needed to delete User login record)
+    const client = await prisma.client.findUnique({
+      where: { id },
+      select: { email: true },
+    });
+
+    if (!client) {
+      return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
+    }
+
+    await prisma.$transaction(async (tx) => {
+      // Delete conversation participations (not cascaded by Client delete)
+      await tx.conversationParticipant.deleteMany({ where: { clientId: id } });
+
+      // Delete the Client record (cascades: bookings, check-ins, feedbacks,
+      // notifications, training/nutrition assignments, body assessments)
+      await tx.client.delete({ where: { id } });
+
+      // Delete the User login account (role "client" with same email)
+      await tx.user.deleteMany({
+        where: { email: client.email, role: "client" },
+      });
+    });
+
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error("Client delete error:", error);
     return NextResponse.json({ error: "Erro ao eliminar cliente" }, { status: 500 });
   }
 }

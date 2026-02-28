@@ -12,17 +12,19 @@ import {
   MessageCircle,
   CalendarDays,
   BookOpen,
-  UserCog,
   Settings,
   LogOut,
   Menu,
   X,
   ChevronLeft,
   TrendingUp,
+  CreditCard,
+  Activity,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const navigation = [
+// PT navigation
+const ptNavigation = [
   { name: "Home", href: "/dashboard", icon: LayoutDashboard },
   { name: "Clientes", href: "/clients", icon: Users },
   { name: "Exercícios", href: "/exercises", icon: Dumbbell },
@@ -33,8 +35,20 @@ const navigation = [
   { name: "Mensagens", href: "/messages", icon: MessageCircle },
   { name: "Agenda", href: "/bookings", icon: CalendarDays },
   { name: "Conteúdos", href: "/content", icon: BookOpen },
-  { name: "Funcionários", href: "/employees", icon: UserCog },
   { name: "Definições", href: "/settings", icon: Settings },
+];
+
+// Athlete navigation
+const athleteNavigation = [
+  { name: "Home", href: "/athlete", icon: LayoutDashboard },
+  { name: "Treino", href: "/athlete/training", icon: Dumbbell },
+  { name: "Nutrição", href: "/athlete/nutrition", icon: UtensilsCrossed },
+  { name: "Progresso", href: "/athlete/progress", icon: Activity },
+  { name: "Agenda", href: "/athlete/bookings", icon: CalendarDays },
+  { name: "Pagamentos", href: "/athlete/payments", icon: CreditCard },
+  { name: "Conteúdos", href: "/athlete/content", icon: BookOpen },
+  { name: "Mensagens", href: "/athlete/messages", icon: MessageCircle },
+  { name: "Definições", href: "/athlete/settings", icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -42,6 +56,17 @@ export default function Sidebar() {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [role, setRole] = useState<string>("admin");
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((d) => { if (d?.role) setRole(d.role); })
+      .catch(() => {});
+  }, []);
+
+  const navigation = role === "client" ? athleteNavigation : ptNavigation;
+  const brandSubtitle = role === "client" ? "Área do Atleta" : "Personal Trainer";
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -50,7 +75,7 @@ export default function Sidebar() {
   };
 
   const isActive = (href: string) => {
-    if (href === "/dashboard") return pathname === "/dashboard";
+    if (href === "/dashboard" || href === "/athlete") return pathname === href;
     return pathname.startsWith(href);
   };
 
@@ -64,7 +89,7 @@ export default function Sidebar() {
         {!collapsed && (
           <div className="overflow-hidden">
             <h1 className="text-base font-bold text-gray-900 tracking-tight leading-tight">SIGA180</h1>
-            <p className="text-[9px] text-gray-400 uppercase tracking-widest">Personal Trainer</p>
+            <p className="text-[9px] text-gray-400 uppercase tracking-widest">{brandSubtitle}</p>
           </div>
         )}
       </div>

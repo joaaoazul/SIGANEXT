@@ -1,11 +1,82 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, createContext, useContext } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Dumbbell, CheckCircle, ArrowRight, ArrowLeft, User, Mail, Phone, Ruler,
-  Weight, Target, Lock, Heart, Activity, Utensils, Shield,
+  Weight, Target, Lock, Heart, Activity, Utensils, Shield, Camera, Upload, X,
 } from "lucide-react";
+
+// ─── Form context for stable component identity (prevents input focus loss) ───
+const OnboardingFormContext = createContext<{
+  form: Record<string, string>;
+  set: (field: string, value: string) => void;
+}>({ form: {}, set: () => {} });
+
+function InputField({ label, icon: Icon, type = "text", field, placeholder, readOnly, ...rest }: {
+  label: string; icon?: React.ComponentType<{ className?: string }>; type?: string;
+  field: string; placeholder?: string; readOnly?: boolean; [k: string]: unknown;
+}) {
+  const { form, set } = useContext(OnboardingFormContext);
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
+      <div className="relative">
+        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
+        <input
+          type={type}
+          value={form[field] || ""}
+          onChange={(e) => set(field, e.target.value)}
+          placeholder={placeholder}
+          readOnly={readOnly}
+          className={`input-field ${Icon ? "pl-10" : ""} ${readOnly ? "bg-gray-50 text-gray-500" : ""}`}
+          {...rest}
+        />
+      </div>
+    </div>
+  );
+}
+
+function SelectField({ label, icon: Icon, field, options }: {
+  label: string; icon?: React.ComponentType<{ className?: string }>;
+  field: string; options: { value: string; label: string }[];
+}) {
+  const { form, set } = useContext(OnboardingFormContext);
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
+      <div className="relative">
+        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
+        <select
+          value={form[field] || ""}
+          onChange={(e) => set(field, e.target.value)}
+          className={`input-field ${Icon ? "pl-10" : ""}`}
+        >
+          <option value="">Selecionar</option>
+          {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+function TextArea({ label, field, placeholder, rows = 3 }: {
+  label: string; field: string; placeholder?: string; rows?: number;
+}) {
+  const { form, set } = useContext(OnboardingFormContext);
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
+      <textarea
+        value={form[field] || ""}
+        onChange={(e) => set(field, e.target.value)}
+        placeholder={placeholder}
+        rows={rows}
+        className="input-field resize-none"
+      />
+    </div>
+  );
+}
 
 function OnboardingForm() {
   const searchParams = useSearchParams();
@@ -18,6 +89,8 @@ function OnboardingForm() {
   const [success, setSuccess] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteId, setInviteId] = useState("");
+  const [onboardingPhotos, setOnboardingPhotos] = useState<{ url: string; label: string }[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const [form, setForm] = useState({
     code: codeFromUrl,
@@ -69,12 +142,40 @@ function OnboardingForm() {
     notes: "",
   });
 
-  const TOTAL_STEPS = 9;
+  const TOTAL_STEPS = 10;
   const stepTitles = [
     "Código", "Palavra-passe", "Dados Pessoais", "Dados Físicos",
-    "Historial Médico", "Estilo de Vida", "Desporto",
+    "Fotografias", "Historial Médico", "Estilo de Vida", "Desporto",
     "Objetivos", "Nutrição",
   ];
+
+  const PHOTO_LABELS = [
+    { key: "front", label: "Frente" },
+    { key: "back", label: "Costas" },
+    { key: "side_left", label: "Lateral Esq." },
+    { key: "side_right", label: "Lateral Dir." },
+    { key: "front_flex", label: "Frente Flexão" },
+    { key: "back_flex", label: "Costas Flexão" },
+  ];
+
+  const handleUploadOnboardingPhoto = async (file: File, label: string) => {
+    if (!inviteId) return;
+    setUploadingPhoto(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("inviteId", inviteId);
+      fd.append("label", label);
+      const res = await fetch("/api/onboarding/upload", { method: "POST", body: fd });
+      if (!res.ok) { const d = await res.json(); setError(d.error || "Erro no upload"); return; }
+      const data = await res.json();
+      setOnboardingPhotos((prev) => [...prev.filter((p) => p.label !== label), { url: data.url, label }]);
+    } catch {
+      setError("Erro ao enviar fotografia");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
 
   useEffect(() => {
     if (codeFromUrl) validateCode(codeFromUrl);
@@ -129,7 +230,7 @@ function OnboardingForm() {
       const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, inviteId }),
+        body: JSON.stringify({ ...form, inviteId, photos: onboardingPhotos.length > 0 ? JSON.stringify(onboardingPhotos) : null }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); setLoading(false); return; }
@@ -160,63 +261,6 @@ function OnboardingForm() {
     );
   }
 
-  // ---------- Helpers ----------
-  const InputField = ({ label, icon: Icon, type = "text", field, placeholder, readOnly, ...rest }: {
-    label: string; icon?: React.ComponentType<{ className?: string }>; type?: string;
-    field: string; placeholder?: string; readOnly?: boolean; [k: string]: unknown;
-  }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
-      <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
-        <input
-          type={type}
-          value={(form as Record<string, string>)[field] || ""}
-          onChange={(e) => set(field, e.target.value)}
-          placeholder={placeholder}
-          readOnly={readOnly}
-          className={`input-field ${Icon ? "pl-10" : ""} ${readOnly ? "bg-gray-50 text-gray-500" : ""}`}
-          {...rest}
-        />
-      </div>
-    </div>
-  );
-
-  const SelectField = ({ label, icon: Icon, field, options }: {
-    label: string; icon?: React.ComponentType<{ className?: string }>;
-    field: string; options: { value: string; label: string }[];
-  }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
-      <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
-        <select
-          value={(form as Record<string, string>)[field] || ""}
-          onChange={(e) => set(field, e.target.value)}
-          className={`input-field ${Icon ? "pl-10" : ""}`}
-        >
-          <option value="">Selecionar</option>
-          {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-      </div>
-    </div>
-  );
-
-  const TextArea = ({ label, field, placeholder, rows = 3 }: {
-    label: string; field: string; placeholder?: string; rows?: number;
-  }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
-      <textarea
-        value={(form as Record<string, string>)[field] || ""}
-        onChange={(e) => set(field, e.target.value)}
-        placeholder={placeholder}
-        rows={rows}
-        className="input-field resize-none"
-      />
-    </div>
-  );
-
   const NavButtons = ({ isLast }: { isLast?: boolean }) => (
     <div className="flex gap-3 pt-4">
       <button onClick={() => setStep((s) => s - 1)} className="btn-secondary flex-1 justify-center">
@@ -240,6 +284,7 @@ function OnboardingForm() {
 
   // ---------- Render ----------
   return (
+    <OnboardingFormContext.Provider value={{ form: form as unknown as Record<string, string>, set }}>
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         {/* Logo */}
@@ -357,8 +402,60 @@ function OnboardingForm() {
             </div>
           )}
 
-          {/* ── Step 5: Historial Médico ── */}
+          {/* ── Step 5: Fotografias Corporais ── */}
           {step === 5 && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Camera className="w-5 h-5 text-emerald-500" /> Fotografias Corporais
+              </h2>
+              <SectionHint text="Opcional — As fotos ajudam a acompanhar a tua evolução física ao longo do tempo." />
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {PHOTO_LABELS.map(({ key, label: lbl }) => {
+                  const existing = onboardingPhotos.find((p) => p.label === key);
+                  return (
+                    <div key={key} className="relative">
+                      {existing ? (
+                        <div className="relative aspect-[3/4] rounded-lg overflow-hidden border-2 border-emerald-300">
+                          <img src={existing.url} alt={lbl} className="w-full h-full object-cover" />
+                          <button
+                            onClick={() => setOnboardingPhotos((prev) => prev.filter((p) => p.label !== key))}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                          <span className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs text-center py-0.5">{lbl}</span>
+                        </div>
+                      ) : (
+                        <label className="flex flex-col items-center justify-center aspect-[3/4] rounded-lg border-2 border-dashed border-gray-300 hover:border-emerald-400 cursor-pointer transition-colors bg-gray-50">
+                          <Upload className="w-5 h-5 text-gray-400 mb-1" />
+                          <span className="text-xs text-gray-500">{lbl}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) handleUploadOnboardingPhoto(f, key);
+                            }}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {uploadingPhoto && (
+                <div className="flex items-center gap-2 text-sm text-emerald-600">
+                  <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                  A enviar fotografia...
+                </div>
+              )}
+              <NavButtons />
+            </div>
+          )}
+
+          {/* ── Step 6: Historial Médico ── */}
+          {step === 6 && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Heart className="w-5 h-5 text-rose-500" /> Historial Médico
@@ -374,14 +471,14 @@ function OnboardingForm() {
               <TextArea label="Historial Familiar Relevante" field="familyHistory" placeholder="Ex: Historial de doença cardíaca..." rows={2} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <InputField label="Tensão Arterial" field="bloodPressure" placeholder="120/80" />
-                <InputField label="Freq. Cardíaca Repouso (BPM)" type="number" field="heartRate" placeholder="70" />
+                <InputField label="Freq. Cardíaca em Repouso (BPM)" type="number" field="heartRate" placeholder="70" />
               </div>
               <NavButtons />
             </div>
           )}
 
-          {/* ── Step 6: Estilo de Vida ── */}
-          {step === 6 && (
+          {/* ── Step 7: Estilo de Vida ── */}
+          {step === 7 && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Activity className="w-5 h-5 text-blue-500" /> Estilo de Vida
@@ -421,8 +518,8 @@ function OnboardingForm() {
             </div>
           )}
 
-          {/* ── Step 7: Historial Desportivo ── */}
-          {step === 7 && (
+          {/* ── Step 8: Historial Desportivo ── */}
+          {step === 8 && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Dumbbell className="w-5 h-5 text-amber-500" /> Historial Desportivo
@@ -442,8 +539,8 @@ function OnboardingForm() {
             </div>
           )}
 
-          {/* ── Step 8: Objetivos ── */}
-          {step === 8 && (
+          {/* ── Step 9: Objetivos ── */}
+          {step === 9 && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Target className="w-5 h-5 text-purple-500" /> Objetivos
@@ -463,8 +560,8 @@ function OnboardingForm() {
             </div>
           )}
 
-          {/* ── Step 9: Nutrição ── */}
-          {step === 9 && (
+          {/* ── Step 10: Nutrição ── */}
+          {step === 10 && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Utensils className="w-5 h-5 text-orange-500" /> Nutrição
@@ -484,6 +581,7 @@ function OnboardingForm() {
         </div>
       </div>
     </div>
+    </OnboardingFormContext.Provider>
   );
 }
 

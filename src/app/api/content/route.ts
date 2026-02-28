@@ -12,17 +12,22 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type");
   const category = searchParams.get("category");
 
-  const where: Record<string, unknown> = {};
-  if (search) where.title = { contains: search };
-  if (type) where.type = type;
-  if (category) where.category = category;
+  try {
+    const where: Record<string, unknown> = {};
+    if (search) where.title = { contains: search, mode: "insensitive" };
+    if (type) where.type = type;
+    if (category) where.category = category;
 
-  const contents = await prisma.content.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-  });
+    const contents = await prisma.content.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
 
-  return NextResponse.json(contents);
+    return NextResponse.json(contents);
+  } catch (error) {
+    console.error("Content GET error:", error);
+    return NextResponse.json([], { status: 200 });
+  }
 }
 
 // POST /api/content

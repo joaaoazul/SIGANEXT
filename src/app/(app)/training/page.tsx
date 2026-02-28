@@ -86,25 +86,34 @@ export default function TrainingPage() {
 
   const fetchPlans = useCallback(async () => {
     setLoading(true);
-    const res = await fetch("/api/training");
-    const data = await res.json();
-    setPlans(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch("/api/training");
+      if (!res.ok) throw new Error("Erro ao carregar planos");
+      const data = await res.json();
+      setPlans(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setPlans([]); }
     setLoading(false);
   }, []);
 
   const fetchClients = useCallback(async () => {
-    const res = await fetch("/api/clients");
-    const data = await res.json();
-    setClients(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch("/api/clients");
+      if (!res.ok) throw new Error("Erro ao carregar clientes");
+      const data = await res.json();
+      setClients(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); }
   }, []);
 
   const fetchExercises = useCallback(async () => {
-    const params = new URLSearchParams();
-    if (exerciseSearch) params.set("search", exerciseSearch);
-    if (exerciseGroup) params.set("muscleGroup", exerciseGroup);
-    const res = await fetch(`/api/exercises?${params.toString()}`);
-    const data = await res.json();
-    setExercises(Array.isArray(data) ? data : []);
+    try {
+      const params = new URLSearchParams();
+      if (exerciseSearch) params.set("search", exerciseSearch);
+      if (exerciseGroup) params.set("muscleGroup", exerciseGroup);
+      const res = await fetch(`/api/exercises?${params.toString()}`);
+      if (!res.ok) throw new Error("Erro ao carregar exercícios");
+      const data = await res.json();
+      setExercises(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); }
   }, [exerciseSearch, exerciseGroup]);
 
   useEffect(() => { fetchPlans(); fetchClients(); }, [fetchPlans, fetchClients]);

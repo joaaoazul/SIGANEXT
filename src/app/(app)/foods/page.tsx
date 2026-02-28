@@ -46,12 +46,15 @@ export default function FoodsPage() {
 
   const fetchFoods = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (categoryFilter) params.set("category", categoryFilter);
-    const res = await fetch(`/api/foods?${params}`);
-    const data = await res.json();
-    setFoods(Array.isArray(data) ? data : []);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (categoryFilter) params.set("category", categoryFilter);
+      const res = await fetch(`/api/foods?${params}`);
+      if (!res.ok) throw new Error("Erro ao carregar alimentos");
+      const data = await res.json();
+      setFoods(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setFoods([]); }
     setLoading(false);
   }, [search, categoryFilter]);
 

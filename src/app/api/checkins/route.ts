@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
     const body = await request.json();
-    const { clientId, mood, energy, sleep, soreness, stress, trainedToday, followedDiet, waterLiters, weight, notes } = body;
+    const { clientId, mood, energy, sleep, soreness, stress, trainedToday, followedDiet, waterLiters, weight, notes, photos } = body;
 
     if (!clientId) {
       return NextResponse.json({ error: "clientId é obrigatório" }, { status: 400 });
@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
         waterLiters: waterLiters ? parseFloat(waterLiters) : null,
         weight: weight ? parseFloat(weight) : null,
         notes: notes || null,
+        photos: photos || null,
       },
       update: {
         mood: mood ? parseInt(mood) : undefined,
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
         waterLiters: waterLiters ? parseFloat(waterLiters) : undefined,
         weight: weight ? parseFloat(weight) : undefined,
         notes: notes !== undefined ? notes : undefined,
+        photos: photos !== undefined ? photos : undefined,
       },
     });
 

@@ -62,13 +62,15 @@ export default function ExercisesPage() {
 
   const fetchExercises = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (muscleFilter) params.set("muscleGroup", muscleFilter);
-
-    const res = await fetch(`/api/exercises?${params}`);
-    const data = await res.json();
-    setExercises(Array.isArray(data) ? data : []);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (muscleFilter) params.set("muscleGroup", muscleFilter);
+      const res = await fetch(`/api/exercises?${params}`);
+      if (!res.ok) throw new Error("Erro ao carregar exercícios");
+      const data = await res.json();
+      setExercises(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setExercises([]); }
     setLoading(false);
   }, [search, muscleFilter]);
 

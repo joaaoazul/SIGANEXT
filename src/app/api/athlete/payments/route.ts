@@ -1,0 +1,28 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/auth";
+
+// GET /api/athlete/payments - Get athlete's payment info
+export async function GET(request: NextRequest) {
+  try {
+    const user = await getUser(request);
+    if (!user || user.role !== "client") {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    const client = await prisma.client.findUnique({
+      where: { id: user.id },
+      select: {
+        plan: true,
+        planStartDate: true,
+        planEndDate: true,
+        paymentStatus: true,
+      },
+    });
+
+    return NextResponse.json({ client: client || { plan: null, planStartDate: null, planEndDate: null, paymentStatus: "pending" } });
+  } catch (error) {
+    console.error("Athlete payments GET error:", error);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+  }
+}

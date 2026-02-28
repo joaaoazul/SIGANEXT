@@ -36,7 +36,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push(data.user?.role === "client" ? "/athlete" : "/dashboard");
       router.refresh();
     } catch {
       setError("Erro de ligação ao servidor");

@@ -16,10 +16,19 @@ const pageNames: Record<string, string> = {
   "/messages": "Mensagens",
   "/bookings": "Agenda",
   "/content": "Conteúdos",
-  "/employees": "Funcionários",
   "/settings": "Definições",
   "/feedback": "Feedback",
   "/notifications": "Notificações",
+  // Athlete routes
+  "/athlete": "Home",
+  "/athlete/training": "Meu Treino",
+  "/athlete/nutrition": "Minha Nutrição",
+  "/athlete/progress": "Meu Progresso",
+  "/athlete/bookings": "Minha Agenda",
+  "/athlete/payments": "Pagamentos",
+  "/athlete/content": "Conteúdos",
+  "/athlete/messages": "Mensagens",
+  "/athlete/settings": "Definições",
 };
 
 export default function TopBar() {
@@ -30,12 +39,14 @@ export default function TopBar() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const pageName = Object.entries(pageNames).find(([path]) =>
-    pathname === path || (path !== "/dashboard" && pathname.startsWith(path))
+    pathname === path || (path !== "/dashboard" && path !== "/athlete" && pathname.startsWith(path))
   )?.[1] || "SIGA180";
+
+  const isAthlete = user?.role === "client";
 
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.json()).then(d => {
-      if (d.user) setUser(d.user);
+      if (d?.id) setUser(d);
     }).catch(() => {});
   }, []);
 
@@ -65,18 +76,20 @@ export default function TopBar() {
 
       {/* Right: Actions */}
       <div className="flex items-center gap-2">
-        {/* Quick add */}
-        <Link
-          href="/clients"
-          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition"
-          title="Adicionar"
-        >
-          <Plus className="w-5 h-5" />
-        </Link>
+        {/* Quick add - PT only (hidden while loading or for athletes) */}
+        {user && !isAthlete && (
+          <Link
+            href="/clients"
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition"
+            title="Adicionar"
+          >
+            <Plus className="w-5 h-5" />
+          </Link>
+        )}
 
         {/* Notifications */}
         <Link
-          href="/notifications"
+          href={isAthlete ? "/athlete/settings" : "/notifications"}
           className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition relative"
           title="Notificações"
         >
@@ -101,7 +114,7 @@ export default function TopBar() {
                 <p className="text-sm font-medium text-gray-900">{user?.name || "Treinador"}</p>
                 <p className="text-xs text-gray-400">{user?.email}</p>
               </div>
-              <Link href="/settings" onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition">
+              <Link href={isAthlete ? "/athlete/settings" : "/settings"} onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition">
                 Definições
               </Link>
               <button

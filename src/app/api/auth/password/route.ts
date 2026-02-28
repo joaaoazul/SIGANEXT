@@ -18,6 +18,21 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "A nova password deve ter pelo menos 6 caracteres" }, { status: 400 });
   }
 
+  if (user.role === "client") {
+    const dbClient = await prisma.client.findUnique({ where: { id: user.id } });
+    if (!dbClient || !dbClient.password) {
+      return NextResponse.json({ error: "Utilizador não encontrado" }, { status: 404 });
+    }
+
+    const valid = await bcrypt.compare(currentPassword, dbClient.password);
+    if (!valid) return NextResponse.json({ error: "Password atual incorreta" }, { status: 400 });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await prisma.client.update({ where: { id: user.id }, data: { password: hashed } });
+
+    return NextResponse.json({ success: true });
+  }
+
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser) return NextResponse.json({ error: "Utilizador não encontrado" }, { status: 404 });
 

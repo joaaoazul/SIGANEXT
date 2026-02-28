@@ -21,13 +21,16 @@ export default function NotificationsPage() {
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (filter === "unread") params.set("read", "false");
-    if (filter === "read") params.set("read", "true");
-    if (["info", "warning", "success", "error"].includes(filter)) params.set("type", filter);
-    const res = await fetch(`/api/notifications?${params}`);
-    const data = await res.json();
-    setNotifications(Array.isArray(data) ? data : []);
+    try {
+      const params = new URLSearchParams();
+      if (filter === "unread") params.set("read", "false");
+      if (filter === "read") params.set("read", "true");
+      if (["info", "warning", "success", "error"].includes(filter)) params.set("type", filter);
+      const res = await fetch(`/api/notifications?${params}`);
+      if (!res.ok) throw new Error("Erro ao carregar notificações");
+      const data = await res.json();
+      setNotifications(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setNotifications([]); }
     setLoading(false);
   }, [filter]);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { TrendingUp, Heart, Zap, Moon, Flame, Brain, Droplets, Weight, Calendar, ChevronDown, User } from "lucide-react";
+import { TrendingUp, Heart, Zap, Moon, Flame, Brain, Droplets, Weight, Calendar, ChevronDown, User, Camera, Upload, X, Eye } from "lucide-react";
 
 interface CheckIn {
   id: string;
@@ -17,6 +17,7 @@ interface CheckIn {
   waterLiters: number | null;
   weight: number | null;
   notes: string | null;
+  photos: string | null;
   client: { id: string; name: string; avatar: string | null };
 }
 
@@ -52,6 +53,9 @@ export default function CheckInsPage() {
     trainedToday: false, followedDiet: false,
     waterLiters: "", weight: "", notes: "",
   });
+  const [checkinPhotos, setCheckinPhotos] = useState<{url: string; label: string; path: string}[]>([]);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCheckins();
@@ -77,15 +81,39 @@ export default function CheckInsPage() {
     }
   };
 
+  const handleUploadPhoto = async (file: File) => {
+    if (!formClient) { alert("Seleciona o atleta primeiro"); return; }
+    setUploadingPhoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", `clients/${formClient}/checkins`);
+      formData.append("label", `checkin_${Date.now()}`);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (res.ok) {
+        const data = await res.json();
+        setCheckinPhotos(prev => [...prev, { url: data.url, label: data.label, path: data.path }]);
+      } else {
+        const err = await res.json();
+        alert(err.error || "Erro ao fazer upload");
+      }
+    } catch { alert("Erro ao fazer upload"); }
+    setUploadingPhoto(false);
+  };
+
   const handleSubmit = async () => {
     if (!formClient) return;
     const res = await fetch("/api/checkins", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clientId: formClient, ...form }),
+      body: JSON.stringify({
+        clientId: formClient, ...form,
+        photos: checkinPhotos.length > 0 ? JSON.stringify(checkinPhotos) : undefined,
+      }),
     });
     if (res.ok) {
       setShowForm(false);
+      setCheckinPhotos([]);
       fetchCheckins();
     }
   };
@@ -210,6 +238,26 @@ export default function CheckInsPage() {
             <label className="block text-sm font-medium text-gray-600 mb-1.5">Notas</label>
             <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} className="input-field resize-none" placeholder="Observações adicionais..." />
           </div>
+          {/* Photos */}
+          <div>
+            <label className="flex items-center gap-1.5 text-sm font-medium text-gray-600 mb-2"><Camera className="w-3.5 h-3.5" /> Fotografias</label>
+            <div className="flex flex-wrap gap-2">
+              {checkinPhotos.map((p, i) => (
+                <div key={i} className="relative group">
+                  <img src={p.url} alt="Foto" className="w-16 h-16 object-cover rounded-lg border border-gray-200" />
+                  <button type="button" onClick={() => setCheckinPhotos(prev => prev.filter((_, idx) => idx !== i))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">×</button>
+                </div>
+              ))}
+              <label className="flex flex-col items-center justify-center w-16 h-16 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/50 transition">
+                {uploadingPhoto ? (
+                  <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4 text-gray-400" />
+                )}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUploadPhoto(f); }} />
+              </label>
+            </div>
+          </div>
           <button onClick={handleSubmit} disabled={!formClient} className="btn-primary">Guardar Check-in</button>
         </div>
       )}
@@ -257,11 +305,34 @@ export default function CheckInsPage() {
                       {ci.weight && <span className="flex items-center gap-1"><Weight className="w-3 h-3" />{ci.weight}kg</span>}
                     </div>
                     {ci.notes && <p className="text-sm text-gray-600 mt-2 border-t border-gray-50 pt-2">{ci.notes}</p>}
+                    {ci.photos && (() => {
+                      try {
+                        const photos: {url: string; label: string}[] = JSON.parse(ci.photos);
+                        if (photos.length === 0) return null;
+                        return (
+                          <div className="flex gap-2 mt-2 pt-2 border-t border-gray-50 overflow-x-auto">
+                            {photos.map((p, i) => (
+                              <img key={i} src={p.url} alt="Foto" className="w-14 h-14 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition flex-shrink-0" onClick={() => setLightboxUrl(p.url)} />
+                            ))}
+                          </div>
+                        );
+                      } catch { return null; }
+                    })()}
                   </div>
                 ))}
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightboxUrl && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setLightboxUrl(null)}>
+          <img src={lightboxUrl} alt="Foto" className="max-w-full max-h-[90vh] object-contain rounded-xl" />
+          <button className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70" onClick={() => setLightboxUrl(null)}>
+            <X className="w-6 h-6" />
+          </button>
         </div>
       )}
     </div>

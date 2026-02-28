@@ -34,18 +34,24 @@ export default function FeedbackPage() {
 
   const fetchFeedbacks = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (statusFilter) params.set("status", statusFilter);
-    const res = await fetch(`/api/feedback?${params}`);
-    const data = await res.json();
-    setFeedbacks(Array.isArray(data) ? data : []);
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter) params.set("status", statusFilter);
+      const res = await fetch(`/api/feedback?${params}`);
+      if (!res.ok) throw new Error("Erro ao carregar feedbacks");
+      const data = await res.json();
+      setFeedbacks(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setFeedbacks([]); }
     setLoading(false);
   }, [statusFilter]);
 
   const fetchClients = useCallback(async () => {
-    const res = await fetch("/api/clients");
-    const data = await res.json();
-    setClients(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch("/api/clients");
+      if (!res.ok) throw new Error("Erro ao carregar clientes");
+      const data = await res.json();
+      setClients(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); }
   }, []);
 
   useEffect(() => { fetchFeedbacks(); fetchClients(); }, [fetchFeedbacks, fetchClients]);

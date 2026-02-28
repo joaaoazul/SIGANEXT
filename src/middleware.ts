@@ -5,30 +5,81 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "siga180-secret-key-change-in-production"
 );
 
-async function verifyTokenEdge(token: string): Promise<boolean> {
+interface TokenPayload {
+  id: string;
+  role: string;
+}
+
+async function getTokenPayload(token: string): Promise<TokenPayload | null> {
   try {
-    await jwtVerify(token, JWT_SECRET);
-    return true;
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return { id: payload.id as string, role: payload.role as string };
   } catch {
-    return false;
+    return null;
   }
 }
+
+// PT-only routes (athlete cannot access)
+const PT_ROUTES = [
+  "/clients", "/exercises", "/foods",
+  "/checkins", "/feedback", "/notifications",
+];
+
+// Athlete-only routes (PT cannot access)
+const ATHLETE_ROUTES = ["/athlete"];
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const { pathname } = request.nextUrl;
 
   // Public routes
-  if (pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/api/auth") || pathname.startsWith("/onboarding") || pathname.startsWith("/api/onboarding") || pathname.startsWith("/api/invites/validate")) {
-    if (token && (await verifyTokenEdge(token)) && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+  const isPublic =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/api/onboarding") ||
+    pathname.startsWith("/api/invites/validate");
+
+  if (isPublic) {
+    if (token && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
+      const user = await getTokenPayload(token);
+      if (user) {
+        const dest = user.role === "client" ? "/athlete" : "/dashboard";
+        return NextResponse.redirect(new URL(dest, request.url));
+      }
     }
     return NextResponse.next();
   }
 
-  // Protected routes
-  if (!token || !(await verifyTokenEdge(token))) {
+  // Protected routes — must be authenticated
+  if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  const user = await getTokenPayload(token);
+  if (!user) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Role-based routing
+  const isAthleteRoute = ATHLETE_ROUTES.some((r) => pathname.startsWith(r));
+  const isPtRoute = PT_ROUTES.some((r) => pathname.startsWith(r));
+
+  if (user.role === "client") {
+    // Athletes accessing PT-only routes → redirect to athlete area
+    if (isPtRoute) {
+      return NextResponse.redirect(new URL("/athlete", request.url));
+    }
+    // Athletes accessing /dashboard → redirect to athlete dashboard
+    if (pathname === "/dashboard") {
+      return NextResponse.redirect(new URL("/athlete", request.url));
+    }
+  } else {
+    // PT/admin accessing athlete-only routes → redirect to PT dashboard
+    if (isAthleteRoute) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
   }
 
   return NextResponse.next();
@@ -46,10 +97,10 @@ export const config = {
     "/bookings/:path*",
     "/notifications/:path*",
     "/content/:path*",
-    "/employees/:path*",
     "/settings/:path*",
     "/checkins/:path*",
     "/messages/:path*",
+    "/athlete/:path*",
     "/onboarding",
     "/login",
     "/register",

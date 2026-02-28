@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Users, Plus, Search, Filter, MoreVertical, Edit, Trash2, Eye,
   Mail, Phone, Link, Copy, Check, Key, RefreshCw, ChevronLeft, ChevronRight,
-  Heart, Activity, Dumbbell, Target, Apple, FileText, User,
+  Heart, Activity, Dumbbell, Target, Apple, FileText, User, AlertTriangle,
 } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
@@ -98,6 +98,7 @@ export default function ClientsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [paymentFilter, setPaymentFilter] = useState("");
   const [showCreateWizard, setShowCreateWizard] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
@@ -108,6 +109,9 @@ export default function ClientsPage() {
   const [inviteResult, setInviteResult] = useState<{ code: string; magicLink?: string } | null>(null);
   const [inviteLoading, setInviteLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   // Wizard state
   const [step, setStep] = useState(0);
@@ -127,14 +131,18 @@ export default function ClientsPage() {
 
   const fetchClients = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (statusFilter) params.set("status", statusFilter);
-    const res = await fetch(`/api/clients?${params}`);
-    const data = await res.json();
-    setClients(Array.isArray(data) ? data : []);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (statusFilter) params.set("status", statusFilter);
+      if (paymentFilter) params.set("payment", paymentFilter);
+      const res = await fetch(`/api/clients?${params}`);
+      if (!res.ok) throw new Error("Erro ao carregar clientes");
+      const data = await res.json();
+      setClients(Array.isArray(data) ? data : []);
+    } catch (e) { console.error(e); setClients([]); }
     setLoading(false);
-  }, [search, statusFilter]);
+  }, [search, statusFilter, paymentFilter]);
 
   useEffect(() => { fetchClients(); }, [fetchClients]);
 
@@ -200,10 +208,21 @@ export default function ClientsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tens a certeza que queres eliminar este cliente?")) return;
-    await fetch(`/api/clients/${id}`, { method: "DELETE" });
-    fetchClients();
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/clients/${deleteTarget.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Falha ao eliminar");
+      setDeleteTarget(null);
+      setDeleteConfirmText("");
+      fetchClients();
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao eliminar o cliente.");
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // ─── Invite ────────────────────────────────────────────────
@@ -402,6 +421,28 @@ export default function ClientsPage() {
         }
       />
 
+      {/* Stats Summary */}
+      {!loading && clients.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">Total</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.length}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-emerald-100 p-4 shadow-sm">
+            <p className="text-xs font-medium text-emerald-500 uppercase tracking-wider">Ativos</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.filter(c => c.status === "active").length}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-yellow-100 p-4 shadow-sm">
+            <p className="text-xs font-medium text-yellow-500 uppercase tracking-wider">Pgto. Pendente</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.filter(c => c.paymentStatus === "pending").length}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-red-100 p-4 shadow-sm">
+            <p className="text-xs font-medium text-red-500 uppercase tracking-wider">Pgto. Em Atraso</p>
+            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.filter(c => c.paymentStatus === "overdue").length}</p>
+          </div>
+        </div>
+      )}
+
       {/* Search & Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
@@ -415,6 +456,14 @@ export default function ClientsPage() {
             <option value="active">Ativos</option>
             <option value="inactive">Inativos</option>
             <option value="pending">Pendentes</option>
+          </select>
+        </div>
+        <div className="relative">
+          <select value={paymentFilter} onChange={(e) => setPaymentFilter(e.target.value)} className="input-field pr-8 appearance-none">
+            <option value="">Todos os pagamentos</option>
+            <option value="paid">Pago</option>
+            <option value="pending">Pendente</option>
+            <option value="overdue">Em atraso</option>
           </select>
         </div>
       </div>
@@ -443,7 +492,7 @@ export default function ClientsPage() {
           </div>
 
           {clients.map((client) => (
-            <div key={client.id} className="card hover:bg-gray-50 transition-colors">
+            <div key={client.id} onClick={() => router.push(`/clients/${client.id}`)} className="card hover:bg-gray-50 transition-colors cursor-pointer">
               <div className="lg:grid lg:grid-cols-[1fr_1fr_auto_auto_auto_auto] lg:gap-4 lg:items-center space-y-3 lg:space-y-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-sm font-semibold shrink-0">
@@ -461,7 +510,7 @@ export default function ClientsPage() {
                 <div className="text-sm text-gray-500">{client.plan || "—"}</div>
                 {statusBadge(client.status)}
                 {paymentBadge(client.paymentStatus)}
-                <div className="relative">
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
                   <button onClick={() => setMenuOpen(menuOpen === client.id ? null : client.id)} className="p-2 hover:bg-white rounded-lg transition">
                     <MoreVertical className="w-4 h-4 text-gray-500" />
                   </button>
@@ -475,7 +524,7 @@ export default function ClientsPage() {
                         <button onClick={() => openEdit(client)} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
                           <Edit className="w-4 h-4" /> Editar
                         </button>
-                        <button onClick={() => { handleDelete(client.id); setMenuOpen(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                        <button onClick={() => { setDeleteTarget({ id: client.id, name: client.name }); setDeleteConfirmText(""); setMenuOpen(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                           <Trash2 className="w-4 h-4" /> Eliminar
                         </button>
                       </div>
@@ -689,6 +738,51 @@ export default function ClientsPage() {
               <button onClick={() => setShowInviteModal(false)} className="btn-primary w-full justify-center">Fechar</button>
             </div>
           )}
+        </div>
+      </Modal>
+
+      {/* ─── Delete Confirmation Modal ───────────────────── */}
+      <Modal isOpen={!!deleteTarget} onClose={() => { setDeleteTarget(null); setDeleteConfirmText(""); }} title="Eliminar Cliente" size="sm">
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-red-800">
+              <p className="font-semibold mb-1">Esta ação é irreversível!</p>
+              <p>Ao eliminar <strong>{deleteTarget?.name}</strong>, todos os dados serão permanentemente apagados:</p>
+              <ul className="mt-2 ml-4 list-disc space-y-0.5 text-red-700">
+                <li>Conta de acesso (login)</li>
+                <li>Planos de treino e nutrição atribuídos</li>
+                <li>Check-ins e avaliações corporais</li>
+                <li>Reservas e agendamentos</li>
+                <li>Mensagens e conversas</li>
+                <li>Feedbacks e notificações</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Escreve <span className="font-bold text-red-600">APAGAR</span> para confirmar:
+            </label>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="APAGAR"
+              className="input-field text-center font-mono text-lg tracking-widest"
+              autoFocus
+            />
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => { setDeleteTarget(null); setDeleteConfirmText(""); }} className="btn-secondary flex-1 justify-center">Cancelar</button>
+            <button
+              onClick={handleDelete}
+              disabled={deleteConfirmText !== "APAGAR" || deleting}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-xl font-medium transition hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Trash2 className="w-4 h-4" />
+              {deleting ? "A eliminar..." : "Eliminar Permanentemente"}
+            </button>
+          </div>
         </div>
       </Modal>
     </div>
