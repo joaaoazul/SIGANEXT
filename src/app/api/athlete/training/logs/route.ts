@@ -67,7 +67,34 @@ export async function POST(request: NextRequest) {
     });
 
     if (!assignment) {
-      return NextResponse.json({ error: "Treino não encontrado ou não atribuído" }, { status: 404 });
+      // Debug: check what assignments exist for this client
+      const allAssignments = await prisma.trainingPlanAssignment.findMany({
+        where: { clientId: user.id },
+        select: { id: true, isActive: true, trainingPlan: { select: { id: true, name: true, workouts: { select: { id: true } } } } },
+      });
+      console.error("No assignment found for workout start", {
+        clientId: user.id,
+        workoutId,
+        existingAssignments: JSON.stringify(allAssignments),
+      });
+
+      // Fallback: verify the workout exists and belongs to any plan assigned to this client
+      const workout = await prisma.workout.findUnique({ where: { id: workoutId } });
+      if (!workout) {
+        return NextResponse.json({ error: "Treino não encontrado" }, { status: 404 });
+      }
+
+      // Allow starting if the workout exists and user has any assignment to its plan
+      const anyAssignment = await prisma.trainingPlanAssignment.findFirst({
+        where: {
+          clientId: user.id,
+          trainingPlanId: workout.trainingPlanId,
+        },
+      });
+
+      if (!anyAssignment) {
+        return NextResponse.json({ error: "Treino não atribuído ao teu plano" }, { status: 404 });
+      }
     }
 
     const log = await prisma.workoutLog.create({
