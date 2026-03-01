@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
     const payment = searchParams.get("payment") || "";
+    const limit = parseInt(searchParams.get("limit") || "100");
+    const offset = parseInt(searchParams.get("offset") || "0");
 
     const where: Record<string, unknown> = {};
     
@@ -27,24 +29,31 @@ export async function GET(request: NextRequest) {
     if (status) where.status = status;
     if (payment) where.paymentStatus = payment;
 
-    const clients = await prisma.client.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: {
-        trainingPlans: {
-          where: { isActive: true },
-          include: { trainingPlan: { select: { name: true } } },
+    const [clients, total] = await Promise.all([
+      prisma.client.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: Math.min(limit, 200),
+        skip: offset,
+        include: {
+          trainingPlans: {
+            where: { isActive: true },
+            include: { trainingPlan: { select: { name: true } } },
+          },
+          nutritionPlans: {
+            where: { isActive: true },
+            include: { nutritionPlan: { select: { name: true } } },
+          },
         },
-        nutritionPlans: {
-          where: { isActive: true },
-          include: { nutritionPlan: { select: { name: true } } },
-        },
-      },
-    });
+      }),
+      prisma.client.count({ where }),
+    ]);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const sanitized = clients.map(({ password, ...rest }) => rest);
-    return NextResponse.json(sanitized);
+    return NextResponse.json(sanitized, {
+      headers: { "X-Total-Count": total.toString() },
+    });
   } catch {
     return NextResponse.json({ error: "Erro ao buscar clientes" }, { status: 500 });
   }

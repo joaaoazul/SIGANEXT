@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { z } from "zod";
 
 export async function GET(request: NextRequest) {
   const user = await getUser(request);
@@ -10,6 +11,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
     const category = searchParams.get("category") || "";
+    const limit = parseInt(searchParams.get("limit") || "200");
+    const offset = parseInt(searchParams.get("offset") || "0");
 
     const where: Record<string, unknown> = {};
     if (search) {
@@ -20,16 +23,39 @@ export async function GET(request: NextRequest) {
     }
     if (category) where.category = category;
 
-    const foods = await prisma.food.findMany({
-      where,
-      orderBy: { name: "asc" },
-    });
+    const [foods, total] = await Promise.all([
+      prisma.food.findMany({
+        where,
+        orderBy: { name: "asc" },
+        take: Math.min(limit, 500),
+        skip: offset,
+      }),
+      prisma.food.count({ where }),
+    ]);
 
-    return NextResponse.json(foods);
+    return NextResponse.json(foods, {
+      headers: { "X-Total-Count": total.toString() },
+    });
   } catch {
     return NextResponse.json({ error: "Erro ao buscar alimentos" }, { status: 500 });
   }
 }
+
+const foodSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório").max(200),
+  category: z.string().min(1, "Categoria é obrigatória"),
+  calories: z.coerce.number().min(0),
+  protein: z.coerce.number().min(0),
+  carbs: z.coerce.number().min(0),
+  fat: z.coerce.number().min(0),
+  fiber: z.coerce.number().min(0).optional().nullable(),
+  sugar: z.coerce.number().min(0).optional().nullable(),
+  sodium: z.coerce.number().min(0).optional().nullable(),
+  isSupplement: z.boolean().optional(),
+  brand: z.string().max(200).optional().nullable(),
+  servingSize: z.coerce.number().min(0).optional().nullable(),
+  servingUnit: z.string().max(50).optional().nullable(),
+});
 
 export async function POST(request: NextRequest) {
   const user = await getUser(request);
@@ -37,22 +63,27 @@ export async function POST(request: NextRequest) {
   if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
   try {
-    const data = await request.json();
+    const raw = await request.json();
+    const result = foodSchema.safeParse(raw);
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+    const data = result.data;
 
     const food = await prisma.food.create({
       data: {
         name: data.name,
         category: data.category,
-        calories: parseFloat(data.calories),
-        protein: parseFloat(data.protein),
-        carbs: parseFloat(data.carbs),
-        fat: parseFloat(data.fat),
-        fiber: data.fiber ? parseFloat(data.fiber) : null,
-        sugar: data.sugar ? parseFloat(data.sugar) : null,
-        sodium: data.sodium ? parseFloat(data.sodium) : null,
+        calories: data.calories,
+        protein: data.protein,
+        carbs: data.carbs,
+        fat: data.fat,
+        fiber: data.fiber ?? null,
+        sugar: data.sugar ?? null,
+        sodium: data.sodium ?? null,
         isSupplement: data.isSupplement || false,
         brand: data.brand || null,
-        servingSize: data.servingSize ? parseFloat(data.servingSize) : null,
+        servingSize: data.servingSize ?? null,
         servingUnit: data.servingUnit || null,
       },
     });

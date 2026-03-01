@@ -18,12 +18,22 @@ export async function GET(request: NextRequest) {
     if (type) where.type = type;
     if (category) where.category = category;
 
-    const contents = await prisma.content.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-    });
+    const limit = parseInt(searchParams.get("limit") || "100");
+    const offset = parseInt(searchParams.get("offset") || "0");
 
-    return NextResponse.json(contents);
+    const [contents, total] = await Promise.all([
+      prisma.content.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: Math.min(limit, 200),
+        skip: offset,
+      }),
+      prisma.content.count({ where }),
+    ]);
+
+    return NextResponse.json(contents, {
+      headers: { "X-Total-Count": total.toString() },
+    });
   } catch (error) {
     console.error("Content GET error:", error);
     return NextResponse.json([], { status: 200 });
