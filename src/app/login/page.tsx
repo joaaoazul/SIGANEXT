@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Dumbbell, Eye, EyeOff } from "lucide-react";
+import { Dumbbell, Eye, EyeOff, Shield, LayoutDashboard } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [consent, setConsent] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [showRoleChoice, setShowRoleChoice] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +38,12 @@ export default function LoginPage() {
         return;
       }
 
+      // Superadmin gets a choice: admin panel or normal dashboard
+      if (data.user?.role === "superadmin") {
+        setShowRoleChoice(true);
+        return;
+      }
+
       router.push(data.user?.role === "client" ? "/athlete" : "/dashboard");
       router.refresh();
     } catch {
@@ -45,6 +52,64 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Superadmin role choice screen
+  if (showRoleChoice) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-500 shadow-lg shadow-emerald-500/20 mb-4">
+              <Dumbbell className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900">SIGA180</h1>
+            <p className="text-gray-500 mt-2">Bem-vindo de volta!</p>
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 text-center">
+              Para onde queres ir?
+            </h2>
+            <p className="text-sm text-gray-500 mb-6 text-center">
+              Tens acesso de superadmin
+            </p>
+
+            <div className="grid grid-cols-1 gap-3">
+              <button
+                onClick={() => { router.push("/admin"); router.refresh(); }}
+                className="flex items-center gap-4 w-full p-4 sm:p-5 rounded-xl border-2 border-red-200 bg-red-50 hover:bg-red-100 hover:border-red-400 transition-all duration-200 group"
+              >
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-red-500 flex items-center justify-center shadow-md shadow-red-500/20 group-hover:scale-105 transition-transform">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-left min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm sm:text-base">Painel de Admin</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Monitorização, incidentes, utilizadores</p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => { router.push("/dashboard"); router.refresh(); }}
+                className="flex items-center gap-4 w-full p-4 sm:p-5 rounded-xl border-2 border-emerald-200 bg-emerald-50 hover:bg-emerald-100 hover:border-emerald-400 transition-all duration-200 group"
+              >
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                  <LayoutDashboard className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-left min-w-0">
+                  <p className="font-semibold text-gray-900 text-sm sm:text-base">Dashboard PT</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Clientes, treinos, nutrição</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <p className="text-center text-gray-400 text-xs mt-6">
+            © 2026 joaoazuldev. Todos os direitos reservados.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 flex items-center justify-center p-4">

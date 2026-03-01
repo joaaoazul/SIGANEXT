@@ -2,6 +2,7 @@
  * Promote a user to superadmin role.
  * Usage: npx tsx prisma/promote-admin.ts <email>
  */
+import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client.js";
 import pg from "pg";
