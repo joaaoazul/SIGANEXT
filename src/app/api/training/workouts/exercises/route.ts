@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-    const { workoutId, exerciseId, sets, reps, restSeconds, weight, notes } = data;
+    const { workoutId, exerciseId, sets, reps, restSeconds, weight, rpe, notes } = data;
 
     if (!workoutId || !exerciseId) {
       return NextResponse.json({ error: "workoutId e exerciseId são obrigatórios" }, { status: 400 });
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
         reps: reps || "12",
         restSeconds: restSeconds || 60,
         weight: weight || null,
+        rpe: rpe !== undefined ? parseFloat(rpe) : null,
         notes: notes || null,
         order: count,
       },
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const data = await request.json();
-    const { id, sets, reps, restSeconds, weight, notes } = data;
+    const { id, sets, reps, restSeconds, weight, rpe, notes } = data;
 
     if (!id) return NextResponse.json({ error: "ID obrigatório" }, { status: 400 });
 
@@ -50,6 +51,7 @@ export async function PUT(request: NextRequest) {
         reps: reps !== undefined ? reps : undefined,
         restSeconds: restSeconds !== undefined ? restSeconds : undefined,
         weight: weight !== undefined ? weight : undefined,
+        rpe: rpe !== undefined ? (rpe === null ? null : parseFloat(rpe)) : undefined,
         notes: notes !== undefined ? notes : undefined,
       },
       include: { exercise: true },

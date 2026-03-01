@@ -27,6 +27,7 @@ interface TrainingExercise {
   reps: string;
   restSeconds: number;
   weight: string | null;
+  rpe: number | null;
   notes: string | null;
   exercise: Exercise;
 }
@@ -138,6 +139,7 @@ export default function TrainingPage() {
   const [toast, setToast] = useState({ show: false, message: "" });
   const [savingFields, setSavingFields] = useState<Set<string>>(new Set());
   const [editingExercise, setEditingExercise] = useState<string | null>(null);
+  const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
 
   const [form, setForm] = useState({ name: "", description: "", duration: "", goal: "", difficulty: "intermediate" });
   const [workoutForm, setWorkoutForm] = useState({ name: "", notes: "" });
@@ -527,7 +529,7 @@ export default function TrainingPage() {
                               <div className="px-4 pb-4 space-y-2 animate-in fade-in slide-in-from-top-1 duration-150">
                                 {/* Column headers for exercises */}
                                 {w.exercises.length > 0 && (
-                                  <div className="flex items-center gap-2 px-3 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                                  <div className="hidden sm:flex items-center gap-2 px-3 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                                     <span className="w-5" />
                                     <span className="w-5">#</span>
                                     <span className="flex-1">Exercício</span>
@@ -535,6 +537,7 @@ export default function TrainingPage() {
                                     <span className="w-1" />
                                     <span className="w-16 text-center">Reps</span>
                                     <span className="w-16 text-center">Peso</span>
+                                    <span className="w-14 text-center">RPE</span>
                                     <span className="w-16 text-center">Desc.</span>
                                     <span className="w-7" />
                                   </div>
@@ -552,84 +555,153 @@ export default function TrainingPage() {
                                   </div>
                                 ) : (
                                   w.exercises.map((ex, idx) => {
-                                    const isEditing = editingExercise === ex.id;
+                                    const isExExpanded = expandedExercise === ex.id;
                                     return (
-                                      <div
-                                        key={ex.id}
-                                        className={`group flex items-center gap-2 rounded-lg px-3 py-2.5 transition-all duration-150
-                                          ${isEditing ? "bg-emerald-50 border border-emerald-200 shadow-sm" : "bg-white border border-gray-100 hover:border-gray-200 hover:shadow-sm"}`}
-                                        onClick={() => setEditingExercise(isEditing ? null : ex.id)}
-                                      >
-                                        <GripVertical className="w-3.5 h-3.5 text-gray-200 flex-shrink-0 cursor-grab" />
-                                        <span className="text-xs font-bold text-gray-300 w-5">{idx + 1}</span>
+                                      <div key={ex.id} className="space-y-0">
+                                        {/* Exercise main row */}
+                                        <div
+                                          className={`group rounded-lg px-3 py-2.5 transition-all duration-150 cursor-pointer
+                                            ${isExExpanded ? "bg-emerald-50 border border-emerald-200 shadow-sm rounded-b-none" : "bg-white border border-gray-100 hover:border-gray-200 hover:shadow-sm"}`}
+                                          onClick={() => setExpandedExercise(isExExpanded ? null : ex.id)}
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <GripVertical className="w-3.5 h-3.5 text-gray-200 flex-shrink-0 cursor-grab" />
+                                            <span className="text-xs font-bold text-gray-300 w-5">{idx + 1}</span>
 
-                                        {/* Exercise name and muscle */}
-                                        <div className="flex-1 min-w-0 flex items-center gap-2">
-                                          <div className={`w-7 h-7 rounded-md bg-gradient-to-br ${muscleGradients[ex.exercise.muscleGroup] || "from-gray-400 to-gray-500"} flex items-center justify-center flex-shrink-0`}>
-                                            <span className="text-xs">{getMuscleEmoji(ex.exercise.muscleGroup)}</span>
+                                            {/* Exercise name and muscle */}
+                                            <div className="flex-1 min-w-0 flex items-center gap-2">
+                                              <div className={`w-7 h-7 rounded-md bg-gradient-to-br ${muscleGradients[ex.exercise.muscleGroup] || "from-gray-400 to-gray-500"} flex items-center justify-center flex-shrink-0`}>
+                                                <span className="text-xs">{getMuscleEmoji(ex.exercise.muscleGroup)}</span>
+                                              </div>
+                                              <div className="min-w-0">
+                                                <p className="text-sm font-medium text-gray-800 truncate">{ex.exercise.name}</p>
+                                                <p className="text-[10px] text-gray-400">{getMuscleLabel(ex.exercise.muscleGroup)}{ex.exercise.equipment ? ` • ${ex.exercise.equipment}` : ""}</p>
+                                              </div>
+                                            </div>
+
+                                            {/* Summary when collapsed */}
+                                            <div className="hidden sm:flex items-center gap-1.5 flex-shrink-0 text-xs text-gray-500">
+                                              <span className="bg-gray-100 px-2 py-0.5 rounded font-medium">{ex.sets}×{ex.reps}</span>
+                                              {ex.weight && <span className="bg-gray-100 px-2 py-0.5 rounded">{ex.weight}kg</span>}
+                                              {ex.rpe && <span className="bg-amber-50 text-amber-600 px-2 py-0.5 rounded font-medium">RPE {ex.rpe}</span>}
+                                              <span className="text-gray-300">{ex.restSeconds}s</span>
+                                            </div>
+
+                                            <div className="flex items-center gap-1 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                                              <button
+                                                onClick={() => handleRemoveExercise(ex.id)}
+                                                className="p-1.5 hover:bg-red-50 rounded-lg text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                                title="Remover exercício"
+                                              >
+                                                <X className="w-3.5 h-3.5" />
+                                              </button>
+                                              {isExExpanded ? <ChevronUp className="w-3.5 h-3.5 text-gray-300" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-300" />}
+                                            </div>
                                           </div>
-                                          <div className="min-w-0">
-                                            <p className="text-sm font-medium text-gray-800 truncate">{ex.exercise.name}</p>
-                                            <p className="text-[10px] text-gray-400">{getMuscleLabel(ex.exercise.muscleGroup)}{ex.exercise.equipment ? ` • ${ex.exercise.equipment}` : ""}</p>
+
+                                          {/* Mobile summary */}
+                                          <div className="flex sm:hidden items-center gap-2 mt-1.5 ml-12 text-xs text-gray-500">
+                                            <span className="bg-gray-100 px-2 py-0.5 rounded font-medium">{ex.sets}×{ex.reps}</span>
+                                            {ex.weight && <span className="bg-gray-100 px-2 py-0.5 rounded">{ex.weight}kg</span>}
+                                            {ex.rpe && <span className="bg-amber-50 text-amber-600 px-2 py-0.5 rounded font-medium">RPE {ex.rpe}</span>}
+                                            <span className="text-gray-300">{ex.restSeconds}s desc.</span>
                                           </div>
                                         </div>
 
-                                        {/* Inline editable fields */}
-                                        <div className="flex items-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                                          <div className="relative">
-                                            <input
-                                              type="number"
-                                              min={1}
-                                              value={ex.sets}
-                                              onChange={(e) => handleUpdateExercise(ex.id, "sets", parseInt(e.target.value) || 1)}
-                                              className="w-14 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none transition-all bg-gray-50 hover:bg-white"
-                                              title="Séries"
-                                            />
-                                            {savingFields.has(`${ex.id}-sets`) && <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
+                                        {/* Expanded: individual sets */}
+                                        {isExExpanded && (
+                                          <div className="bg-gray-50 border border-t-0 border-emerald-200 rounded-b-lg px-4 py-3 space-y-3 animate-in fade-in slide-in-from-top-1 duration-150">
+                                            {/* Global exercise settings */}
+                                            <div className="flex flex-wrap items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                                              <div className="flex items-center gap-1.5">
+                                                <label className="text-[10px] font-semibold text-gray-400 uppercase">Descanso</label>
+                                                <div className="relative flex items-center">
+                                                  <input
+                                                    type="number"
+                                                    min={0}
+                                                    value={ex.restSeconds}
+                                                    onChange={(e) => handleUpdateExercise(ex.id, "restSeconds", parseInt(e.target.value) || 0)}
+                                                    className="w-16 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white pr-5"
+                                                  />
+                                                  <Timer className="w-3 h-3 text-gray-300 absolute right-1.5" />
+                                                  {savingFields.has(`${ex.id}-restSeconds`) && <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
+                                                </div>
+                                                <span className="text-[10px] text-gray-400">seg</span>
+                                              </div>
+                                              <div className="flex items-center gap-1.5">
+                                                <label className="text-[10px] font-semibold text-gray-400 uppercase">Notas</label>
+                                                <input
+                                                  type="text"
+                                                  value={ex.notes || ""}
+                                                  onChange={(e) => handleUpdateExercise(ex.id, "notes", e.target.value)}
+                                                  className="w-36 text-xs border border-gray-200 rounded-lg py-1.5 px-2 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  placeholder="Notas do exercício..."
+                                                />
+                                              </div>
+                                            </div>
+
+                                            {/* Sets header */}
+                                            <div className="flex items-center gap-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1">
+                                              <span className="w-12">Série</span>
+                                              <span className="w-16 text-center">Reps</span>
+                                              <span className="w-20 text-center">Peso (kg)</span>
+                                              <span className="w-14 text-center">RPE</span>
+                                            </div>
+
+                                            {/* Individual sets */}
+                                            {Array.from({ length: ex.sets }, (_, setIdx) => (
+                                              <div key={setIdx} className="flex items-center gap-2 px-1" onClick={(e) => e.stopPropagation()}>
+                                                <div className="w-12 flex items-center gap-1">
+                                                  <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold">
+                                                    {setIdx + 1}
+                                                  </div>
+                                                </div>
+                                                <input
+                                                  type="text"
+                                                  value={ex.reps}
+                                                  onChange={(e) => handleUpdateExercise(ex.id, "reps", e.target.value)}
+                                                  className="w-16 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  placeholder="12"
+                                                />
+                                                <input
+                                                  type="text"
+                                                  value={ex.weight || ""}
+                                                  onChange={(e) => handleUpdateExercise(ex.id, "weight", e.target.value)}
+                                                  className="w-20 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  placeholder="—"
+                                                />
+                                                <input
+                                                  type="number"
+                                                  min={1}
+                                                  max={10}
+                                                  step={0.5}
+                                                  value={ex.rpe || ""}
+                                                  onChange={(e) => handleUpdateExercise(ex.id, "rpe", parseFloat(e.target.value) || 0)}
+                                                  className="w-14 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  placeholder="—"
+                                                />
+                                              </div>
+                                            ))}
+
+                                            {/* Add/remove set buttons */}
+                                            <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                                              <button
+                                                onClick={() => handleUpdateExercise(ex.id, "sets", ex.sets + 1)}
+                                                className="text-[10px] font-medium text-emerald-600 hover:text-emerald-700 px-2 py-1 rounded-lg hover:bg-emerald-50 transition-colors flex items-center gap-1"
+                                              >
+                                                <Plus className="w-3 h-3" /> Série
+                                              </button>
+                                              {ex.sets > 1 && (
+                                                <button
+                                                  onClick={() => handleUpdateExercise(ex.id, "sets", ex.sets - 1)}
+                                                  className="text-[10px] font-medium text-red-500 hover:text-red-600 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1"
+                                                >
+                                                  <Trash2 className="w-3 h-3" /> Remover
+                                                </button>
+                                              )}
+                                            </div>
                                           </div>
-                                          <span className="text-xs text-gray-300 font-bold">×</span>
-                                          <div className="relative">
-                                            <input
-                                              type="text"
-                                              value={ex.reps}
-                                              onChange={(e) => handleUpdateExercise(ex.id, "reps", e.target.value)}
-                                              className="w-16 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none transition-all bg-gray-50 hover:bg-white"
-                                              title="Repetições"
-                                              placeholder="12"
-                                            />
-                                            {savingFields.has(`${ex.id}-reps`) && <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
-                                          </div>
-                                          <div className="relative">
-                                            <input
-                                              type="text"
-                                              value={ex.weight || ""}
-                                              onChange={(e) => handleUpdateExercise(ex.id, "weight", e.target.value)}
-                                              className="w-16 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none transition-all bg-gray-50 hover:bg-white"
-                                              title="Peso (kg)"
-                                              placeholder="— kg"
-                                            />
-                                            {savingFields.has(`${ex.id}-weight`) && <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
-                                          </div>
-                                          <div className="relative flex items-center">
-                                            <input
-                                              type="number"
-                                              min={0}
-                                              value={ex.restSeconds}
-                                              onChange={(e) => handleUpdateExercise(ex.id, "restSeconds", parseInt(e.target.value) || 0)}
-                                              className="w-16 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none transition-all bg-gray-50 hover:bg-white pr-5"
-                                              title="Descanso (segundos)"
-                                            />
-                                            <Timer className="w-3 h-3 text-gray-300 absolute right-1.5" />
-                                            {savingFields.has(`${ex.id}-restSeconds`) && <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
-                                          </div>
-                                          <button
-                                            onClick={() => handleRemoveExercise(ex.id)}
-                                            className="p-1.5 hover:bg-red-50 rounded-lg text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                                            title="Remover exercício"
-                                          >
-                                            <X className="w-3.5 h-3.5" />
-                                          </button>
-                                        </div>
+                                        )}
                                       </div>
                                     );
                                   })
