@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/auth";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+
     const { id } = await params;
-    const client = await prisma.client.findUnique({
-      where: { id },
+    const client = await prisma.client.findFirst({
+      where: { id, deletedAt: null },
       include: {
         trainingPlans: {
           include: { trainingPlan: true },
@@ -46,6 +50,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const { id } = await params;
     const data = await request.json();
     
@@ -106,16 +114,20 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const { id } = await params;
 
-    // Find client to get their email (needed to delete User login record)
-    const client = await prisma.client.findUnique({
-      where: { id },
-      select: { email: true },
+    // Soft delete: set deletedAt timestamp instead of removing data
+    const client = await prisma.client.findFirst({
+      where: { id, deletedAt: null },
+      select: { id: true, email: true },
     });
 
     if (!client) {
@@ -123,16 +135,16 @@ export async function DELETE(
     }
 
     await prisma.$transaction(async (tx) => {
-      // Delete conversation participations (not cascaded by Client delete)
-      await tx.conversationParticipant.deleteMany({ where: { clientId: id } });
+      // Mark client as soft-deleted
+      await tx.client.update({
+        where: { id },
+        data: { deletedAt: new Date(), status: "inactive" },
+      });
 
-      // Delete the Client record (cascades: bookings, check-ins, feedbacks,
-      // notifications, training/nutrition assignments, body assessments)
-      await tx.client.delete({ where: { id } });
-
-      // Delete the User login account (role "client" with same email)
-      await tx.user.deleteMany({
+      // Deactivate the User login account (don't delete, preserve audit trail)
+      await tx.user.updateMany({
         where: { email: client.email, role: "client" },
+        data: { role: "deleted_client" },
       });
     });
 

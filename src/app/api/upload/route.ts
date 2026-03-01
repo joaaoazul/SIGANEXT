@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/auth";
 import { uploadFile, BUCKET_NAME } from "@/lib/supabase";
+import sharp from "sharp";
+
+const MAX_DIMENSION = 1920;
+const QUALITY = 80;
 
 /** 
  * POST /api/upload
@@ -9,6 +13,8 @@ import { uploadFile, BUCKET_NAME } from "@/lib/supabase";
  *   - folder: e.g. "clients/{clientId}/assessments" or "clients/{clientId}/checkins"
  *   - label: e.g. "front", "back", "side_left", "side_right"
  * Returns { url, label, path }
+ * 
+ * Images are automatically compressed to WebP (max 1920px, 80% quality).
  */
 export async function POST(request: NextRequest) {
   try {
@@ -30,19 +36,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Tipo de ficheiro não suportado. Use JPG, PNG ou WebP." }, { status: 400 });
     }
 
-    // Max 5MB
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: "Ficheiro demasiado grande. Máximo 5MB." }, { status: 400 });
+    // Max 10MB raw (will be compressed)
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "Ficheiro demasiado grande. Máximo 10MB." }, { status: 400 });
     }
 
-    // Build unique path
-    const ext = file.name.split(".").pop() || "jpg";
-    const timestamp = Date.now();
-    const path = `${folder}/${label}_${timestamp}.${ext}`;
+    // Compress & resize to WebP
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
+    const compressed = await sharp(rawBuffer)
+      .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: "inside", withoutEnlargement: true })
+      .webp({ quality: QUALITY })
+      .toBuffer();
 
-    // Upload
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const url = await uploadFile(BUCKET_NAME, path, buffer, file.type);
+    // Build unique path (always .webp now)
+    const timestamp = Date.now();
+    const path = `${folder}/${label}_${timestamp}.webp`;
+
+    // Upload compressed image
+    const url = await uploadFile(BUCKET_NAME, path, compressed, "image/webp");
 
     return NextResponse.json({ url, label: label || "photo", path });
   } catch (error) {

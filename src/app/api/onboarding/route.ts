@@ -2,38 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { sendWelcomeEmail } from "@/lib/email";
+import { onboardingSchema } from "@/lib/schemas/client";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const raw = await request.json();
+    const result = onboardingSchema.safeParse(raw);
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    }
     const {
       inviteId, name, email, password,
-      // Personal
       phone, dateOfBirth, gender,
-      // Physical
       height, weight, bodyFat,
-      // Medical
       medicalConditions, medications, allergies, injuries, surgeries,
       familyHistory, bloodPressure, heartRate,
-      // Lifestyle
       occupation, sleepHours, stressLevel, smokingStatus, alcoholConsumption, activityLevel,
-      // Sports
       trainingExperience, trainingFrequency, preferredTraining, sportHistory,
-      // Goals
       primaryGoal, secondaryGoal, targetWeight, motivation,
-      // Nutrition
       dietaryRestrictions, foodAllergies, mealsPerDay, waterIntake, supplementsUsed,
-      notes,
-      // Photos (from onboarding step)
-      photos,
-    } = body;
-
-    if (!inviteId || !name || !email) {
-      return NextResponse.json({ error: "Dados obrigatórios em falta" }, { status: 400 });
-    }
-    if (!password || password.length < 6) {
-      return NextResponse.json({ error: "Palavra-passe deve ter pelo menos 6 caracteres" }, { status: 400 });
-    }
+      notes, photos,
+    } = result.data;
 
     // Verify invite
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
@@ -68,9 +57,9 @@ export async function POST(request: NextRequest) {
           phone: phone || null,
           dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
           gender: gender || null,
-          height: height ? parseFloat(height) : null,
-          weight: weight ? parseFloat(weight) : null,
-          bodyFat: bodyFat ? parseFloat(bodyFat) : null,
+          height: height ?? null,
+          weight: weight ?? null,
+          bodyFat: bodyFat ?? null,
           // Medical
           medicalConditions: medicalConditions || null,
           medications: medications || null,
@@ -79,29 +68,29 @@ export async function POST(request: NextRequest) {
           surgeries: surgeries || null,
           familyHistory: familyHistory || null,
           bloodPressure: bloodPressure || null,
-          heartRate: heartRate ? parseInt(heartRate) : null,
+          heartRate: heartRate ?? null,
           // Lifestyle
           occupation: occupation || null,
-          sleepHours: sleepHours ? parseFloat(sleepHours) : null,
-          stressLevel: stressLevel ? parseInt(stressLevel) : null,
+          sleepHours: sleepHours ?? null,
+          stressLevel: stressLevel ?? null,
           smokingStatus: smokingStatus || null,
           alcoholConsumption: alcoholConsumption || null,
           activityLevel: activityLevel || null,
           // Sports
           trainingExperience: trainingExperience || null,
-          trainingFrequency: trainingFrequency ? parseInt(trainingFrequency) : null,
+          trainingFrequency: trainingFrequency ?? null,
           preferredTraining: preferredTraining || null,
           sportHistory: sportHistory || null,
           // Goals
           primaryGoal: primaryGoal || null,
           secondaryGoal: secondaryGoal || null,
-          targetWeight: targetWeight ? parseFloat(targetWeight) : null,
+          targetWeight: targetWeight ?? null,
           motivation: motivation || null,
           // Nutrition
           dietaryRestrictions: dietaryRestrictions || null,
           foodAllergies: foodAllergies || null,
-          mealsPerDay: mealsPerDay ? parseInt(mealsPerDay) : null,
-          waterIntake: waterIntake ? parseFloat(waterIntake) : null,
+          mealsPerDay: mealsPerDay ?? null,
+          waterIntake: waterIntake ?? null,
           supplementsUsed: supplementsUsed || null,
           notes: notes || null,
           status: "active",
@@ -134,8 +123,8 @@ export async function POST(request: NextRequest) {
       // Create initial body assessment if we have weight
       if (weight) {
         // Auto-calculate BMI and BMR
-        const w = parseFloat(weight);
-        const h = height ? parseFloat(height) : null;
+        const w = weight;
+        const h = height || null;
         let bmi: number | undefined;
         let bmr: number | undefined;
 
@@ -157,7 +146,7 @@ export async function POST(request: NextRequest) {
           data: {
             clientId: newClient.id,
             weight: w,
-            bodyFat: bodyFat ? parseFloat(bodyFat) : undefined,
+            bodyFat: bodyFat ?? undefined,
             bmi: bmi ? parseFloat(bmi.toFixed(1)) : undefined,
             bmr: bmr ? parseFloat(bmr.toFixed(0)) : undefined,
             photos: photos || null,
