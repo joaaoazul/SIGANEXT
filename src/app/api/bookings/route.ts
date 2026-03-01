@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { z } from "zod";
+
+const bookingSlotSchema = z.object({
+  date: z.string().min(1, "Data é obrigatória"),
+  startTime: z.string().min(1, "Hora início é obrigatória"),
+  endTime: z.string().min(1, "Hora fim é obrigatória"),
+  maxClients: z.coerce.number().int().min(1).max(50).optional().default(1),
+  notes: z.string().max(1000).optional().nullable(),
+  title: z.string().max(200).optional().default("PT Session"),
+});
 
 // GET /api/bookings - list booking slots with bookings
 export async function GET(request: NextRequest) {
@@ -38,22 +48,22 @@ export async function POST(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
-  const body = await request.json();
-  const { date, startTime, endTime, maxClients = 1, notes, title = "PT Session" } = body;
-
-  if (!date || !startTime || !endTime) {
-    return NextResponse.json({ error: "Data, hora início e hora fim são obrigatórios" }, { status: 400 });
+  const raw = await request.json();
+  const result = bookingSlotSchema.safeParse(raw);
+  if (!result.success) {
+    return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
   }
+  const data = result.data;
 
   const slot = await prisma.bookingSlot.create({
     data: {
       userId: user.id,
-      title,
-      date: new Date(date),
-      startTime,
-      endTime,
-      maxClients: parseInt(maxClients),
-      notes: notes || null,
+      title: data.title,
+      date: new Date(data.date),
+      startTime: data.startTime,
+      endTime: data.endTime,
+      maxClients: data.maxClients,
+      notes: data.notes || null,
     },
     include: { bookings: { include: { client: true } } },
   });

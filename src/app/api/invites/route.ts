@@ -3,16 +3,24 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import crypto from "crypto";
 import { sendInviteEmail } from "@/lib/email";
+import { z } from "zod";
+
+const inviteSchema = z.object({
+  email: z.string().email("Email inválido"),
+  type: z.enum(["magic_code", "magic_link"]).optional().default("magic_code"),
+});
 
 // POST - Create invite
 export async function POST(request: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
-  const body = await request.json();
-  const { email, type = "magic_code" } = body;
-
-  if (!email) return NextResponse.json({ error: "Email é obrigatório" }, { status: 400 });
+  const raw = await request.json();
+  const result = inviteSchema.safeParse(raw);
+  if (!result.success) {
+    return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+  }
+  const { email, type } = result.data;
 
   // Generate code (6-digit for magic_code, uuid for magic_link)
   const code = type === "magic_code"

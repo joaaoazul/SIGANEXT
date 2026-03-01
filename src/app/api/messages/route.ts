@@ -22,42 +22,58 @@ export async function GET(request: NextRequest) {
       orderBy: { updatedAt: "desc" },
     });
 
-    // Enrich with participant names
-    const enriched = await Promise.all(
-      conversations.map(async (conv) => {
-        const otherParticipants = conv.participants.filter((p) => p.userId !== user.id);
-        const names = await Promise.all(
-          otherParticipants.map(async (p) => {
-            if (p.clientId) {
-              const client = await prisma.client.findUnique({ where: { id: p.clientId }, select: { name: true, avatar: true } });
-              return { name: client?.name || "Atleta", avatar: client?.avatar, type: "client" as const, id: p.clientId };
-            }
-            if (p.userId) {
-              const u = await prisma.user.findUnique({ where: { id: p.userId }, select: { name: true, avatar: true } });
-              return { name: u?.name || "Utilizador", avatar: u?.avatar, type: "user" as const, id: p.userId };
-            }
-            return { name: "Desconhecido", avatar: null, type: "unknown" as const, id: "" };
-          })
-        );
+    // Batch-fetch all referenced users and clients in 2 queries (fix N+1)
+    const allParticipants = conversations.flatMap((c) => c.participants);
+    const userIds = [...new Set(allParticipants.map((p) => p.userId).filter(Boolean) as string[])];
+    const clientIds = [...new Set(allParticipants.map((p) => p.clientId).filter(Boolean) as string[])];
 
-        const lastMessage = conv.messages[0] || null;
-        const unreadCount = await prisma.message.count({
-          where: {
-            conversationId: conv.id,
-            isRead: false,
-            NOT: { senderId: user.id, senderType: "user" },
-          },
-        });
+    const [users, clients] = await Promise.all([
+      userIds.length > 0
+        ? prisma.user.findMany({ where: { id: { in: userIds } }, select: { id: true, name: true, avatar: true } })
+        : [],
+      clientIds.length > 0
+        ? prisma.client.findMany({ where: { id: { in: clientIds } }, select: { id: true, name: true, avatar: true } })
+        : [],
+    ]);
+    const userMap = new Map(users.map((u) => [u.id, u]));
+    const clientMap = new Map(clients.map((c) => [c.id, c]));
 
-        return {
-          id: conv.id,
-          participants: names,
-          lastMessage: lastMessage ? { content: lastMessage.content, createdAt: lastMessage.createdAt, senderType: lastMessage.senderType } : null,
-          unreadCount,
-          updatedAt: conv.updatedAt,
-        };
-      })
-    );
+    // Batch unread counts in a single query
+    const unreadCounts = await prisma.message.groupBy({
+      by: ["conversationId"],
+      where: {
+        conversationId: { in: conversations.map((c) => c.id) },
+        isRead: false,
+        NOT: { senderId: user.id, senderType: "user" },
+      },
+      _count: true,
+    });
+    const unreadMap = new Map(unreadCounts.map((u) => [u.conversationId, u._count]));
+
+    const enriched = conversations.map((conv) => {
+      const otherParticipants = conv.participants.filter((p) => p.userId !== user.id);
+      const names = otherParticipants.map((p) => {
+        if (p.clientId) {
+          const client = clientMap.get(p.clientId);
+          return { name: client?.name || "Atleta", avatar: client?.avatar || null, type: "client" as const, id: p.clientId };
+        }
+        if (p.userId) {
+          const u = userMap.get(p.userId);
+          return { name: u?.name || "Utilizador", avatar: u?.avatar || null, type: "user" as const, id: p.userId };
+        }
+        return { name: "Desconhecido", avatar: null, type: "unknown" as const, id: "" };
+      });
+
+      const lastMessage = conv.messages[0] || null;
+
+      return {
+        id: conv.id,
+        participants: names,
+        lastMessage: lastMessage ? { content: lastMessage.content, createdAt: lastMessage.createdAt, senderType: lastMessage.senderType } : null,
+        unreadCount: unreadMap.get(conv.id) || 0,
+        updatedAt: conv.updatedAt,
+      };
+    });
 
     return NextResponse.json(enriched);
   } catch (error) {

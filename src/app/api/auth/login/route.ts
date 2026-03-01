@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 login attempts per 15 minutes per IP
+    const ip = getClientIP(request);
+    const rl = rateLimit(`login:${ip}`, { max: 5, windowSecs: 15 * 60 });
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "Demasiadas tentativas. Tente novamente mais tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rl.resetAt - Date.now()) / 1000).toString() } }
+      );
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {

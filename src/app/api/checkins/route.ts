@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { z } from "zod";
+
+const checkinSchema = z.object({
+  clientId: z.string().min(1, "clientId é obrigatório"),
+  mood: z.coerce.number().int().min(1).max(10).optional().nullable(),
+  energy: z.coerce.number().int().min(1).max(10).optional().nullable(),
+  sleep: z.coerce.number().int().min(1).max(10).optional().nullable(),
+  soreness: z.coerce.number().int().min(1).max(10).optional().nullable(),
+  stress: z.coerce.number().int().min(1).max(10).optional().nullable(),
+  trainedToday: z.boolean().optional().default(false),
+  followedDiet: z.boolean().optional().default(false),
+  waterLiters: z.coerce.number().min(0).max(20).optional().nullable(),
+  weight: z.coerce.number().min(20).max(500).optional().nullable(),
+  notes: z.string().max(5000).optional().nullable(),
+  photos: z.any().optional().nullable(),
+});
 
 // GET - List check-ins (optionally filtered by client)
 export async function GET(request: NextRequest) {
@@ -39,7 +55,12 @@ export async function POST(request: NextRequest) {
     const user = await getUser(request);
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
-    const body = await request.json();
+    const raw = await request.json();
+    const result = checkinSchema.safeParse(raw);
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+    const body = result.data;
     const { clientId, mood, energy, sleep, soreness, stress, trainedToday, followedDiet, waterLiters, weight, notes, photos } = body;
 
     if (!clientId) {
@@ -60,28 +81,28 @@ export async function POST(request: NextRequest) {
       create: {
         clientId,
         date: today,
-        mood: mood ? parseInt(mood) : null,
-        energy: energy ? parseInt(energy) : null,
-        sleep: sleep ? parseInt(sleep) : null,
-        soreness: soreness ? parseInt(soreness) : null,
-        stress: stress ? parseInt(stress) : null,
+        mood: mood ?? null,
+        energy: energy ?? null,
+        sleep: sleep ?? null,
+        soreness: soreness ?? null,
+        stress: stress ?? null,
         trainedToday: trainedToday || false,
         followedDiet: followedDiet || false,
-        waterLiters: waterLiters ? parseFloat(waterLiters) : null,
-        weight: weight ? parseFloat(weight) : null,
+        waterLiters: waterLiters ?? null,
+        weight: weight ?? null,
         notes: notes || null,
         photos: photos || null,
       },
       update: {
-        mood: mood ? parseInt(mood) : undefined,
-        energy: energy ? parseInt(energy) : undefined,
-        sleep: sleep ? parseInt(sleep) : undefined,
-        soreness: soreness ? parseInt(soreness) : undefined,
-        stress: stress ? parseInt(stress) : undefined,
+        mood: mood !== undefined ? mood : undefined,
+        energy: energy !== undefined ? energy : undefined,
+        sleep: sleep !== undefined ? sleep : undefined,
+        soreness: soreness !== undefined ? soreness : undefined,
+        stress: stress !== undefined ? stress : undefined,
         trainedToday: trainedToday !== undefined ? trainedToday : undefined,
         followedDiet: followedDiet !== undefined ? followedDiet : undefined,
-        waterLiters: waterLiters ? parseFloat(waterLiters) : undefined,
-        weight: weight ? parseFloat(weight) : undefined,
+        waterLiters: waterLiters !== undefined ? waterLiters : undefined,
+        weight: weight !== undefined ? weight : undefined,
         notes: notes !== undefined ? notes : undefined,
         photos: photos !== undefined ? photos : undefined,
       },

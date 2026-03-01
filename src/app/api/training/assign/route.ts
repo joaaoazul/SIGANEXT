@@ -1,9 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/auth";
+import { z } from "zod";
+
+const assignSchema = z.object({
+  clientId: z.string().min(1, "clientId é obrigatório"),
+  trainingPlanId: z.string().min(1, "trainingPlanId é obrigatório"),
+  startDate: z.string().optional(),
+  endDate: z.string().optional().nullable(),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
+    const raw = await request.json();
+    const result = assignSchema.safeParse(raw);
+    if (!result.success) {
+      return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+    const data = result.data;
 
     const assignment = await prisma.trainingPlanAssignment.create({
       data: {

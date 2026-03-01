@@ -66,6 +66,37 @@ export async function middleware(request: NextRequest) {
   const isAthleteRoute = ATHLETE_ROUTES.some((r) => pathname.startsWith(r));
   const isPtRoute = PT_ROUTES.some((r) => pathname.startsWith(r));
 
+  let response = NextResponse.next();
+
+  // Auto-refresh token if it expires within 2 days
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const now = Math.floor(Date.now() / 1000);
+    const expiresIn = ((payload.exp as number) || 0) - now;
+    const twoDays = 2 * 24 * 60 * 60;
+    if (expiresIn > 0 && expiresIn < twoDays) {
+      // Re-sign token (import jose's SignJWT for edge-compatible signing)
+      const newToken = await new (await import("jose")).SignJWT({
+        id: payload.id,
+        email: payload.email,
+        name: payload.name,
+        role: payload.role,
+      })
+        .setProtectedHeader({ alg: "HS256" })
+        .setExpirationTime("7d")
+        .sign(JWT_SECRET);
+
+      response = NextResponse.next();
+      response.cookies.set("token", newToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+    }
+  } catch { /* token refresh is best-effort */ }
+
   if (user.role === "client") {
     // Athletes accessing PT-only routes → redirect to athlete area
     if (isPtRoute) {
@@ -82,7 +113,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

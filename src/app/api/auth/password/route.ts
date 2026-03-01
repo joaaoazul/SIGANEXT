@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import bcrypt from "bcryptjs";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 // PUT /api/auth/password
 export async function PUT(request: NextRequest) {
+  // Rate limit: 5 password change attempts per 15 minutes
+  const ip = getClientIP(request);
+  const rl = rateLimit(`password:${ip}`, { max: 5, windowSecs: 15 * 60 });
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "Demasiadas tentativas. Tente novamente mais tarde." },
+      { status: 429, headers: { "Retry-After": Math.ceil((rl.resetAt - Date.now()) / 1000).toString() } }
+    );
+  }
+
   const user = await getUser(request);
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
