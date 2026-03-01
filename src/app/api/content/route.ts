@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const user = await getUser(request);
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
   const body = await request.json();
   const { title, description, type, category, url, thumbnailUrl, isPublished = true } = body;

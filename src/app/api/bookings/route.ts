@@ -6,6 +6,7 @@ import { getUser } from "@/lib/auth";
 export async function GET(request: NextRequest) {
   const user = await getUser(request);
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
   const date = searchParams.get("date");
@@ -35,6 +36,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const user = await getUser(request);
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
   const body = await request.json();
   const { date, startTime, endTime, maxClients = 1, notes, title = "PT Session" } = body;

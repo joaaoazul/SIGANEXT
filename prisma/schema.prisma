@@ -145,6 +145,8 @@ model BodyAssessment {
   notes       String?
   photos      String?   // JSON array: [{url, label, path}]
   createdAt   DateTime  @default(now())
+  
+  @@index([clientId])
 }
 
 // ==================== EXERCISES ====================
@@ -192,6 +194,8 @@ model Workout {
   
   exercises       TrainingExercise[]
   workoutLogs     WorkoutLog[]
+
+  @@index([trainingPlanId])
 }
 
 model TrainingExercise {
@@ -209,6 +213,9 @@ model TrainingExercise {
   order       Int       @default(0)
 
   exerciseLogs ExerciseLog[]
+
+  @@index([workoutId])
+  @@index([exerciseId])
 }
 
 model TrainingPlanAssignment {
@@ -221,9 +228,12 @@ model TrainingPlanAssignment {
   endDate         DateTime?
   isActive        Boolean   @default(true)
   createdAt       DateTime  @default(now())
+
+  @@index([clientId])
+  @@index([trainingPlanId])
 }
 
-// ==================== NUTRITION ====================
+// ==================== NUTRITION ======================================
 
 model Food {
   id            String    @id @default(cuid())
@@ -272,6 +282,8 @@ model Meal {
   notes           String?
   
   foods           MealFood[]
+
+  @@index([nutritionPlanId])
 }
 
 model MealFood {
@@ -284,6 +296,9 @@ model MealFood {
   unit      String    @default("g")
   notes     String?
   order     Int       @default(0)
+
+  @@index([mealId])
+  @@index([foodId])
 }
 
 model NutritionPlanAssignment {
@@ -296,9 +311,12 @@ model NutritionPlanAssignment {
   endDate         DateTime?
   isActive        Boolean   @default(true)
   createdAt       DateTime  @default(now())
+
+  @@index([clientId])
+  @@index([nutritionPlanId])
 }
 
-// ==================== FEEDBACK ====================
+// ==================== FEEDBACK ======================================
 
 model Feedback {
   id          String    @id @default(cuid())
@@ -314,9 +332,11 @@ model Feedback {
   response    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([clientId])
 }
 
-// ==================== NOTIFICATIONS ====================
+// ==================== NOTIFICATIONS ======================================
 
 model Notification {
   id          String    @id @default(cuid())
@@ -330,9 +350,11 @@ model Notification {
   isRead      Boolean   @default(false)
   isGlobal    Boolean   @default(false)
   createdAt   DateTime  @default(now())
+
+  @@index([clientId])
 }
 
-// ==================== BOOKINGS / AGENDA ====================
+// ==================== BOOKINGS / AGENDA ======================================
 
 model BookingSlot {
   id          String    @id @default(cuid())
@@ -353,6 +375,9 @@ model BookingSlot {
   createdAt   DateTime  @default(now())
   
   bookings    Booking[]
+
+  @@index([userId])
+  @@index([date])
 }
 
 model Booking {
@@ -367,9 +392,13 @@ model Booking {
   notes         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@index([clientId])
+  @@index([bookingSlotId])
+  @@index([date])
 }
 
-// ==================== CONTENT ====================
+// ==================== CONTENT ======================================
 
 model Content {
   id          String    @id @default(cuid())
@@ -432,6 +461,9 @@ model ExerciseLog {
   notes               String?
   
   setLogs             SetLog[]
+
+  @@index([workoutLogId])
+  @@index([trainingExerciseId])
 }
 
 model SetLog {
@@ -445,6 +477,8 @@ model SetLog {
   completed       Boolean   @default(true)
   notes           String?
   createdAt       DateTime  @default(now())
+
+  @@index([exerciseLogId])
 }
 
 // ==================== DAILY CHECK-INS ====================

@@ -5,6 +5,10 @@ import { getUser } from "@/lib/auth";
 import { sendWelcomeEmail } from "@/lib/email";
 
 export async function GET(request: NextRequest) {
+  const user = await getUser(request);
+  if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
@@ -57,8 +61,11 @@ function generatePassword(length = 10): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const data = await request.json();
-    const user = await getUser();
 
     // Password: use provided, or generate one
     let plainPassword = data.password || "";
