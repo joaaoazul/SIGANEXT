@@ -1,6 +1,12 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+function getResend() {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "SIGA180 <noreply@siga180.pt>";
 const APP_NAME = "SIGA180";
@@ -67,7 +73,7 @@ export async function sendInviteEmail(params: {
     <p style="font-size:12px;color:#9ca3af;">Este convite expira em 7 dias. Se não fizeste este pedido, ignora este email.</p>
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: `${trainerName} convidou-te para o ${APP_NAME}`,
@@ -92,7 +98,7 @@ export async function sendWelcomeEmail(params: {
     <p style="font-size:12px;color:#9ca3af;">Se precisares de ajuda, contacta o teu treinador diretamente.</p>
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: `Bem-vindo ao ${APP_NAME}, ${athleteName}!`,
@@ -122,7 +128,7 @@ export async function sendNotificationEmail(params: {
     ${actionHtml}
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: `${APP_NAME} — ${title}`,
@@ -149,7 +155,7 @@ export async function sendNewMessageEmail(params: {
     <p style="text-align:center;"><a href="${APP_URL}/messages" class="btn">Ver Mensagens</a></p>
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM_EMAIL,
     to,
     subject: `${APP_NAME} — Nova mensagem de ${senderName}`,
