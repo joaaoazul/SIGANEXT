@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import bcrypt from "bcryptjs";
+import { logAudit } from "@/lib/audit";
+import { getClientIP } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
@@ -69,6 +71,15 @@ export async function POST(request: NextRequest) {
         data: { role: "deleted_admin" },
       });
     }
+
+    logAudit({
+      action: "delete_account",
+      entity: user.role === "client" ? "Client" : "User",
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+      ip: getClientIP(request) || undefined,
+    });
 
     // Clear auth cookie
     const response = NextResponse.json({ success: true });

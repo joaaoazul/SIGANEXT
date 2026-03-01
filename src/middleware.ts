@@ -28,6 +28,9 @@ const PT_ROUTES = [
 // Athlete-only routes (PT cannot access)
 const ATHLETE_ROUTES = ["/athlete"];
 
+// System admin routes (superadmin only)
+const ADMIN_ROUTES = ["/admin"];
+
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const { pathname } = request.nextUrl;
@@ -65,6 +68,13 @@ export async function middleware(request: NextRequest) {
   // Role-based routing
   const isAthleteRoute = ATHLETE_ROUTES.some((r) => pathname.startsWith(r));
   const isPtRoute = PT_ROUTES.some((r) => pathname.startsWith(r));
+  const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r));
+
+  // System admin routes — superadmin only
+  if (isAdminRoute && user.role !== "superadmin") {
+    const dest = user.role === "client" ? "/athlete" : "/dashboard";
+    return NextResponse.redirect(new URL(dest, request.url));
+  }
 
   let response = NextResponse.next();
 
@@ -133,6 +143,7 @@ export const config = {
     "/messages/:path*",
     "/profile/:path*",
     "/athlete/:path*",
+    "/admin/:path*",
     "/onboarding",
     "/login",
     "/register",

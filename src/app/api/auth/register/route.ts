@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { logAuditFromRequest } from "@/lib/audit";
 
 export async function POST(request: NextRequest) {
   try {
@@ -76,6 +77,14 @@ export async function POST(request: NextRequest) {
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
+    });
+
+    logAuditFromRequest(request, "register", {
+      entity: "User",
+      entityId: user.id,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: "admin",
     });
 
     return response;

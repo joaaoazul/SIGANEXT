@@ -565,3 +565,58 @@ model Message {
   
   @@index([conversationId])
 }
+
+// ==================== ADMIN — INCIDENTS & AUDIT ====================
+
+model Incident {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  severity    String    @default("medium") // low, medium, high, critical
+  status      String    @default("open")   // open, investigating, resolved, closed
+  category    String    @default("other")  // bug, security, performance, data, billing, other
+  reportedBy  String?   // User or client email, or "system"
+  assignedTo  String?   // User id
+  resolution  String?   // How it was resolved
+  resolvedAt  DateTime?
+  metadata    String?   // JSON: extra context, stack traces, affected users, etc.
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  notes       IncidentNote[]
+
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt])
+}
+
+model IncidentNote {
+  id          String    @id @default(cuid())
+  incidentId  String
+  incident    Incident  @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  authorId    String    // User.id
+  authorName  String
+  content     String
+  createdAt   DateTime  @default(now())
+
+  @@index([incidentId])
+}
+
+model AuditLog {
+  id          String    @id @default(cuid())
+  action      String    // login, logout, create, update, delete, export, password_change, etc.
+  entity      String?   // User, Client, TrainingPlan, etc.
+  entityId    String?   // ID of the affected entity
+  userId      String?   // Who performed the action
+  userEmail   String?
+  userRole    String?
+  ip          String?
+  userAgent   String?
+  details     String?   // JSON: extra context
+  createdAt   DateTime  @default(now())
+
+  @@index([action])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([entity, entityId])
+}
