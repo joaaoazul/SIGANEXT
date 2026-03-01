@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET /api/athlete/dashboard - Get athlete's dashboard data
 export async function GET(request: NextRequest) {
@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
     if (!user || user.role !== "client") {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
+
+    const clientId = await getClientId(user);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest) {
     recentContent,
   ] = await Promise.all([
     prisma.client.findUnique({
-      where: { id: user.id },
+      where: { id: clientId },
       select: {
         id: true,
         name: true,
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
       },
     }),
     prisma.trainingPlanAssignment.findFirst({
-      where: { clientId: user.id, isActive: true },
+      where: { clientId, isActive: true },
       include: {
         trainingPlan: {
           include: {
@@ -59,7 +61,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     }),
     prisma.nutritionPlanAssignment.findFirst({
-      where: { clientId: user.id, isActive: true },
+      where: { clientId, isActive: true },
       include: {
         nutritionPlan: {
           include: {
@@ -76,7 +78,7 @@ export async function GET(request: NextRequest) {
     }),
     prisma.booking.findMany({
       where: {
-        clientId: user.id,
+        clientId,
         date: { gte: new Date() },
         status: "confirmed",
       },
@@ -90,19 +92,19 @@ export async function GET(request: NextRequest) {
     }),
     prisma.checkIn.findFirst({
       where: {
-        clientId: user.id,
+        clientId,
         date: { gte: today, lt: tomorrow },
       },
     }),
     prisma.checkIn.findMany({
-      where: { clientId: user.id },
+      where: { clientId },
       orderBy: { date: "desc" },
       take: 7,
     }),
     prisma.notification.count({
       where: {
         OR: [
-          { clientId: user.id, isRead: false },
+          { clientId, isRead: false },
           { isGlobal: true, isRead: false },
         ],
       },
@@ -115,7 +117,7 @@ export async function GET(request: NextRequest) {
   ]);
 
     return NextResponse.json({
-      client: client || { id: user.id, name: user.name, avatar: null, primaryGoal: null, weight: null, targetWeight: null, paymentStatus: "pending", plan: null, planEndDate: null },
+      client: client || { id: clientId, name: user.name, avatar: null, primaryGoal: null, weight: null, targetWeight: null, paymentStatus: "pending", plan: null, planEndDate: null },
       activeTrainingPlan,
       activeNutritionPlan,
       upcomingBookings,

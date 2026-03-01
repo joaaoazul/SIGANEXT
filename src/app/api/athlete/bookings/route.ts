@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET /api/athlete/bookings - Get athlete's bookings
 export async function GET(request: NextRequest) {
@@ -10,11 +10,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
   const { searchParams } = new URL(request.url);
   const filter = searchParams.get("filter") || "upcoming";
 
   const now = new Date();
-  const where: Record<string, unknown> = { clientId: user.id };
+  const where: Record<string, unknown> = { clientId };
 
   if (filter === "upcoming") {
     where.date = { gte: now };
@@ -73,6 +75,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
   const { bookingSlotId, date, notes } = await request.json();
 
   if (!bookingSlotId || !date) {
@@ -103,7 +107,7 @@ export async function POST(request: NextRequest) {
   // Check if athlete already has a booking for this slot+date
   const existing = await prisma.booking.findFirst({
     where: {
-      clientId: user.id,
+      clientId,
       bookingSlotId,
       date: new Date(date),
       status: { not: "cancelled" },
@@ -116,7 +120,7 @@ export async function POST(request: NextRequest) {
 
   const booking = await prisma.booking.create({
     data: {
-      clientId: user.id,
+      clientId,
       bookingSlotId,
       date: new Date(date),
       notes,

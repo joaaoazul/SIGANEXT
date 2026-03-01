@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET /api/athlete/content - Get published content for athletes
 export async function GET(request: NextRequest) {
@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
     if (!user || user.role !== "client") {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
+
+    const clientId = await getClientId(user);
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");

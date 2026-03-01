@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET /api/athlete/training/logs - Get athlete's workout logs
 export async function GET(request: NextRequest) {
@@ -10,11 +10,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const { searchParams } = new URL(request.url);
     const workoutId = searchParams.get("workoutId");
     const limit = parseInt(searchParams.get("limit") || "20");
 
-    const where: { clientId: string; workoutId?: string } = { clientId: user.id };
+    const where: { clientId: string; workoutId?: string } = { clientId };
     if (workoutId) where.workoutId = workoutId;
 
     const logs = await prisma.workoutLog.findMany({
@@ -50,6 +52,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const { workoutId } = await request.json();
     if (!workoutId) {
       return NextResponse.json({ error: "workoutId obrigatório" }, { status: 400 });
@@ -58,7 +62,7 @@ export async function POST(request: NextRequest) {
     // Verify the client has access to this workout (through assignment)
     const assignment = await prisma.trainingPlanAssignment.findFirst({
       where: {
-        clientId: user.id,
+        clientId,
         isActive: true,
         trainingPlan: {
           workouts: { some: { id: workoutId } },
@@ -69,11 +73,11 @@ export async function POST(request: NextRequest) {
     if (!assignment) {
       // Debug: check what assignments exist for this client
       const allAssignments = await prisma.trainingPlanAssignment.findMany({
-        where: { clientId: user.id },
+        where: { clientId },
         select: { id: true, isActive: true, trainingPlan: { select: { id: true, name: true, workouts: { select: { id: true } } } } },
       });
       console.error("No assignment found for workout start", {
-        clientId: user.id,
+        clientId,
         workoutId,
         existingAssignments: JSON.stringify(allAssignments),
       });
@@ -87,7 +91,7 @@ export async function POST(request: NextRequest) {
       // Allow starting if the workout exists and user has any assignment to its plan
       const anyAssignment = await prisma.trainingPlanAssignment.findFirst({
         where: {
-          clientId: user.id,
+          clientId,
           trainingPlanId: workout.trainingPlanId,
         },
       });
@@ -99,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     const log = await prisma.workoutLog.create({
       data: {
-        clientId: user.id,
+        clientId,
         workoutId,
       },
       include: {
@@ -129,13 +133,15 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const { logId, completedAt, duration, notes } = await request.json();
     if (!logId) {
       return NextResponse.json({ error: "logId obrigatório" }, { status: 400 });
     }
 
     const log = await prisma.workoutLog.update({
-      where: { id: logId, clientId: user.id },
+      where: { id: logId, clientId },
       data: {
         completedAt: completedAt ? new Date(completedAt) : new Date(),
         duration: duration || null,

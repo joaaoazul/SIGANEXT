@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET - List conversations for current athlete (client)
 export async function GET(request: NextRequest) {
@@ -10,9 +10,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const conversations = await prisma.conversation.findMany({
       where: {
-        participants: { some: { clientId: user.id } },
+        participants: { some: { clientId } },
       },
       include: {
         participants: true,
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     const enriched = await Promise.all(
       conversations.map(async (conv) => {
-        const otherParticipants = conv.participants.filter((p) => p.clientId !== user.id);
+        const otherParticipants = conv.participants.filter((p) => p.clientId !== clientId);
         const names = await Promise.all(
           otherParticipants.map(async (p) => {
             if (p.userId) {
@@ -52,7 +54,7 @@ export async function GET(request: NextRequest) {
           where: {
             conversationId: conv.id,
             isRead: false,
-            NOT: { senderId: user.id, senderType: "client" },
+            NOT: { senderId: clientId, senderType: "client" },
           },
         });
 
@@ -83,14 +85,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
-    const { userId, clientId } = await request.json();
+    const clientId = await getClientId(user);
 
-    if (!userId && !clientId) {
+    const { userId, clientId: targetClientId } = await request.json();
+
+    if (!userId && !targetClientId) {
       return NextResponse.json({ error: "Destinatário é obrigatório" }, { status: 400 });
     }
 
     // Cannot message yourself
-    if (clientId === user.id) {
+    if (targetClientId === clientId) {
       return NextResponse.json({ error: "Não podes enviar mensagem a ti próprio" }, { status: 400 });
     }
 
@@ -98,14 +102,14 @@ export async function POST(request: NextRequest) {
     const existingWhere = userId
       ? {
           AND: [
-            { participants: { some: { clientId: user.id } } },
+            { participants: { some: { clientId } } },
             { participants: { some: { userId } } },
           ],
         }
       : {
           AND: [
-            { participants: { some: { clientId: user.id } } },
             { participants: { some: { clientId } } },
+            { participants: { some: { clientId: targetClientId } } },
           ],
         };
 
@@ -117,8 +121,8 @@ export async function POST(request: NextRequest) {
 
     // Create new conversation
     const participantsCreate = userId
-      ? [{ clientId: user.id }, { userId }]
-      : [{ clientId: user.id }, { clientId }];
+      ? [{ clientId }, { userId }]
+      : [{ clientId }, { clientId: targetClientId }];
 
     const conversation = await prisma.conversation.create({
       data: {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET - Get available contacts for athlete (PT + other athletes managed by same PT)
 export async function GET(request: NextRequest) {
@@ -10,9 +10,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     // Get current client to find their manager
     const client = await prisma.client.findUnique({
-      where: { id: user.id },
+      where: { id: clientId },
       select: { managerId: true },
     });
 
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest) {
       const otherAthletes = await prisma.client.findMany({
         where: {
           managerId: client.managerId,
-          id: { not: user.id },
+          id: { not: clientId },
           status: "active",
         },
         select: { id: true, name: true, avatar: true },

@@ -231,7 +231,11 @@ export default function AthleteTrainingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workoutId: workout.id }),
       });
-      if (!res.ok) throw new Error("Erro ao iniciar treino");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.error("Start workout failed:", res.status, errData);
+        throw new Error(errData.error || "Erro ao iniciar treino");
+      }
       const log = await res.json();
 
       const initialData: Record<string, SetData[]> = {};

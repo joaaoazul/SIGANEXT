@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET /api/athlete/progress - Get athlete's progress data
 export async function GET(request: NextRequest) {
@@ -10,18 +10,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const [client, checkIns, bodyAssessments] = await Promise.all([
       prisma.client.findUnique({
-        where: { id: user.id },
+        where: { id: clientId },
         select: { weight: true, targetWeight: true, bodyFat: true, height: true },
       }),
       prisma.checkIn.findMany({
-        where: { clientId: user.id },
+        where: { clientId },
         orderBy: { date: "desc" },
         take: 30,
       }),
       prisma.bodyAssessment.findMany({
-        where: { clientId: user.id },
+        where: { clientId },
         orderBy: { date: "desc" },
         take: 10,
       }),
@@ -42,6 +44,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const body = await request.json();
 
     const today = new Date();
@@ -51,7 +55,7 @@ export async function POST(request: NextRequest) {
     const checkIn = await prisma.checkIn.upsert({
       where: {
         clientId_date: {
-          clientId: user.id,
+          clientId,
           date: today,
         },
       },
@@ -68,7 +72,7 @@ export async function POST(request: NextRequest) {
         notes: body.notes ?? undefined,
       },
       create: {
-        clientId: user.id,
+        clientId,
         date: today,
         mood: body.mood,
         energy: body.energy,
@@ -86,7 +90,7 @@ export async function POST(request: NextRequest) {
     // If weight was submitted, update client's current weight too
     if (body.weight) {
       await prisma.client.update({
-        where: { id: user.id },
+        where: { id: clientId },
         data: { weight: body.weight },
       });
     }

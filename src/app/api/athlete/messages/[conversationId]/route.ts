@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // GET - Messages in conversation (for athlete)
 export async function GET(request: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
@@ -10,11 +10,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const { conversationId } = await params;
 
     // Verify client is participant
     const participant = await prisma.conversationParticipant.findFirst({
-      where: { conversationId, clientId: user.id },
+      where: { conversationId, clientId },
     });
     if (!participant) return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
 
@@ -36,14 +38,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       where: {
         conversationId,
         isRead: false,
-        NOT: { senderId: user.id, senderType: "client" },
+        NOT: { senderId: clientId, senderType: "client" },
       },
       data: { isRead: true },
     });
 
     // Update lastReadAt
     await prisma.conversationParticipant.updateMany({
-      where: { conversationId, clientId: user.id },
+      where: { conversationId, clientId },
       data: { lastReadAt: new Date() },
     });
 
@@ -62,11 +64,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const { conversationId } = await params;
 
     // Verify client is participant
     const participant = await prisma.conversationParticipant.findFirst({
-      where: { conversationId, clientId: user.id },
+      where: { conversationId, clientId },
     });
     if (!participant) return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
 
@@ -77,7 +81,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       data: {
         conversationId,
         senderType: "client",
-        senderId: user.id,
+        senderId: clientId,
         content: content.trim(),
         type,
       },

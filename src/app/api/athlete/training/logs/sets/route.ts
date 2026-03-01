@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, getClientId } from "@/lib/auth";
 
 // POST /api/athlete/training/logs/sets - Log a completed set
 export async function POST(request: NextRequest) {
@@ -10,6 +10,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
+    const clientId = await getClientId(user);
+
     const { workoutLogId, trainingExerciseId, setNumber, reps, weight, rpe, completed, notes } = await request.json();
 
     if (!workoutLogId || !trainingExerciseId || setNumber === undefined) {
@@ -18,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     // Verify ownership
     const workoutLog = await prisma.workoutLog.findFirst({
-      where: { id: workoutLogId, clientId: user.id },
+      where: { id: workoutLogId, clientId },
     });
     if (!workoutLog) {
       return NextResponse.json({ error: "Sessão não encontrada" }, { status: 404 });
