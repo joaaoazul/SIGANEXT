@@ -131,6 +131,7 @@ export const config = {
     "/settings/:path*",
     "/checkins/:path*",
     "/messages/:path*",
+    "/profile/:path*",
     "/athlete/:path*",
     "/onboarding",
     "/login",

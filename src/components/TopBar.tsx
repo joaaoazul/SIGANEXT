@@ -19,6 +19,7 @@ const pageNames: Record<string, string> = {
   "/settings": "Definições",
   "/feedback": "Feedback",
   "/notifications": "Notificações",
+  "/profile": "Meu Perfil",
   // Athlete routes
   "/athlete": "Home",
   "/athlete/training": "Meu Treino",
@@ -114,6 +115,9 @@ export default function TopBar() {
                 <p className="text-sm font-medium text-gray-900">{user?.name || "Treinador"}</p>
                 <p className="text-xs text-gray-400">{user?.email}</p>
               </div>
+              <Link href="/profile" onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition">
+                Meu Perfil
+              </Link>
               <Link href={isAthlete ? "/athlete/settings" : "/settings"} onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition">
                 Definições
               </Link>

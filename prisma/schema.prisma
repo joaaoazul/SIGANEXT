@@ -16,7 +16,12 @@ model User {
   name          String
   role          String    @default("admin") // admin, employee, client
   avatar        String?
+  coverImage    String?   // Banner / cover photo
   phone         String?
+  bio           String?   // Short bio
+  specialties   String?   // Comma-separated specialties (e.g. "Hipertrofia, Perda de peso")
+  location      String?   // City / region
+  socialLinks   String?   // JSON: { instagram, facebook, linkedin, website }
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
