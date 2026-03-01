@@ -67,10 +67,10 @@ export default function TopBar() {
     .toUpperCase() || "PT";
 
   return (
-    <header className="h-14 border-b border-gray-100 bg-white flex items-center justify-between px-4 lg:px-6 shrink-0">
+    <header className="h-14 border-b border-gray-100 bg-white flex items-center justify-between px-3 sm:px-4 lg:px-6 shrink-0">
       {/* Left: Page name badge */}
-      <div className="flex items-center gap-3 pl-10 lg:pl-0">
-        <span className="text-sm font-semibold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg">
+      <div className="flex items-center gap-3">
+        <span className="text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50 px-2.5 sm:px-3 py-1 rounded-lg truncate max-w-[160px] sm:max-w-none">
           {pageName}
         </span>
       </div>

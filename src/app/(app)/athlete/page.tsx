@@ -130,7 +130,7 @@ export default function AthleteDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white">
+      <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 sm:p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-emerald-100 text-sm">Bem-vindo de volta</p>
@@ -195,7 +195,7 @@ export default function AthleteDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Today's Workout */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <Dumbbell className="w-5 h-5 text-emerald-500" />
@@ -242,7 +242,7 @@ export default function AthleteDashboard() {
         </div>
 
         {/* Today's Check-in */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-blue-500" />
@@ -251,7 +251,7 @@ export default function AthleteDashboard() {
           </div>
           {data.todayCheckIn ? (
             <div className="space-y-4">
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 <MetricBadge icon={<Heart className="w-3.5 h-3.5" />} label="Humor" value={data.todayCheckIn.mood} emoji={moodEmojis} />
                 <MetricBadge icon={<Zap className="w-3.5 h-3.5" />} label="Energia" value={data.todayCheckIn.energy} emoji={energyEmojis} />
                 <MetricBadge icon={<Moon className="w-3.5 h-3.5" />} label="Sono" value={data.todayCheckIn.sleep} />
@@ -286,7 +286,7 @@ export default function AthleteDashboard() {
         </div>
 
         {/* Upcoming Bookings */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <CalendarDays className="w-5 h-5 text-purple-500" />
@@ -336,7 +336,7 @@ export default function AthleteDashboard() {
         </div>
 
         {/* Nutrition Summary */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <UtensilsCrossed className="w-5 h-5 text-orange-500" />
@@ -354,7 +354,7 @@ export default function AthleteDashboard() {
               <p className="font-medium text-gray-900">
                 {data.activeNutritionPlan.nutritionPlan.name}
               </p>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <MacroBadge
                   label="Kcal"
                   value={data.activeNutritionPlan.nutritionPlan.totalCalories}
@@ -394,7 +394,7 @@ export default function AthleteDashboard() {
 
       {/* Recent Content */}
       {data.recentContent.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-yellow-500" />

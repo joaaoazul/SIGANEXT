@@ -200,7 +200,7 @@ export default function AthleteNutritionPage() {
       {activePlan ? (
         <div className="space-y-5">
           {/* Plan Header */}
-          <div className="bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 rounded-2xl p-6 text-white relative overflow-hidden">
+          <div className="bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden">
             <div className="absolute right-0 top-0 opacity-10">
               <UtensilsCrossed className="w-40 h-40 -mt-8 -mr-8" />
             </div>

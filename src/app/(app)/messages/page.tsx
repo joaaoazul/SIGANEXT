@@ -46,39 +46,59 @@ export default function MessagesPage() {
   const [mobileView, setMobileView] = useState<"list" | "chat">("list");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<NodeJS.Timeout>(null);
+  const convPollRef = useRef<NodeJS.Timeout>(null);
+  const prevMsgCountRef = useRef(0);
 
   useEffect(() => {
     fetchConversations();
     fetchClients();
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+    // Poll conversations list every 3s to show new messages in sidebar
+    convPollRef.current = setInterval(fetchConversations, 3000);
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+      if (convPollRef.current) clearInterval(convPollRef.current);
+    };
   }, []);
 
   useEffect(() => {
     if (selectedConv) {
       fetchMessages(selectedConv);
-      // Poll for new messages every 5s
+      // Poll for new messages every 3s
       if (pollRef.current) clearInterval(pollRef.current);
-      pollRef.current = setInterval(() => fetchMessages(selectedConv), 5000);
+      pollRef.current = setInterval(() => {
+        fetchMessages(selectedConv);
+      }, 3000);
     }
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [selectedConv]);
 
+  // Only auto-scroll when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > prevMsgCountRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+    prevMsgCountRef.current = messages.length;
   }, [messages]);
 
   const fetchConversations = async () => {
-    const res = await fetch("/api/messages");
-    if (res.ok) setConversations(await res.json());
+    try {
+      const res = await fetch("/api/messages");
+      if (res.ok) {
+        const data = await res.json();
+        setConversations(Array.isArray(data) ? data : []);
+      }
+    } catch { /* network error, will retry */ }
     setLoading(false);
   };
 
   const fetchMessages = async (convId: string) => {
-    const res = await fetch(`/api/messages/${convId}`);
-    if (res.ok) {
-      const msgs = await res.json();
-      setMessages(msgs);
-    }
+    try {
+      const res = await fetch(`/api/messages/${convId}`);
+      if (res.ok) {
+        const msgs = await res.json();
+        setMessages(msgs);
+      }
+    } catch { /* network error, will retry */ }
     setLoadingMessages(false);
   };
 
@@ -146,7 +166,7 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="flex h-[calc(100vh-8rem)] lg:h-[calc(100vh-8rem)] max-h-[calc(100dvh-10rem)] lg:max-h-none bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       {/* Conversations sidebar */}
       <div className={`w-full sm:w-80 border-r border-gray-100 flex flex-col ${mobileView === "chat" ? "hidden sm:flex" : "flex"}`}>
         <div className="p-4 border-b border-gray-100">

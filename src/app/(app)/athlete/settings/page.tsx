@@ -129,7 +129,7 @@ export default function AthleteSettingsPage() {
       </div>
 
       {/* Profile Form */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <User className="w-5 h-5 text-gray-400" />
           Perfil
@@ -192,7 +192,7 @@ export default function AthleteSettingsPage() {
       </div>
 
       {/* Change Password */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <Lock className="w-5 h-5 text-gray-400" />
           Alterar Password
@@ -252,7 +252,7 @@ export default function AthleteSettingsPage() {
       </div>
 
       {/* Account Info */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6">
+      <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">Conta</h2>

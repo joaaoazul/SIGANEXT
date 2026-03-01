@@ -10,6 +10,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "SIGA180 - Gestão para Personal Trainers",
   description: "Plataforma SaaS de gestão completa para Personal Trainers. Gerir clientes, treinos, nutrição e muito mais.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
+  themeColor: "#10b981",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SIGA180",
+  },
 };
 
 export default function RootLayout({

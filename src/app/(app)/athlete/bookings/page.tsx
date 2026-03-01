@@ -163,9 +163,9 @@ export default function AthleteBookingsPage() {
           {bookings.map((booking) => (
             <div
               key={booking.id}
-              className="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4"
+              className="bg-white rounded-2xl border border-gray-100 p-3 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
             >
-              <div className="w-14 h-14 rounded-xl bg-purple-50 flex flex-col items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-purple-50 flex flex-col items-center justify-center flex-shrink-0">
                 <span className="text-xs text-purple-400">
                   {dayNames[new Date(booking.date).getDay()].substring(0, 3)}
                 </span>
@@ -174,7 +174,7 @@ export default function AthleteBookingsPage() {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900">{booking.bookingSlot.title}</h3>
+                <h3 className="font-semibold text-gray-900 truncate">{booking.bookingSlot.title}</h3>
                 <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-500">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />

@@ -47,6 +47,8 @@ export default function AthleteMessagesPage() {
   const [meId, setMeId] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<NodeJS.Timeout>(null);
+  const convPollRef = useRef<NodeJS.Timeout>(null);
+  const prevMsgCountRef = useRef(0);
 
   // New conversation modal state
   const [showNewConvModal, setShowNewConvModal] = useState(false);
@@ -58,20 +60,29 @@ export default function AthleteMessagesPage() {
   useEffect(() => {
     fetchConversations();
     fetch("/api/auth/me").then((r) => r.json()).then((d) => setMeId(d?.id || ""));
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+    // Poll conversations list every 3s
+    convPollRef.current = setInterval(fetchConversations, 3000);
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+      if (convPollRef.current) clearInterval(convPollRef.current);
+    };
   }, []);
 
   useEffect(() => {
     if (selectedConv) {
       fetchMessages(selectedConv);
       if (pollRef.current) clearInterval(pollRef.current);
-      pollRef.current = setInterval(() => fetchMessages(selectedConv), 5000);
+      pollRef.current = setInterval(() => fetchMessages(selectedConv), 3000);
     }
     return () => { if (pollRef.current) clearInterval(pollRef.current); };
   }, [selectedConv]);
 
+  // Only auto-scroll when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > prevMsgCountRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+    prevMsgCountRef.current = messages.length;
   }, [messages]);
 
   const fetchConversations = async () => {
@@ -79,20 +90,17 @@ export default function AthleteMessagesPage() {
       const res = await fetch("/api/athlete/messages");
       const data = await res.json();
       setConversations(Array.isArray(data) ? data : []);
-    } finally {
-      setLoading(false);
-    }
+    } catch { /* network error, will retry */ }
+    setLoading(false);
   };
 
   const fetchMessages = async (convId: string) => {
-    setLoadingMessages(true);
     try {
       const res = await fetch(`/api/athlete/messages/${convId}`);
       const data = await res.json();
       setMessages(Array.isArray(data) ? data : []);
-    } finally {
-      setLoadingMessages(false);
-    }
+    } catch { /* network error, will retry */ }
+    setLoadingMessages(false);
   };
 
   const sendMessage = async () => {
@@ -201,7 +209,7 @@ export default function AthleteMessagesPage() {
         </button>
       </div>
 
-      <div className="flex-1 flex bg-white rounded-2xl border border-gray-100 overflow-hidden min-h-0">
+      <div className="flex-1 flex bg-white rounded-2xl border border-gray-100 overflow-hidden min-h-0 max-h-[calc(100dvh-14rem)] lg:max-h-none">
         {/* Conversations List */}
         <div
           className={`w-full md:w-80 border-r border-gray-100 flex flex-col ${

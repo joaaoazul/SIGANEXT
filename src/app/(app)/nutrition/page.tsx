@@ -408,17 +408,17 @@ export default function NutritionPage() {
     const macros = calcPlanMacros(meals);
 
     return (
-      <div className="min-h-screen">
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => setShowEditor(false)} className="p-2 hover:bg-gray-100 rounded-lg">
+      <div className="min-h-screen pb-20 lg:pb-0">
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-3 sm:px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <button onClick={() => setShowEditor(false)} className="p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
               <X className="w-5 h-5 text-gray-500" />
             </button>
-            <h1 className="text-lg font-semibold text-gray-900">
-              {editingPlan ? "Editar Plano" : "Novo Plano de Nutrição"}
+            <h1 className="text-sm sm:text-lg font-semibold text-gray-900 truncate">
+              {editingPlan ? "Editar Plano" : "Novo Plano"}
             </h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden sm:flex items-center gap-4 text-xs text-gray-500 bg-gray-50 rounded-xl px-4 py-2">
               <span className="text-amber-600 font-medium">{macros.cal} kcal</span>
               <span className="text-red-600">P: {macros.prot}g</span>
@@ -427,12 +427,13 @@ export default function NutritionPage() {
             </div>
             <button onClick={savePlan} disabled={saving || !planName.trim()} className="btn-primary">
               <Save className="w-4 h-4" />
-              {saving ? "A guardar..." : "Guardar Plano"}
+              <span className="hidden sm:inline">{saving ? "A guardar..." : "Guardar Plano"}</span>
+              <span className="sm:hidden">{saving ? "..." : "Guardar"}</span>
             </button>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-3 sm:p-6">
           <div className="card mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

@@ -187,7 +187,7 @@ export default function CheckInsPage() {
 
       {/* New Check-in Form */}
       {showForm && (
-        <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm space-y-4">
+        <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-sm space-y-4">
           <h3 className="text-base font-semibold text-gray-900">Novo Check-in</h3>
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1.5">Atleta</label>

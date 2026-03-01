@@ -301,9 +301,10 @@ export default function ExercisesPage() {
                 )}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-gray-900">{ex.name}</h3>
-                  {ex.description && <p className="text-xs text-gray-500 truncate mt-0.5">{ex.description}</p>}
+                  {ex.description && <p className="text-xs text-gray-500 truncate mt-0.5 hidden sm:block">{ex.description}</p>}
+                  <p className="text-[10px] text-gray-400 mt-0.5 sm:hidden">{getMuscleLabel(ex.muscleGroup)} · {getDifficultyLabel(ex.difficulty)}</p>
                 </div>
-                <div className="flex flex-wrap gap-1.5 flex-shrink-0">
+                <div className="hidden sm:flex flex-wrap gap-1.5 flex-shrink-0">
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${muscleColors[ex.muscleGroup] || "bg-gray-100 text-gray-500 border-gray-200"}`}>
                     {getMuscleLabel(ex.muscleGroup)}
                   </span>

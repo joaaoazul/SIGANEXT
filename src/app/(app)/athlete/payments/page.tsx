@@ -84,7 +84,7 @@ export default function AthletePaymentsPage() {
       </div>
 
       {/* Plan Card */}
-      <div className={`rounded-2xl border-2 p-6 ${status.bg}`}>
+      <div className={`rounded-2xl border-2 p-4 sm:p-6 ${status.bg}`}>
         <div className="flex items-start justify-between">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export default function AthletePaymentsPage() {
       </div>
 
       {/* Future Stripe integration note */}
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-6">
+      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-4 sm:p-6">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-5 h-5 text-violet-500" />

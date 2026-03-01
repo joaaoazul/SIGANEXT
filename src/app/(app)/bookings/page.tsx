@@ -155,7 +155,7 @@ export default function BookingsPage() {
               <button
                 key={day}
                 onClick={() => setSelectedDate(day)}
-                className={`p-2 rounded-lg text-center transition-colors ${
+                className={`p-1 sm:p-2 rounded-lg text-center transition-colors ${
                   isSelected ? "bg-emerald-50 ring-1 ring-emerald-500" :
                   isToday ? "bg-white" : "hover:bg-gray-50"
                 }`}
@@ -206,8 +206,8 @@ export default function BookingsPage() {
               .sort((a, b) => a.startTime.localeCompare(b.startTime))
               .map(slot => (
               <div key={slot.id} className="card">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <div className="flex items-center gap-1.5 text-emerald-600">
                       <Clock className="w-4 h-4" />
                       <span className="text-sm font-semibold">{slot.startTime} - {slot.endTime}</span>
@@ -234,12 +234,12 @@ export default function BookingsPage() {
                 {slot.bookings.length > 0 && (
                   <div className="space-y-2">
                     {slot.bookings.map(b => (
-                      <div key={b.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                        <div>
-                          <span className="text-sm text-gray-900 font-medium">{b.client.name}</span>
-                          {b.notes && <span className="text-xs text-gray-400 ml-2">— {b.notes}</span>}
+                      <div key={b.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 bg-gray-50 rounded-lg">
+                        <div className="min-w-0">
+                          <span className="text-sm text-gray-900 font-medium truncate block">{b.client.name}</span>
+                          {b.notes && <span className="text-xs text-gray-400">— {b.notes}</span>}
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 flex-shrink-0">
                           <span className={`badge text-xs ${
                             b.status === "confirmed" ? "bg-emerald-50 text-emerald-600" :
                             b.status === "completed" ? "bg-blue-50 text-blue-600" :

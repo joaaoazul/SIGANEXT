@@ -527,10 +527,10 @@ export default function AthleteTrainingPage() {
 
           {/* Sets */}
           <div className="p-4 space-y-3">
-            <div className="flex items-center gap-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1">
-              <span className="w-12">Série</span>
+            <div className="flex items-center gap-1 sm:gap-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-1">
+              <span className="w-8 sm:w-12">Série</span>
               <span className="flex-1 text-center">Reps</span>
-              <span className="flex-1 text-center">Peso (kg)</span>
+              <span className="flex-1 text-center">Peso</span>
               <span className="flex-1 text-center">RPE</span>
               <span className="w-10" />
             </div>
@@ -542,7 +542,7 @@ export default function AthleteTrainingPage() {
               return (
                 <div
                   key={idx}
-                  className={`flex items-center gap-2 py-2.5 px-3 rounded-xl transition-all ${
+                  className={`flex items-center gap-1 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl transition-all ${
                     isCurrent
                       ? "bg-emerald-50 border-2 border-emerald-200 shadow-sm"
                       : isCompleted
@@ -550,7 +550,7 @@ export default function AthleteTrainingPage() {
                       : "border border-gray-100"
                   }`}
                 >
-                  <div className="w-12">
+                  <div className="w-8 sm:w-12">
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
                       isCompleted ? "bg-emerald-500 text-white" : isCurrent ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-gray-400"
                     }`}>
@@ -722,7 +722,7 @@ export default function AthleteTrainingPage() {
       {activePlan ? (
         <div className="space-y-4">
           {/* Plan Header */}
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white">
+          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-4 sm:p-6 text-white">
             <div className="flex items-center gap-3 mb-2">
               <Dumbbell className="w-6 h-6" />
               <h2 className="text-xl font-bold">{activePlan.trainingPlan.name}</h2>
