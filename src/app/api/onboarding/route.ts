@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { sendWelcomeEmail } from "@/lib/email";
 import { onboardingSchema } from "@/lib/schemas/client";
+import { getClientIP } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,6 +24,13 @@ export async function POST(request: NextRequest) {
       dietaryRestrictions, foodAllergies, mealsPerDay, waterIntake, supplementsUsed,
       notes, photos,
     } = result.data;
+
+    // RGPD: consent must be explicitly given
+    const consent = raw.consent === true;
+    if (!consent) {
+      return NextResponse.json({ error: "O consentimento RGPD é obrigatório" }, { status: 400 });
+    }
+    const consentIp = getClientIP(request);
 
     // Verify invite
     const invite = await prisma.invite.findUnique({ where: { id: inviteId } });
@@ -93,6 +101,8 @@ export async function POST(request: NextRequest) {
           waterIntake: waterIntake ?? null,
           supplementsUsed: supplementsUsed || null,
           notes: notes || null,
+          consentDate: new Date(),
+          consentIp: consentIp || null,
           status: "active",
           managerId: invite.invitedBy,
         },

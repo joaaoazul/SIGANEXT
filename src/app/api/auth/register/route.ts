@@ -16,11 +16,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, name } = await request.json();
+    const { email, password, name, consent } = await request.json();
 
     if (!email || !password || !name) {
       return NextResponse.json(
         { error: "Todos os campos são obrigatórios" },
+        { status: 400 }
+      );
+    }
+
+    if (!consent) {
+      return NextResponse.json(
+        { error: "Tem de aceitar a Política de Privacidade para se registar." },
         { status: 400 }
       );
     }
@@ -34,6 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const consentIp = getClientIP(request);
 
     const user = await prisma.user.create({
       data: {
@@ -41,6 +49,8 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         name,
         role: "admin",
+        consentDate: new Date(),
+        consentIp: consentIp || null,
       },
     });
 

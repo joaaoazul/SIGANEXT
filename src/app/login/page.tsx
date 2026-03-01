@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [consent, setConsent] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,7 +22,7 @@ export default function LoginPage() {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
       const body = isLogin
         ? { email: form.email, password: form.password }
-        : form;
+        : { ...form, consent };
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -122,6 +123,25 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+
+            {!isLogin && (
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="register-consent"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                  required
+                />
+                <label htmlFor="register-consent" className="text-xs text-gray-600 leading-relaxed">
+                  Li e aceito a{" "}
+                  <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
+                    Política de Privacidade
+                  </a>.
+                </label>
+              </div>
+            )}
 
             <button
               type="submit"

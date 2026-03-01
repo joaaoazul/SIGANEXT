@@ -24,6 +24,8 @@ model User {
   socialLinks   String?   // JSON: { instagram, facebook, linkedin, website }
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  consentDate   DateTime? // RGPD consent timestamp
+  consentIp     String?   // IP at time of consent
 
   // Admin/Employee relations
   managedClients Client[]  @relation("ManagedBy")
@@ -97,6 +99,10 @@ model Client {
   
   // Notas gerais
   notes         String?
+  
+  // RGPD / Consentimento
+  consentDate   DateTime? // Data em que o atleta deu consentimento RGPD
+  consentIp     String?   // IP do pedido de consentimento
   
   // Subscription
   plan          String?

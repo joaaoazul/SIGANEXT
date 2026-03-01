@@ -143,6 +143,7 @@ function OnboardingForm() {
   });
 
   const TOTAL_STEPS = 10;
+  const [consentGiven, setConsentGiven] = useState(false);
   const stepTitles = [
     "Código", "Palavra-passe", "Dados Pessoais", "Dados Físicos",
     "Fotografias", "Historial Médico", "Estilo de Vida", "Desporto",
@@ -224,13 +225,17 @@ function OnboardingForm() {
   };
 
   const handleSubmit = async () => {
+    if (!consentGiven) {
+      setError("Tens de aceitar a Política de Privacidade para concluir o registo.");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
       const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, inviteId, photos: onboardingPhotos.length > 0 ? JSON.stringify(onboardingPhotos) : null }),
+        body: JSON.stringify({ ...form, inviteId, consent: true, photos: onboardingPhotos.length > 0 ? JSON.stringify(onboardingPhotos) : null }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); setLoading(false); return; }
@@ -575,6 +580,31 @@ function OnboardingForm() {
               </div>
               <TextArea label="Suplementos Utilizados" field="supplementsUsed" placeholder="Ex: Whey Protein, Creatina..." rows={2} />
               <TextArea label="Notas Adicionais" field="notes" placeholder="Alguma informação extra que queiras partilhar..." />
+
+              {/* RGPD Consent */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="consent"
+                    checked={consentGiven}
+                    onChange={(e) => setConsentGiven(e.target.checked)}
+                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <label htmlFor="consent" className="text-sm text-gray-700 leading-relaxed">
+                    Li e aceito a{" "}
+                    <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
+                      Política de Privacidade
+                    </a>.
+                    Autorizo o tratamento dos meus dados pessoais e de saúde para efeitos de 
+                    acompanhamento desportivo personalizado, nos termos do Art. 9.º, n.º 2, al. a) do RGPD.
+                  </label>
+                </div>
+                <p className="text-[11px] text-gray-400 pl-7">
+                  Podes revogar este consentimento a qualquer momento nas definições da tua conta.
+                </p>
+              </div>
+
               <NavButtons isLast />
             </div>
           )}
