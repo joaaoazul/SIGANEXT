@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Try User table first (trainers, admins)
+    // Try User table first (trainers, admins, client-users)
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (user) {
@@ -23,15 +23,23 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
       }
 
+      // For client-role users, resolve the Client record so we use Client.id
+      // (all athlete APIs key data by clientId, not userId)
+      let tokenId = user.id;
+      if (user.role === "client") {
+        const client = await prisma.client.findUnique({ where: { email } });
+        if (client) tokenId = client.id;
+      }
+
       const token = signToken({
-        id: user.id,
+        id: tokenId,
         email: user.email,
         name: user.name,
         role: user.role,
       });
 
       const response = NextResponse.json({
-        user: { id: user.id, email: user.email, name: user.name, role: user.role },
+        user: { id: tokenId, email: user.email, name: user.name, role: user.role },
       });
 
       response.cookies.set("token", token, {
@@ -45,7 +53,7 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    // Fallback: check Client table (athletes)
+    // Fallback: check Client table directly (athletes without User record)
     const client = await prisma.client.findUnique({ where: { email } });
 
     if (!client || !client.password) {

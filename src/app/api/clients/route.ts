@@ -131,13 +131,19 @@ export async function POST(request: NextRequest) {
       });
 
       // Create User record so the athlete can log in
-      await tx.user.create({
+      const userRecord = await tx.user.create({
         data: {
           name: data.name,
           email: data.email,
           password: hashedPassword,
           role: "client",
         },
+      });
+
+      // Link User to Client
+      await tx.client.update({
+        where: { id: client.id },
+        data: { userId: userRecord.id },
       });
 
       // Create initial body assessment if weight provided

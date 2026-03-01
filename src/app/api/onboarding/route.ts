@@ -110,13 +110,19 @@ export async function POST(request: NextRequest) {
       });
 
       // Also create a User record so the athlete can log in
-      await tx.user.create({
+      const userRecord = await tx.user.create({
         data: {
           name,
           email,
           password: hashedPassword,
           role: "client",
         },
+      });
+
+      // Link User to Client
+      await tx.client.update({
+        where: { id: newClient.id },
+        data: { userId: userRecord.id },
       });
 
       // Mark invite as accepted
