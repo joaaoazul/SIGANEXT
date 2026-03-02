@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.gitignore
+*.md
+.env
+.env.*
+!.env.example
+deploy/
+scripts/
+prisma/seed.*
+prisma/debug*
+prisma/link*
+prisma/promote*
+prisma/add-*
+NUL
