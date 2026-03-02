@@ -1,6 +1,6 @@
 #!/bin/bash
 # ═══════════════════════════════════════════════════════
-# SIGA180 — Deployment script for Hetzner CX22
+# SIGA180 — Deployment script for Hetzner
 # Run from the server: bash deploy/deploy.sh
 # ═══════════════════════════════════════════════════════
 
@@ -12,12 +12,34 @@ BRANCH="main"
 
 echo "══════════════════════════════════════"
 echo "  SIGA180 — Deploying..."
+echo "  $(date '+%Y-%m-%d %H:%M:%S')"
 echo "══════════════════════════════════════"
 
+# ── Pre-flight checks ──
+cd "$APP_DIR"
+
+if [ ! -f ".env" ]; then
+  echo "❌ .env file not found! Create it first:"
+  echo "   cp .env.example .env && nano .env"
+  exit 1
+fi
+
+# Verify critical env vars
+source <(grep -E '^(DATABASE_URL|JWT_SECRET|NEXT_PUBLIC_APP_URL)=' .env)
+if [ -z "$DATABASE_URL" ]; then
+  echo "❌ DATABASE_URL not set in .env"
+  exit 1
+fi
+if [ -z "$JWT_SECRET" ] || [ "$JWT_SECRET" = "your-jwt-secret-here" ]; then
+  echo "❌ JWT_SECRET not configured in .env"
+  exit 1
+fi
+
+echo "  ✓ Pre-flight checks passed"
+
 # ── 1. Pull latest code ──
-echo "[1/6] Pulling latest code..."
+echo "[1/7] Pulling latest code..."
 if [ -d "$APP_DIR/.git" ]; then
-  cd "$APP_DIR"
   git fetch origin
   git reset --hard "origin/$BRANCH"
 else
@@ -27,15 +49,15 @@ else
 fi
 
 # ── 2. Install dependencies ──
-echo "[2/6] Installing dependencies..."
-npm ci --production=false
+echo "[2/7] Installing dependencies..."
+npm ci
 
 # ── 3. Generate Prisma client ──
-echo "[3/6] Generating Prisma client..."
+echo "[3/7] Generating Prisma client..."
 npx prisma generate
 
 # ── 4. Push DB schema (safe — won't drop data) ──
-echo "[4/6] Syncing database schema..."
+echo "[4/7] Syncing database schema..."
 npx prisma db push --accept-data-loss=false
 
 # ── 5. Build ──
@@ -47,9 +69,11 @@ echo "[6/7] Preparing standalone build..."
 if [ -d ".next/standalone" ]; then
   cp -r .next/static .next/standalone/.next/static 2>/dev/null || true
   cp -r public .next/standalone/public 2>/dev/null || true
-  # Copy .env to standalone dir so server.js can read it
   cp .env .next/standalone/.env 2>/dev/null || true
-  echo "  ✓ Static assets + public copied to standalone"
+  echo "  ✓ Static assets + public + .env copied to standalone"
+else
+  echo "  ⚠ No standalone output found — check next.config.ts has output: 'standalone'"
+  exit 1
 fi
 
 # ── 7. Restart PM2 ──
@@ -73,7 +97,7 @@ fi
 echo ""
 echo "══════════════════════════════════════"
 echo "  ✅ Deploy complete!"
-echo "  App running at http://localhost:3000"
+echo "  $(date '+%Y-%m-%d %H:%M:%S')"
 echo "  PM2 status: pm2 status"
 echo "  Logs: pm2 logs siga180"
 echo "══════════════════════════════════════"

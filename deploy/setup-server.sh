@@ -86,7 +86,7 @@ echo "  Swap: $(free -h | grep Swap | awk '{print $2}')"
 
 # ── 9. Setup Nginx (HTTP only — SSL comes after) ──
 echo "[9/9] Configuring Nginx..."
-cp "$APP_DIR/deploy/nginx.conf" /etc/nginx/sites-available/siga180
+cp "$APP_DIR/deploy/nginx-initial.conf" /etc/nginx/sites-available/siga180
 ln -sf /etc/nginx/sites-available/siga180 /etc/nginx/sites-enabled/siga180
 rm -f /etc/nginx/sites-enabled/default
 nginx -t && systemctl reload nginx
@@ -94,6 +94,9 @@ nginx -t && systemctl reload nginx
 # Enable fail2ban
 systemctl enable fail2ban
 systemctl start fail2ban
+
+# PM2 auto-start on reboot
+pm2 startup systemd -u root --hp /root 2>/dev/null || true
 
 echo ""
 echo "══════════════════════════════════════"
@@ -109,5 +112,5 @@ echo "  2. Deploy da app:"
 echo "     cd $APP_DIR && bash deploy/deploy.sh"
 echo ""
 echo "  3. SSL (depois de confirmar que HTTP funciona):"
-echo "     bash deploy/setup-ssl.sh $DOMAIN"
+echo "     bash deploy/setup-ssl.sh siga180.pt"
 echo "══════════════════════════════════════"
