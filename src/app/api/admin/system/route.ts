@@ -105,14 +105,28 @@ export async function GET() {
       fail2banBanned = match ? parseInt(match[1]) : 0;
     } catch {}
 
-    // SSL certificate info
-    let ssl = { valid: false, domain: "", expiresAt: "" };
+    // SSL certificate info (Cloudflare Origin Certificate)
+    let ssl = { valid: false, domain: "", expiresAt: "", issuer: "", type: "" };
     try {
-      const certPath = "/etc/letsencrypt/live/siga180.pt/fullchain.pem";
-      if (fs.existsSync(certPath)) {
-        const certInfo = execSync(`openssl x509 -enddate -noout -in ${certPath}`, { timeout: 3000 }).toString().trim();
-        const dateStr = certInfo.replace("notAfter=", "");
-        ssl = { valid: true, domain: "siga180.pt", expiresAt: new Date(dateStr).toISOString() };
+      // Check Cloudflare Origin Certificate first, then Let's Encrypt fallback
+      const certPaths = [
+        { path: "/etc/ssl/cloudflare/cert.pem", type: "Cloudflare Origin" },
+        { path: "/etc/letsencrypt/live/siga180.pt/fullchain.pem", type: "Let's Encrypt" },
+      ];
+      for (const cert of certPaths) {
+        if (fs.existsSync(cert.path)) {
+          const certInfo = execSync(`openssl x509 -enddate -noout -in ${cert.path}`, { timeout: 3000 }).toString().trim();
+          const dateStr = certInfo.replace("notAfter=", "");
+          const issuerInfo = execSync(`openssl x509 -issuer -noout -in ${cert.path}`, { timeout: 3000 }).toString().trim();
+          ssl = {
+            valid: true,
+            domain: "siga180.pt",
+            expiresAt: new Date(dateStr).toISOString(),
+            issuer: issuerInfo.replace("issuer=", "").trim(),
+            type: cert.type,
+          };
+          break;
+        }
       }
     } catch {}
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import bcrypt from "bcryptjs";
 
 export async function GET(
   request: NextRequest,
@@ -25,11 +26,19 @@ export async function GET(
         bio: true,
         specialties: true,
         location: true,
+        avatar: true,
         createdAt: true,
         updatedAt: true,
         consentDate: true,
         consentIp: true,
+        consentVersion: true,
+        healthDataConsent: true,
+        permissions: true,
         _count: { select: { managedClients: true, bookingSlots: true } },
+        managedClients: {
+          select: { id: true, name: true, email: true, status: true },
+          take: 50,
+        },
       },
     });
 
@@ -56,17 +65,46 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
-    // Only allow updating role and basic fields
     const data: Record<string, unknown> = {};
+
+    // Role update
     if (body.role && ["admin", "superadmin", "employee", "client", "suspended"].includes(body.role)) {
       data.role = body.role;
     }
-    if (body.name) data.name = body.name;
+
+    // Basic field updates
+    if (body.name !== undefined) data.name = body.name;
+    if (body.email !== undefined) data.email = body.email;
+    if (body.phone !== undefined) data.phone = body.phone || null;
+    if (body.bio !== undefined) data.bio = body.bio || null;
+    if (body.specialties !== undefined) data.specialties = body.specialties || null;
+    if (body.location !== undefined) data.location = body.location || null;
+
+    // Password reset by admin
+    if (body.newPassword) {
+      if (body.newPassword.length < 6) {
+        return NextResponse.json({ error: "Password deve ter pelo menos 6 caracteres" }, { status: 400 });
+      }
+      data.password = await bcrypt.hash(body.newPassword, 12);
+    }
+
+    // Consent management
+    if (body.resetConsent) {
+      data.consentDate = null;
+      data.consentIp = null;
+      data.consentVersion = null;
+      data.healthDataConsent = false;
+    }
+
+    const target = await prisma.user.findUnique({ where: { id }, select: { email: true, role: true, name: true } });
+    if (!target) {
+      return NextResponse.json({ error: "Utilizador não encontrado" }, { status: 404 });
+    }
 
     const updated = await prisma.user.update({
       where: { id },
       data,
-      select: { id: true, name: true, email: true, role: true },
+      select: { id: true, name: true, email: true, role: true, phone: true },
     });
 
     logAuditFromRequest(request, "admin_update_user", {
@@ -75,7 +113,13 @@ export async function PUT(
       userId: user.id,
       userEmail: user.email,
       userRole: user.role,
-      details: { changes: data, targetEmail: updated.email },
+      details: {
+        changes: Object.keys(data).filter(k => k !== "password"),
+        passwordReset: !!body.newPassword,
+        consentReset: !!body.resetConsent,
+        targetEmail: target.email,
+        previousRole: target.role,
+      },
     });
 
     return NextResponse.json(updated);
@@ -95,33 +139,91 @@ export async function DELETE(
     }
 
     const { id } = await params;
+    const url = new URL(request.url);
+    const permanent = url.searchParams.get("permanent") === "true";
+    const purgeData = url.searchParams.get("purge") === "true";
 
     if (id === user.id) {
       return NextResponse.json({ error: "Não pode eliminar a própria conta" }, { status: 400 });
     }
 
-    const target = await prisma.user.findUnique({ where: { id }, select: { email: true, role: true } });
+    const target = await prisma.user.findUnique({
+      where: { id },
+      select: { email: true, role: true, name: true },
+    });
     if (!target) {
       return NextResponse.json({ error: "Utilizador não encontrado" }, { status: 404 });
     }
 
-    // Suspend instead of delete (preserve data)
-    await prisma.user.update({
-      where: { id },
-      data: { role: "suspended" },
-    });
+    if (permanent) {
+      // Permanent delete with optional data purge
+      if (purgeData) {
+        // Delete all related data first
+        // User's foods
+        await prisma.food.deleteMany({ where: { userId: id } });
+        // User's exercises
+        await prisma.exercise.deleteMany({ where: { userId: id } });
+        // User's content
+        await prisma.content.deleteMany({ where: { userId: id } });
+        // User's booking slots
+        await prisma.bookingSlot.deleteMany({ where: { userId: id } });
+        // Notifications sent by user
+        await prisma.notification.deleteMany({ where: { senderId: id } });
+        // Feedbacks sent by user
+        await prisma.feedback.deleteMany({ where: { senderId: id } });
 
-    logAuditFromRequest(request, "admin_suspend_user", {
-      entity: "User",
-      entityId: id,
-      userId: user.id,
-      userEmail: user.email,
-      userRole: user.role,
-      details: { targetEmail: target.email, previousRole: target.role },
-    });
+        // Manage clients owned by this user
+        const managedClients = await prisma.client.findMany({
+          where: { managerId: id },
+          select: { id: true },
+        });
+        if (managedClients.length > 0) {
+          // Unlink clients from this manager
+          await prisma.client.updateMany({
+            where: { managerId: id },
+            data: { managerId: null },
+          });
+        }
+      }
 
-    return NextResponse.json({ success: true });
-  } catch {
+      // Delete the user
+      await prisma.user.delete({ where: { id } });
+
+      logAuditFromRequest(request, "admin_delete_user_permanent", {
+        entity: "User",
+        entityId: id,
+        userId: user.id,
+        userEmail: user.email,
+        userRole: user.role,
+        details: {
+          targetEmail: target.email,
+          targetName: target.name,
+          previousRole: target.role,
+          dataPurged: purgeData,
+        },
+      });
+
+      return NextResponse.json({ success: true, action: "deleted" });
+    } else {
+      // Suspend (soft delete)
+      await prisma.user.update({
+        where: { id },
+        data: { role: "suspended" },
+      });
+
+      logAuditFromRequest(request, "admin_suspend_user", {
+        entity: "User",
+        entityId: id,
+        userId: user.id,
+        userEmail: user.email,
+        userRole: user.role,
+        details: { targetEmail: target.email, previousRole: target.role },
+      });
+
+      return NextResponse.json({ success: true, action: "suspended" });
+    }
+  } catch (error) {
+    console.error("Admin delete user error:", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

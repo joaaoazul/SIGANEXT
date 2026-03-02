@@ -25,7 +25,7 @@ interface SystemData {
   swap: { total: number; used: number; free: number };
   disk: { total: number; used: number; free: number; percent: number };
   pm2: { name: string; status: string; cpu: number; memory: number; uptime: number; restarts: number }[];
-  services: { nginx: boolean; fail2ban: boolean; fail2banBanned: number; firewall: boolean; ssl: { valid: boolean; domain: string; expiresAt: string } };
+  services: { nginx: boolean; fail2ban: boolean; fail2banBanned: number; firewall: boolean; ssl: { valid: boolean; domain: string; expiresAt: string; issuer?: string; type?: string } };
   lastDeploy: { hash: string; message: string; date: string; author: string };
 }
 
@@ -191,7 +191,7 @@ export default function ServerPage() {
             { icon: Globe, name: "Nginx", active: data.services.nginx, info: "Reverse Proxy" },
             { icon: Flame, name: "Fail2ban", active: data.services.fail2ban, info: `${data.services.fail2banBanned} IP(s) banidos` },
             { icon: Wifi, name: "Firewall", active: data.services.firewall, info: "UFW" },
-            { icon: Lock, name: "SSL/TLS", active: data.services.ssl.valid, info: data.services.ssl.valid ? `Expira: ${new Date(data.services.ssl.expiresAt).toLocaleDateString("pt-PT")}` : "Não configurado" },
+            { icon: Lock, name: data.services.ssl.type ? `SSL (${data.services.ssl.type})` : "SSL/TLS", active: data.services.ssl.valid, info: data.services.ssl.valid ? `Expira: ${new Date(data.services.ssl.expiresAt).toLocaleDateString("pt-PT")}` : "Não configurado" },
           ].map((svc) => (
             <div key={svc.name} className={`rounded-xl border p-4 ${svc.active ? "border-emerald-500/20 bg-emerald-500/5" : "border-red-500/20 bg-red-500/5"}`}>
               <div className="flex items-center gap-2 mb-2">
