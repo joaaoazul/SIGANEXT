@@ -103,6 +103,7 @@ export async function POST(request: NextRequest) {
           notes: notes || null,
           consentDate: new Date(),
           consentIp: consentIp || null,
+          consentVersion: "1.0",
           status: "active",
           managerId: invite.invitedBy,
         },
@@ -115,6 +116,9 @@ export async function POST(request: NextRequest) {
           email,
           password: hashedPassword,
           role: "client",
+          consentDate: new Date(),
+          consentIp: consentIp || null,
+          consentVersion: "1.0",
         },
       });
 

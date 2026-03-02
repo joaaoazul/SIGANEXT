@@ -203,6 +203,10 @@ export default function LoginPage() {
                   Li e aceito a{" "}
                   <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
                     Política de Privacidade
+                  </a>
+                  {" "}e os{" "}
+                  <a href="/termos" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
+                    Termos de Serviço
                   </a>.
                 </label>
               </div>
@@ -238,6 +242,11 @@ export default function LoginPage() {
         <p className="text-center text-gray-400 text-xs mt-6">
           © 2026 joaoazuldev. Todos os direitos reservados.
         </p>
+        <div className="flex justify-center gap-4 mt-2 text-xs">
+          <a href="/privacy" className="text-gray-400 hover:text-emerald-600 transition">Privacidade</a>
+          <a href="/cookies" className="text-gray-400 hover:text-emerald-600 transition">Cookies</a>
+          <a href="/termos" className="text-gray-400 hover:text-emerald-600 transition">Termos</a>
+        </div>
       </div>
     </div>
   );

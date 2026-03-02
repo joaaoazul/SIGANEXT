@@ -17,6 +17,10 @@ export default function SettingsPage() {
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [showWithdrawConsent, setShowWithdrawConsent] = useState(false);
+  const [withdrawConfirmation, setWithdrawConfirmation] = useState("");
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawError, setWithdrawError] = useState("");
 
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.json()).then(data => {
@@ -232,6 +236,63 @@ export default function SettingsPage() {
                   </div>
                 </div>
               )}
+
+              {/* Consent Withdrawal */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <h4 className="text-sm font-semibold text-gray-900 mb-1">Revogar Consentimento</h4>
+                <p className="text-xs text-gray-500 mb-3">
+                  Nos termos do Art. 7.º, n.º 3 do RGPD, pode revogar o seu consentimento a qualquer momento.
+                  A sua conta será suspensa mas os dados mantidos pelo período de retenção legal (2 anos).
+                </p>
+                <button onClick={() => setShowWithdrawConsent(!showWithdrawConsent)} className="text-sm text-amber-600 hover:text-amber-700 font-medium underline transition">
+                  Revogar consentimento RGPD
+                </button>
+              </div>
+
+              {showWithdrawConsent && (
+                <div className="border border-amber-200 bg-amber-50 rounded-xl p-4 space-y-3">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-amber-800">Revogar Consentimento RGPD</p>
+                      <p className="text-xs text-amber-700 mt-1">A sua conta será suspensa. Poderá contactar-nos para reativação. Escreva &quot;REVOGAR CONSENTIMENTO&quot; para confirmar.</p>
+                    </div>
+                  </div>
+                  {withdrawError && <p className="text-sm text-red-700 bg-red-100 rounded-lg px-3 py-2">{withdrawError}</p>}
+                  <input type="text" value={withdrawConfirmation} onChange={(e) => setWithdrawConfirmation(e.target.value)} className="w-full px-4 py-3 bg-white border border-amber-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm" placeholder="REVOGAR CONSENTIMENTO" />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={async () => {
+                        setWithdrawing(true);
+                        setWithdrawError("");
+                        try {
+                          const res = await fetch("/api/auth/withdraw-consent", {
+                            method: "POST", headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ confirmation: withdrawConfirmation }),
+                          });
+                          const data = await res.json();
+                          if (!res.ok) { setWithdrawError(data.error); setWithdrawing(false); return; }
+                          router.push("/login");
+                        } catch { setWithdrawError("Erro de ligação"); setWithdrawing(false); }
+                      }}
+                      disabled={withdrawing || withdrawConfirmation !== "REVOGAR CONSENTIMENTO"}
+                      className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition"
+                    >
+                      {withdrawing ? "A revogar..." : "Confirmar Revogação"}
+                    </button>
+                    <button onClick={() => { setShowWithdrawConsent(false); setWithdrawConfirmation(""); setWithdrawError(""); }} className="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              )}  
+
+              {/* Legal links */}
+              <div className="mt-4 pt-4 border-t border-gray-200 flex flex-wrap gap-3 text-sm">
+                <a href="/privacy" className="text-emerald-600 hover:text-emerald-700 underline">Política de Privacidade</a>
+                <a href="/cookies" className="text-emerald-600 hover:text-emerald-700 underline">Política de Cookies</a>
+                <a href="/termos" className="text-emerald-600 hover:text-emerald-700 underline">Termos de Serviço</a>
+              </div>
             </div>
           )}
 

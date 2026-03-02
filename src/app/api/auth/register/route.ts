@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
         role: "admin",
         consentDate: new Date(),
         consentIp: consentIp || null,
+        consentVersion: "1.0",
       },
     });
 

@@ -42,7 +42,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/api/onboarding") ||
-    pathname.startsWith("/api/invites/validate");
+    pathname.startsWith("/api/invites/validate") ||
+    pathname.startsWith("/privacy") ||
+    pathname.startsWith("/cookies") ||
+    pathname.startsWith("/termos");
 
   if (isPublic) {
     if (token && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
