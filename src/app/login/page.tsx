@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [consent, setConsent] = useState(false);
+  const [healthConsent, setHealthConsent] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [showRoleChoice, setShowRoleChoice] = useState(false);
 
@@ -23,7 +24,7 @@ export default function LoginPage() {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
       const body = isLogin
         ? { email: form.email, password: form.password }
-        : { ...form, consent };
+        : { ...form, consent, healthConsent };
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -190,25 +191,40 @@ export default function LoginPage() {
             </div>
 
             {!isLogin && (
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  id="register-consent"
-                  checked={consent}
-                  onChange={(e) => setConsent(e.target.checked)}
-                  className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
-                  required
-                />
-                <label htmlFor="register-consent" className="text-xs text-gray-600 leading-relaxed">
-                  Li e aceito a{" "}
-                  <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
-                    Política de Privacidade
-                  </a>
-                  {" "}e os{" "}
-                  <a href="/termos" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
-                    Termos de Serviço
-                  </a>.
-                </label>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="register-consent"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                    required
+                  />
+                  <label htmlFor="register-consent" className="text-xs text-gray-600 leading-relaxed">
+                    Li e aceito a{" "}
+                    <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
+                      Política de Privacidade
+                    </a>
+                    {" "}e os{" "}
+                    <a href="/termos" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
+                      Termos de Serviço
+                    </a>.
+                  </label>
+                </div>
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="health-consent"
+                    checked={healthConsent}
+                    onChange={(e) => setHealthConsent(e.target.checked)}
+                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <label htmlFor="health-consent" className="text-xs text-gray-600 leading-relaxed">
+                    Autorizo o tratamento de <strong>dados de saúde</strong> (Art. 9.º RGPD) — incluindo informações médicas, avaliações corporais e dados nutricionais — para acompanhamento desportivo personalizado.
+                    <span className="text-gray-400 ml-1">(Opcional)</span>
+                  </label>
+                </div>
               </div>
             )}
 

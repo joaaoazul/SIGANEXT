@@ -144,6 +144,7 @@ function OnboardingForm() {
 
   const TOTAL_STEPS = 10;
   const [consentGiven, setConsentGiven] = useState(false);
+  const [healthConsentGiven, setHealthConsentGiven] = useState(false);
   const stepTitles = [
     "Código", "Palavra-passe", "Dados Pessoais", "Dados Físicos",
     "Fotografias", "Historial Médico", "Estilo de Vida", "Desporto",
@@ -235,7 +236,7 @@ function OnboardingForm() {
       const res = await fetch("/api/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, inviteId, consent: true, photos: onboardingPhotos.length > 0 ? JSON.stringify(onboardingPhotos) : null }),
+        body: JSON.stringify({ ...form, inviteId, consent: true, healthConsent: healthConsentGiven, photos: onboardingPhotos.length > 0 ? JSON.stringify(onboardingPhotos) : null }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); setLoading(false); return; }
@@ -595,13 +596,29 @@ function OnboardingForm() {
                     Li e aceito a{" "}
                     <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
                       Política de Privacidade
-                    </a>.
-                    Autorizo o tratamento dos meus dados pessoais e de saúde para efeitos de 
-                    acompanhamento desportivo personalizado, nos termos do Art. 9.º, n.º 2, al. a) do RGPD.
+                    </a>{" "}e os{" "}
+                    <a href="/termos" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
+                      Termos de Serviço
+                    </a>. *
+                  </label>
+                </div>
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="healthConsent"
+                    checked={healthConsentGiven}
+                    onChange={(e) => setHealthConsentGiven(e.target.checked)}
+                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <label htmlFor="healthConsent" className="text-sm text-gray-700 leading-relaxed">
+                    Autorizo o tratamento dos meus <strong>dados de saúde</strong> (Art. 9.º RGPD) — incluindo
+                    informações médicas, avaliações corporais e dados nutricionais — para acompanhamento
+                    desportivo personalizado.
+                    <span className="text-gray-400 ml-1">(Opcional — pode ser dado mais tarde)</span>
                   </label>
                 </div>
                 <p className="text-[11px] text-gray-400 pl-7">
-                  Podes revogar este consentimento a qualquer momento nas definições da tua conta.
+                  Podes revogar estes consentimentos a qualquer momento nas definições da tua conta.
                 </p>
               </div>
 

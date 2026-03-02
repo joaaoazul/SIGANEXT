@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     if (!consent) {
       return NextResponse.json({ error: "O consentimento RGPD é obrigatório" }, { status: 400 });
     }
+    const healthConsent = raw.healthConsent === true;
     const consentIp = getClientIP(request);
 
     // Verify invite
@@ -104,6 +105,7 @@ export async function POST(request: NextRequest) {
           consentDate: new Date(),
           consentIp: consentIp || null,
           consentVersion: "1.0",
+          healthDataConsent: healthConsent,
           status: "active",
           managerId: invite.invitedBy,
         },
@@ -119,6 +121,7 @@ export async function POST(request: NextRequest) {
           consentDate: new Date(),
           consentIp: consentIp || null,
           consentVersion: "1.0",
+          healthDataConsent: healthConsent,
         },
       });
 

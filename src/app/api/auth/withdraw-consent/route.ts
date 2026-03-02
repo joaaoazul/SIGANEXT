@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 /**
  * POST /api/auth/withdraw-consent — Withdraw RGPD consent
@@ -10,6 +11,12 @@ import { logAuditFromRequest } from "@/lib/audit";
  */
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIP(request);
+    const rl = rateLimit(`withdraw:${ip}`, { max: 3, windowSecs: 60 * 60 });
+    if (!rl.success) {
+      return NextResponse.json({ error: "Demasiadas tentativas. Tente mais tarde." }, { status: 429 });
+    }
+
     const token = request.cookies.get("token")?.value;
     if (!token) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });

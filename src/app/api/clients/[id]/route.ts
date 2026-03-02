@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 
 export async function GET(
   request: NextRequest,
@@ -39,6 +40,16 @@ export async function GET(
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...sanitized } = client;
+
+    // RGPD — Audit log: client data access
+    logAuditFromRequest(request, "view_client", {
+      entity: "Client",
+      entityId: id,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+    });
+
     return NextResponse.json(sanitized);
   } catch {
     return NextResponse.json({ error: "Erro ao buscar cliente" }, { status: 500 });
@@ -107,6 +118,16 @@ export async function PUT(
       },
     });
 
+    // RGPD — Audit log: client data modification
+    logAuditFromRequest(request, "edit_client", {
+      entity: "Client",
+      entityId: id,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+      details: { fields: Object.keys(data) },
+    });
+
     return NextResponse.json(client);
   } catch {
     return NextResponse.json({ error: "Erro ao atualizar cliente" }, { status: 500 });
@@ -134,18 +155,66 @@ export async function DELETE(
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     }
 
+    const anonymizedEmail = `deleted_${id}@anonimizado.local`;
+    const anonymizedName = "[Dados Removidos]";
+
     await prisma.$transaction(async (tx) => {
-      // Mark client as soft-deleted
+      // RGPD Art. 17 — Anonymize all personal + health data
       await tx.client.update({
         where: { id },
-        data: { deletedAt: new Date(), status: "inactive" },
+        data: {
+          deletedAt: new Date(),
+          status: "inactive",
+          name: anonymizedName,
+          email: anonymizedEmail,
+          phone: null,
+          dateOfBirth: null,
+          gender: null,
+          avatar: null,
+          notes: null,
+          medicalConditions: null,
+          medications: null,
+          allergies: null,
+          injuries: null,
+          surgeries: null,
+          familyHistory: null,
+          bloodPressure: null,
+          heartRate: null,
+          occupation: null,
+          smokingStatus: null,
+          alcoholConsumption: null,
+          dietaryRestrictions: null,
+          foodAllergies: null,
+          supplementsUsed: null,
+          motivation: null,
+          consentDate: null,
+          consentIp: null,
+          consentVersion: null,
+        },
       });
 
-      // Deactivate the User login account (don't delete, preserve audit trail)
+      // Anonymize the User login account too
       await tx.user.updateMany({
         where: { email: client.email, role: "client" },
-        data: { role: "deleted_client" },
+        data: {
+          role: "deleted_client",
+          name: anonymizedName,
+          email: anonymizedEmail,
+          phone: null,
+          bio: null,
+          avatar: null,
+        },
       });
+    });
+
+    // RGPD — Audit log: client deletion (anonymization)
+    logAuditFromRequest(request, "delete_client", {
+      entity: "Client",
+      entityId: id,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+      details: { anonymizedEmail },
     });
 
     return NextResponse.json({ success: true });

@@ -1,5 +1,6 @@
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
+import ReconsentBanner from "@/components/ReconsentBanner";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             {children}
           </div>
         </main>
+        <ReconsentBanner />
       </div>
     </div>
   );

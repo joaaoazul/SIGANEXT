@@ -1,10 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const user = await getUser();
+    const ip = getClientIP(request);
+    const rl = rateLimit(`export:${ip}`, { max: 5, windowSecs: 60 * 60 });
+    if (!rl.success) {
+      return NextResponse.json({ error: "Demasiados pedidos de exportação. Tente mais tarde." }, { status: 429 });
+    }
+
+    const user = await getUser(request);
     if (!user) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }

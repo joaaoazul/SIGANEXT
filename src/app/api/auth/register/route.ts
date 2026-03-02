@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, name, consent } = await request.json();
+    const { email, password, name, consent, healthConsent } = await request.json();
 
     if (!email || !password || !name) {
       return NextResponse.json(
@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
         consentDate: new Date(),
         consentIp: consentIp || null,
         consentVersion: "1.0",
+        healthDataConsent: !!healthConsent,
       },
     });
 

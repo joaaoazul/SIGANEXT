@@ -3,10 +3,16 @@ import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { logAudit } from "@/lib/audit";
-import { getClientIP } from "@/lib/rate-limit";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIP(request);
+    const rl = rateLimit(`delete-account:${ip}`, { max: 3, windowSecs: 60 * 60 });
+    if (!rl.success) {
+      return NextResponse.json({ error: "Demasiadas tentativas. Tente mais tarde." }, { status: 429 });
+    }
+
     const user = await getUser(request);
     if (!user) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -38,16 +44,53 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Password incorreta" }, { status: 403 });
       }
 
+      const anonymizedEmail = `deleted_${clientId}@anonimizado.local`;
+      const anonymizedName = "[Dados Removidos]";
+
       await prisma.$transaction(async (tx) => {
-        // Soft delete client
+        // RGPD Art. 17 — Anonymize all personal + health data
         await tx.client.update({
           where: { id: clientId },
-          data: { deletedAt: new Date(), status: "inactive" },
+          data: {
+            deletedAt: new Date(),
+            status: "inactive",
+            name: anonymizedName,
+            email: anonymizedEmail,
+            phone: null,
+            dateOfBirth: null,
+            gender: null,
+            avatar: null,
+            notes: null,
+            medicalConditions: null,
+            medications: null,
+            allergies: null,
+            injuries: null,
+            surgeries: null,
+            familyHistory: null,
+            bloodPressure: null,
+            heartRate: null,
+            occupation: null,
+            smokingStatus: null,
+            alcoholConsumption: null,
+            dietaryRestrictions: null,
+            foodAllergies: null,
+            supplementsUsed: null,
+            motivation: null,
+            consentDate: null,
+            consentIp: null,
+            consentVersion: null,
+          },
         });
-        // Deactivate User login
         await tx.user.updateMany({
           where: { email: client.email, role: "client" },
-          data: { role: "deleted_client" },
+          data: {
+            role: "deleted_client",
+            name: anonymizedName,
+            email: anonymizedEmail,
+            phone: null,
+            bio: null,
+            avatar: null,
+          },
         });
       });
     } else {
@@ -68,7 +111,21 @@ export async function POST(request: NextRequest) {
 
       await prisma.user.update({
         where: { id: user.id },
-        data: { role: "deleted_admin" },
+        data: {
+          role: "deleted_admin",
+          name: "[Dados Removidos]",
+          email: `deleted_${user.id}@anonimizado.local`,
+          phone: null,
+          bio: null,
+          avatar: null,
+          coverImage: null,
+          specialties: null,
+          location: null,
+          socialLinks: null,
+          consentDate: null,
+          consentIp: null,
+          consentVersion: null,
+        },
       });
     }
 

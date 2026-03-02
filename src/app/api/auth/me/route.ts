@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     if (user.role === "client") {
       const data = await prisma.client.findUnique({
         where: { id: user.id },
-        select: { id: true, name: true, email: true, phone: true, avatar: true, createdAt: true },
+        select: { id: true, name: true, email: true, phone: true, avatar: true, createdAt: true, consentVersion: true },
       });
       if (!data) {
         console.error("auth/me: Client not found in DB for id:", user.id);
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     const data = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { id: true, name: true, email: true, phone: true, role: true, avatar: true, createdAt: true },
+      select: { id: true, name: true, email: true, phone: true, role: true, avatar: true, createdAt: true, consentVersion: true },
     });
 
     return NextResponse.json(data);

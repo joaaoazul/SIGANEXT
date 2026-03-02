@@ -27,8 +27,7 @@ model User {
   consentDate    DateTime? // RGPD consent timestamp
   consentIp      String?   // IP at time of consent
   consentVersion String?   // Version of privacy policy consented to
-
-  // Admin/Employee relations
+  healthDataConsent Boolean @default(false) // Explicit consent for health data (Art. 9)
   managedClients Client[]  @relation("ManagedBy")
   clientProfile  Client?   @relation("ClientUser")
   sentNotifications Notification[] @relation("SentNotifications")
@@ -105,6 +104,7 @@ model Client {
   consentDate    DateTime? // Data em que o atleta deu consentimento RGPD
   consentIp      String?   // IP do pedido de consentimento
   consentVersion String?   // Versão da política de privacidade aceite
+  healthDataConsent Boolean @default(false) // Consentimento explícito para dados de saúde (Art. 9.º)
   
   // Subscription
   plan          String?
