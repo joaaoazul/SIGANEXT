@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "100");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { client: { managerId: user.id } };
     if (status) where.status = status;
 
     const [feedbacks, total] = await Promise.all([
@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
     }
     const data = result.data;
+
+    // Verify client belongs to this trainer
+    const client = await prisma.client.findFirst({ where: { id: data.clientId, managerId: user.id } });
+    if (!client) return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
 
     const feedback = await prisma.feedback.create({
       data: {

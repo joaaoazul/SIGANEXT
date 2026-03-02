@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
 
     const [plans, total] = await Promise.all([
       prisma.nutritionPlan.findMany({
+        where: { OR: [{ userId: user.id }, { userId: null }] },
         orderBy: { createdAt: "desc" },
         take: Math.min(limit, 100),
         skip: offset,
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
           _count: { select: { assignments: true } },
         },
       }),
-      prisma.nutritionPlan.count(),
+      prisma.nutritionPlan.count({ where: { OR: [{ userId: user.id }, { userId: null }] } }),
     ]);
 
     return NextResponse.json(plans, {
@@ -88,6 +89,7 @@ export async function POST(request: NextRequest) {
         totalCarbs: data.totalCarbs ?? null,
         totalFat: data.totalFat ?? null,
         goal: data.goal || null,
+        userId: user.id,
         meals: data.meals ? {
           create: data.meals.map((m, idx) => ({
             name: m.name,

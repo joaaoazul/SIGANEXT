@@ -82,6 +82,7 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
   const invites = await prisma.invite.findMany({
+    where: { invitedBy: user.id },
     orderBy: { createdAt: "desc" },
     take: 50,
   });

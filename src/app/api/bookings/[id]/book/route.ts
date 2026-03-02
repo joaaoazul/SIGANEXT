@@ -14,6 +14,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ error: "Cliente obrigatório" }, { status: 400 });
   }
 
+  // Verify client belongs to this trainer
+  const clientCheck = await prisma.client.findFirst({ where: { id: clientId, managerId: user.id } });
+  if (!clientCheck) return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
+
   const slot = await prisma.bookingSlot.findUnique({
     where: { id, userId: user.id },
     include: { bookings: true },

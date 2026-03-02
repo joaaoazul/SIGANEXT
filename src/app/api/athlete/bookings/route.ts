@@ -42,9 +42,10 @@ export async function GET(request: NextRequest) {
     take: 50,
   });
 
-  // Also get available slots for booking
+  // Also get available slots for booking (only from athlete's trainer)
+  const client = await prisma.client.findUnique({ where: { id: clientId }, select: { managerId: true } });
   const availableSlots = await prisma.bookingSlot.findMany({
-    where: { isActive: true },
+    where: { isActive: true, ...(client?.managerId ? { userId: client.managerId } : {}) },
     select: {
       id: true,
       title: true,

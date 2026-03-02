@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/auth";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const { id } = await params;
     const data = await request.json();
 
@@ -35,10 +40,14 @@ export async function PUT(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const { id } = await params;
     await prisma.food.delete({ where: { id } });
     return NextResponse.json({ success: true });

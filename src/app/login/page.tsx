@@ -6,13 +6,10 @@ import { Dumbbell, Eye, EyeOff, Shield, LayoutDashboard } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [consent, setConsent] = useState(false);
-  const [healthConsent, setHealthConsent] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showRoleChoice, setShowRoleChoice] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,15 +18,10 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      const body = isLogin
-        ? { email: form.email, password: form.password }
-        : { ...form, consent, healthConsent };
-
-      const res = await fetch(endpoint, {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ email: form.email, password: form.password }),
       });
 
       const data = await res.json();
@@ -121,13 +113,13 @@ export default function LoginPage() {
             <Dumbbell className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">SIGA180</h1>
-          <p className="text-gray-500 mt-2">Plataforma de Gestão para Personal Trainers</p>
+          <p className="text-gray-500 mt-2">Sistema Integrado de Gestão de Atletas</p>
         </div>
 
         {/* Form Card */}
         <div className="bg-white rounded-2xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            {isLogin ? "Iniciar Sessão" : "Criar Conta"}
+            Iniciar Sessão
           </h2>
 
           {error && (
@@ -137,22 +129,6 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Nome
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-                  placeholder="O teu nome"
-                  required={!isLogin}
-                />
-              </div>
-            )}
-
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Email
@@ -190,44 +166,6 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {!isLogin && (
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    id="register-consent"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
-                    required
-                  />
-                  <label htmlFor="register-consent" className="text-xs text-gray-600 leading-relaxed">
-                    Li e aceito a{" "}
-                    <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
-                      Política de Privacidade
-                    </a>
-                    {" "}e os{" "}
-                    <a href="/termos" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
-                      Termos de Serviço
-                    </a>.
-                  </label>
-                </div>
-                <div className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    id="health-consent"
-                    checked={healthConsent}
-                    onChange={(e) => setHealthConsent(e.target.checked)}
-                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
-                  />
-                  <label htmlFor="health-consent" className="text-xs text-gray-600 leading-relaxed">
-                    Autorizo o tratamento de <strong>dados de saúde</strong> (Art. 9.º RGPD) — incluindo informações médicas, avaliações corporais e dados nutricionais — para acompanhamento desportivo personalizado.
-                    <span className="text-gray-400 ml-1">(Opcional)</span>
-                  </label>
-                </div>
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={loading}
@@ -241,18 +179,9 @@ export default function LoginPage() {
                   </svg>
                   A processar...
                 </span>
-              ) : isLogin ? "Entrar" : "Registar"}
+              ) : "Entrar"}
             </button>
           </form>
-
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => { setIsLogin(!isLogin); setError(""); }}
-              className="text-emerald-600 hover:text-emerald-700 text-sm font-medium transition"
-            >
-              {isLogin ? "Não tens conta? Regista-te" : "Já tens conta? Inicia sessão"}
-            </button>
-          </div>
         </div>
 
         <p className="text-center text-gray-400 text-xs mt-6">

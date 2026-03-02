@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/auth";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+
     const { id } = await params;
+
+    // Verify client belongs to this trainer (or is the client themselves)
+    const ownerFilter = user.role === "client" ? { id } : { id, managerId: user.id };
+    const clientCheck = await prisma.client.findFirst({ where: ownerFilter });
+    if (!clientCheck) return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
+
     const data = await request.json();
 
     // Calculate BMI if height + weight available

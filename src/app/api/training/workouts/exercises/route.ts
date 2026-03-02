@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/lib/auth";
 
 // POST - Add exercise to a workout
 export async function POST(request: NextRequest) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const data = await request.json();
     const { workoutId, exerciseId, sets, reps, restSeconds, weight, rpe, notes } = data;
 
@@ -39,6 +44,10 @@ export async function POST(request: NextRequest) {
 // PUT - Update training exercise (sets, reps, rest, etc.)
 export async function PUT(request: NextRequest) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const data = await request.json();
     const { id, sets, reps, restSeconds, weight, rpe, notes } = data;
 
@@ -66,6 +75,10 @@ export async function PUT(request: NextRequest) {
 // DELETE - Remove exercise from workout
 export async function DELETE(request: NextRequest) {
   try {
+    const user = await getUser(request);
+    if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID obrigatório" }, { status: 400 });

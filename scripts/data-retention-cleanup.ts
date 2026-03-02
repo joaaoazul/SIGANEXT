@@ -44,17 +44,8 @@ async function main() {
     if (!DRY_RUN) {
       // Delete related data first (cascade may handle some, but be explicit)
       await prisma.$transaction(async (tx) => {
-        // Delete workout logs
-        const workoutSets = await tx.workoutLog.findMany({
-          where: { clientId: client.id },
-          select: { id: true },
-        });
-        if (workoutSets.length > 0) {
-          await tx.workoutExerciseSet.deleteMany({
-            where: { workoutLogId: { in: workoutSets.map((w) => w.id) } },
-          });
-          await tx.workoutLog.deleteMany({ where: { clientId: client.id } });
-        }
+        // Delete workout logs (SetLog → ExerciseLog → WorkoutLog cascade)
+        await tx.workoutLog.deleteMany({ where: { clientId: client.id } });
 
         // Delete bookings
         await tx.booking.deleteMany({ where: { clientId: client.id } });
@@ -65,31 +56,27 @@ async function main() {
         // Delete feedbacks
         await tx.feedback.deleteMany({ where: { clientId: client.id } });
 
-        // Delete messages
-        await tx.message.deleteMany({
-          where: { OR: [{ senderId: client.id }, { receiverId: client.id }] },
+        // Delete messages via conversation participants
+        const participantRecords = await tx.conversationParticipant.findMany({
+          where: { clientId: client.id },
+          select: { conversationId: true },
         });
-
-        // Delete conversations
-        await tx.conversation.deleteMany({
-          where: { OR: [{ participantAId: client.id }, { participantBId: client.id }] },
-        });
+        const convIds = participantRecords.map((p) => p.conversationId);
+        if (convIds.length > 0) {
+          await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
+          await tx.conversationParticipant.deleteMany({ where: { conversationId: { in: convIds } } });
+          await tx.conversation.deleteMany({ where: { id: { in: convIds } } });
+        }
 
         // Delete notifications
-        await tx.notification.deleteMany({ where: { userId: client.id } });
+        await tx.notification.deleteMany({ where: { clientId: client.id } });
 
         // Delete body assessments
         await tx.bodyAssessment.deleteMany({ where: { clientId: client.id } });
 
         // Unassign from training/nutrition plans (don't delete PT's plans)
-        await tx.trainingPlan.updateMany({
-          where: { clientId: client.id },
-          data: { clientId: null },
-        });
-        await tx.nutritionPlan.updateMany({
-          where: { clientId: client.id },
-          data: { clientId: null },
-        });
+        await tx.trainingPlanAssignment.deleteMany({ where: { clientId: client.id } });
+        await tx.nutritionPlanAssignment.deleteMany({ where: { clientId: client.id } });
 
         // Finally, delete the client record
         await tx.client.delete({ where: { id: client.id } });
@@ -118,23 +105,26 @@ async function main() {
 
     if (!DRY_RUN) {
       await prisma.$transaction(async (tx) => {
-        // Remove managed clients association (don't delete clients)
+        // Remove managed clients association (orphan them)
         await tx.client.updateMany({
           where: { managerId: user.id },
-          data: { managerId: user.id }, // no-op, clients remain orphaned for now
+          data: { managerId: null },
         });
 
-        // Delete user's content (exercises, foods, training plans, nutrition plans are PT's work)
-        // Note: We DON'T delete exercises/foods as they might be used by migrated clients
-        
-        // Delete conversations and messages
-        await tx.message.deleteMany({
-          where: { OR: [{ senderId: user.id }, { receiverId: user.id }] },
+        // Delete conversations and messages via participants
+        const participantRecords = await tx.conversationParticipant.findMany({
+          where: { userId: user.id },
+          select: { conversationId: true },
         });
-        await tx.conversation.deleteMany({
-          where: { OR: [{ participantAId: user.id }, { participantBId: user.id }] },
-        });
-        await tx.notification.deleteMany({ where: { userId: user.id } });
+        const convIds = participantRecords.map((p) => p.conversationId);
+        if (convIds.length > 0) {
+          await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
+          await tx.conversationParticipant.deleteMany({ where: { conversationId: { in: convIds } } });
+          await tx.conversation.deleteMany({ where: { id: { in: convIds } } });
+        }
+
+        // Delete notifications sent by this user
+        await tx.notification.deleteMany({ where: { senderId: user.id } });
 
         // Delete the user record
         await tx.user.delete({ where: { id: user.id } });
@@ -172,7 +162,6 @@ async function main() {
   console.log("══════════════════════════════════════");
 
   await prisma.$disconnect();
-  await pool.end();
 }
 
 main().catch((err) => {

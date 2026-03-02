@@ -10,6 +10,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const { bookingId } = await params;
   const { status } = await request.json();
 
+  // Verify booking's slot belongs to this trainer
+  const existing = await prisma.booking.findFirst({
+    where: { id: bookingId, bookingSlot: { userId: user.id } },
+  });
+  if (!existing) return NextResponse.json({ error: "Reserva não encontrada" }, { status: 404 });
+
   const booking = await prisma.booking.update({
     where: { id: bookingId },
     data: { status },
@@ -25,6 +31,13 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
   const { bookingId } = await params;
+
+  // Verify booking's slot belongs to this trainer
+  const existing = await prisma.booking.findFirst({
+    where: { id: bookingId, bookingSlot: { userId: user.id } },
+  });
+  if (!existing) return NextResponse.json({ error: "Reserva não encontrada" }, { status: 404 });
+
   await prisma.booking.delete({ where: { id: bookingId } });
   return NextResponse.json({ success: true });
 }

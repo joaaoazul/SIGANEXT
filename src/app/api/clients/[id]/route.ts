@@ -12,8 +12,9 @@ export async function GET(
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
     const { id } = await params;
+    const ownerFilter = user.role === "client" ? {} : { managerId: user.id };
     const client = await prisma.client.findFirst({
-      where: { id, deletedAt: null },
+      where: { id, deletedAt: null, ...ownerFilter },
       include: {
         trainingPlans: {
           include: { trainingPlan: true },
@@ -67,6 +68,10 @@ export async function PUT(
 
     const { id } = await params;
     const data = await request.json();
+
+    // Verify ownership
+    const existing = await prisma.client.findFirst({ where: { id, managerId: user.id } });
+    if (!existing) return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     
     const client = await prisma.client.update({
       where: { id },
@@ -147,7 +152,7 @@ export async function DELETE(
 
     // Soft delete: set deletedAt timestamp instead of removing data
     const client = await prisma.client.findFirst({
-      where: { id, deletedAt: null },
+      where: { id, deletedAt: null, managerId: user.id },
       select: { id: true, email: true },
     });
 

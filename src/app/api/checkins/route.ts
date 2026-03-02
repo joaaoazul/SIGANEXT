@@ -29,7 +29,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    const where = clientId ? { clientId } : {};
+    const where = clientId
+      ? { clientId, client: { managerId: user.id } }
+      : { client: { managerId: user.id } };
 
     const [checkins, total] = await Promise.all([
       prisma.checkIn.findMany({
@@ -67,8 +69,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "clientId é obrigatório" }, { status: 400 });
     }
 
-    // Check if client exists
-    const client = await prisma.client.findUnique({ where: { id: clientId } });
+    // Check if client exists and belongs to this trainer
+    const client = await prisma.client.findFirst({ where: { id: clientId, managerId: user.id } });
     if (!client) return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
 
     // Create today's date at midnight for unique constraint

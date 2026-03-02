@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   const category = searchParams.get("category");
 
   try {
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { OR: [{ userId: user.id }, { userId: null }] };
     if (search) where.title = { contains: search, mode: "insensitive" };
     if (type) where.type = type;
     if (category) where.category = category;
@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
       url: data.url || null,
       thumbnailUrl: data.thumbnailUrl || null,
       isPublished: data.isPublished,
+      userId: user.id,
     },
   });
 

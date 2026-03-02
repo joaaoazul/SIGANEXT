@@ -19,10 +19,15 @@ import ToolsWidget from "@/components/ToolsWidget";
 
 async function getStats() {
   try {
+    const user = await getUser();
+    if (!user) return null;
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const myClients = { managerId: user.id, deletedAt: null };
 
     const [
       totalClients,
@@ -40,24 +45,26 @@ async function getStats() {
       todayCheckins,
       totalCheckins,
     ] = await Promise.all([
-      prisma.client.count(),
-      prisma.client.count({ where: { status: "active" } }),
-      prisma.client.count({ where: { paymentStatus: "pending" } }),
-      prisma.client.count({ where: { paymentStatus: "overdue" } }),
+      prisma.client.count({ where: myClients }),
+      prisma.client.count({ where: { ...myClients, status: "active" } }),
+      prisma.client.count({ where: { ...myClients, paymentStatus: "pending" } }),
+      prisma.client.count({ where: { ...myClients, paymentStatus: "overdue" } }),
       prisma.exercise.count(),
       prisma.trainingPlan.count(),
       prisma.nutritionPlan.count(),
-      prisma.feedback.count({ where: { status: "pending" } }),
+      prisma.feedback.count({ where: { status: "pending", client: { managerId: user.id } } }),
       prisma.booking.count({
         where: {
           date: { gte: new Date() },
           status: "confirmed",
+          bookingSlot: { userId: user.id },
         },
       }),
       prisma.booking.findMany({
         where: {
           date: { gte: today, lt: tomorrow },
           status: "confirmed",
+          bookingSlot: { userId: user.id },
         },
         include: {
           client: { select: { name: true, avatar: true } },
@@ -67,22 +74,24 @@ async function getStats() {
         take: 8,
       }),
       prisma.client.findMany({
+        where: myClients,
         take: 5,
         orderBy: { createdAt: "desc" },
         select: { id: true, name: true, email: true, status: true, createdAt: true },
       }),
       prisma.feedback.findMany({
+        where: { client: { managerId: user.id } },
         take: 5,
         orderBy: { createdAt: "desc" },
         include: { client: { select: { name: true } } },
       }),
       prisma.checkIn.findMany({
-        where: { date: { gte: today, lt: tomorrow } },
+        where: { date: { gte: today, lt: tomorrow }, client: { managerId: user.id } },
         include: { client: { select: { name: true, avatar: true } } },
         orderBy: { createdAt: "desc" },
         take: 6,
       }),
-      prisma.checkIn.count({ where: { date: { gte: today, lt: tomorrow } } }),
+      prisma.checkIn.count({ where: { date: { gte: today, lt: tomorrow }, client: { managerId: user.id } } }),
     ]);
 
     // Compute avg wellness from today's checkins
@@ -122,6 +131,9 @@ async function getStats() {
 export default async function DashboardPage() {
   const user = await getUser();
   const stats = await getStats();
+  if (!stats) {
+    return <div className="p-6 text-center text-gray-500">Não foi possível carregar o dashboard.</div>;
+  }
 
   const greeting = () => {
     const hour = new Date().getHours();

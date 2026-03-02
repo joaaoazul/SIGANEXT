@@ -23,6 +23,10 @@ export async function POST(request: NextRequest) {
     }
     const data = result.data;
 
+    // Verify client belongs to this trainer
+    const client = await prisma.client.findFirst({ where: { id: data.clientId, managerId: user.id } });
+    if (!client) return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
+
     const assignment = await prisma.nutritionPlanAssignment.create({
       data: {
         clientId: data.clientId,

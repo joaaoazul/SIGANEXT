@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "200");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = { OR: [{ userId: user.id }, { userId: null }] };
     if (search) {
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
         thumbnailUrl: data.thumbnailUrl || null,
         difficulty: data.difficulty || "intermediate",
         instructions: data.instructions || null,
+        userId: user.id,
       },
     });
 

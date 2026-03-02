@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
 
     const [plans, total] = await Promise.all([
       prisma.trainingPlan.findMany({
+        where: { OR: [{ userId: user.id }, { userId: null }] },
         orderBy: { createdAt: "desc" },
         take: Math.min(limit, 100),
         skip: offset,
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
           _count: { select: { assignments: true } },
         },
       }),
-      prisma.trainingPlan.count(),
+      prisma.trainingPlan.count({ where: { OR: [{ userId: user.id }, { userId: null }] } }),
     ]);
 
     return NextResponse.json(plans, {
@@ -87,6 +88,7 @@ export async function POST(request: NextRequest) {
         duration: data.duration ?? null,
         goal: data.goal || null,
         difficulty: data.difficulty || "intermediate",
+        userId: user.id,
         workouts: data.workouts ? {
           create: data.workouts.map((w, idx) => ({
             name: w.name,

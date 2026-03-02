@@ -6,8 +6,14 @@ import { getUser } from "@/lib/auth";
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUser(request);
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
   const { id } = await params;
+
+  // Verify ownership
+  const existing = await prisma.content.findFirst({ where: { id, userId: user.id } });
+  if (!existing) return NextResponse.json({ error: "Conteúdo não encontrado" }, { status: 404 });
+
   const body = await request.json();
 
   const content = await prisma.content.update({
@@ -30,8 +36,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUser(request);
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+  if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
   const { id } = await params;
+
+  // Verify ownership
+  const existing = await prisma.content.findFirst({ where: { id, userId: user.id } });
+  if (!existing) return NextResponse.json({ error: "Conteúdo não encontrado" }, { status: 404 });
+
   await prisma.content.delete({ where: { id } });
   return NextResponse.json({ success: true });
 }

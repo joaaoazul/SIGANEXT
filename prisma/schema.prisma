@@ -175,10 +175,13 @@ model Exercise {
   thumbnailUrl  String?
   difficulty    String    @default("intermediate")
   instructions  String?
+  userId        String?   // Owner trainer
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
   trainingExercises TrainingExercise[]
+
+  @@index([userId])
 }
 
 // ==================== TRAINING PLANS ====================
@@ -190,11 +193,14 @@ model TrainingPlan {
   duration    Int?
   goal        String?
   difficulty  String    @default("intermediate")
+  userId      String?   // Owner trainer
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   
   workouts    Workout[]
   assignments TrainingPlanAssignment[]
+
+  @@index([userId])
 }
 
 model Workout {
@@ -264,10 +270,13 @@ model Food {
   brand         String?
   servingSize   Float?
   servingUnit   String?
+  userId        String?   // Owner trainer
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
   mealFoods     MealFood[]
+
+  @@index([userId])
 }
 
 model NutritionPlan {
@@ -279,11 +288,14 @@ model NutritionPlan {
   totalCarbs      Float?
   totalFat        Float?
   goal            String?
+  userId          String?   // Owner trainer
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
   meals           Meal[]
   assignments     NutritionPlanAssignment[]
+
+  @@index([userId])
 }
 
 model Meal {
@@ -424,8 +436,11 @@ model Content {
   thumbnailUrl String?
   category    String?
   isPublished Boolean   @default(true)
+  userId      String?   // Owner trainer
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
 }
 
 // ==================== MAGIC LINKS / INVITES ====================
