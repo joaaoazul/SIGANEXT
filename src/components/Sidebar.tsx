@@ -21,6 +21,7 @@ import {
   CreditCard,
   Activity,
   MoreHorizontal,
+  Shield,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -89,7 +90,11 @@ export default function Sidebar() {
   }, [pathname]);
 
   const isAthlete = role === "client";
-  const navigation = isAthlete ? athleteNavigation : ptNavigation;
+  const isAdmin = role === "admin" || role === "superadmin";
+  const baseNavigation = isAthlete ? athleteNavigation : ptNavigation;
+  const navigation = isAdmin
+    ? [...baseNavigation, { name: "Admin SOC", href: "/admin", icon: Shield }]
+    : baseNavigation;
   const bottomNav = isAthlete ? athleteBottomNav : ptBottomNav;
   const brandSubtitle = isAthlete ? "Área do Atleta" : "Personal Trainer";
 

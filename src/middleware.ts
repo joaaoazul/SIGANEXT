@@ -76,8 +76,8 @@ export async function middleware(request: NextRequest) {
   const isPtRoute = PT_ROUTES.some((r) => pathname.startsWith(r));
   const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r));
 
-  // System admin routes — superadmin only
-  if (isAdminRoute && user.role !== "superadmin") {
+  // System admin routes — admin (PT) or superadmin only
+  if (isAdminRoute && user.role !== "admin" && user.role !== "superadmin") {
     const dest = user.role === "client" ? "/athlete" : "/dashboard";
     return NextResponse.redirect(new URL(dest, request.url));
   }

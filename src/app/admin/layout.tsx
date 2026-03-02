@@ -9,10 +9,14 @@ import {
   ScrollText,
   ArrowLeft,
   Shield,
+  Server,
+  Lock,
 } from "lucide-react";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/server", label: "Servidor", icon: Server },
+  { href: "/admin/rgpd", label: "RGPD", icon: Lock },
   { href: "/admin/users", label: "Utilizadores", icon: Users },
   { href: "/admin/incidents", label: "Incidentes", icon: AlertTriangle },
   { href: "/admin/logs", label: "Audit Logs", icon: ScrollText },
