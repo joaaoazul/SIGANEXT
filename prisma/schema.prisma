@@ -131,6 +131,8 @@ model Client {
   bookings           Booking[]
   checkIns           CheckIn[]
   workoutLogs        WorkoutLog[]
+  foodLogs           FoodLog[]
+  waterLogs          WaterLog[]
 }
 
 model BodyAssessment {
@@ -275,6 +277,7 @@ model Food {
   updatedAt     DateTime  @updatedAt
   
   mealFoods     MealFood[]
+  foodLogEntries FoodLogEntry[]
 
   @@index([userId])
 }
@@ -508,6 +511,60 @@ model SetLog {
   createdAt       DateTime  @default(now())
 
   @@index([exerciseLogId])
+}
+
+// ==================== FOOD LOG (Diário alimentar do atleta) ====================
+
+model FoodLog {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date        DateTime  @default(now()) // day of the log
+  mealType    String    // breakfast, morning_snack, lunch, afternoon_snack, dinner, supper, snack
+  name        String    // "Pequeno-almoço", user-given label
+  time        String?   // "08:30"
+  notes       String?
+  photos      String?   // JSON array: [{url, label, path}]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  entries     FoodLogEntry[]
+
+  @@index([clientId])
+  @@index([clientId, date])
+}
+
+model FoodLogEntry {
+  id          String    @id @default(cuid())
+  foodLogId   String
+  foodLog     FoodLog   @relation(fields: [foodLogId], references: [id], onDelete: Cascade)
+  foodId      String?   // link to catalogue food (optional)
+  food        Food?     @relation(fields: [foodId], references: [id])
+  name        String    // food name (can be custom if no foodId)
+  quantity    Float     @default(100)
+  unit        String    @default("g")
+  calories    Float     @default(0)
+  protein     Float     @default(0)
+  carbs       Float     @default(0)
+  fat         Float     @default(0)
+  fiber       Float?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  @@index([foodLogId])
+  @@index([foodId])
+}
+
+model WaterLog {
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date        DateTime  // day
+  amountMl    Int       @default(250) // each entry = one glass/amount
+  createdAt   DateTime  @default(now())
+
+  @@index([clientId])
+  @@index([clientId, date])
 }
 
 // ==================== DAILY CHECK-INS ====================

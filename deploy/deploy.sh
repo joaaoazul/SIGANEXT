@@ -39,18 +39,36 @@ echo "[4/6] Syncing database schema..."
 npx prisma db push --accept-data-loss=false
 
 # ── 5. Build ──
-echo "[5/6] Building Next.js..."
+echo "[5/7] Building Next.js..."
 npm run build
 
-# ── 6. Restart PM2 ──
-echo "[6/6] Restarting application..."
+# ── 6. Copy assets for standalone mode ──
+echo "[6/7] Preparing standalone build..."
+if [ -d ".next/standalone" ]; then
+  cp -r .next/static .next/standalone/.next/static 2>/dev/null || true
+  cp -r public .next/standalone/public 2>/dev/null || true
+  # Copy .env to standalone dir so server.js can read it
+  cp .env .next/standalone/.env 2>/dev/null || true
+  echo "  ✓ Static assets + public copied to standalone"
+fi
+
+# ── 7. Restart PM2 ──
+echo "[7/7] Restarting application..."
 if pm2 describe siga180 > /dev/null 2>&1; then
-  pm2 reload ecosystem.config.js
+  pm2 reload ecosystem.config.js --update-env
 else
   pm2 start ecosystem.config.js
 fi
 
 pm2 save
+
+# Verify
+sleep 3
+if curl -sf -o /dev/null http://127.0.0.1:3000; then
+  echo "  ✓ App responding at http://127.0.0.1:3000"
+else
+  echo "  ⚠ App may still be starting. Check: pm2 logs siga180"
+fi
 
 echo ""
 echo "══════════════════════════════════════"
