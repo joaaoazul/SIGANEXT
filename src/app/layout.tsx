@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
@@ -8,11 +8,17 @@ const outfit = Outfit({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#10b981",
+};
+
 export const metadata: Metadata = {
   title: "SIGA180 - Gestão para Personal Trainers",
   description: "Plataforma SaaS de gestão completa para Personal Trainers. Gerir clientes, treinos, nutrição e muito mais.",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
-  themeColor: "#10b981",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
