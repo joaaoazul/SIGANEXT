@@ -114,6 +114,7 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-bold text-gray-900">SIGA180</h1>
           <p className="text-gray-500 mt-2">Sistema Integrado de Gestão de Atletas</p>
+          <p className="text-gray-400 text-sm mt-1">Ruben Ramos Coaching</p>
         </div>
 
         {/* Form Card */}

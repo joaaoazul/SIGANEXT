@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 
-const inter = Inter({
-  variable: "--font-inter",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt">
-      <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
+      <body className={`${outfit.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
         {children}
         <CookieBanner />
       </body>
