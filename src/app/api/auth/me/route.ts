@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const user = await getUser(request);
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
+    // 1. Lógica para quando um Atleta faz login
     if (user.role === "client") {
       const data = await prisma.client.findUnique({
         where: { id: user.id },
@@ -20,12 +21,37 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ...data, role: "client" });
     }
 
+    // 2. Lógica para quando o PT / Admin faz login
     const data = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { id: true, name: true, email: true, phone: true, role: true, avatar: true, createdAt: true, consentVersion: true },
+      select: { 
+        id: true, 
+        name: true, 
+        email: true, 
+        phone: true, 
+        role: true, 
+        avatar: true, 
+        createdAt: true, 
+        consentVersion: true,
+        plan: true // ADICIONADO: Vai buscar o plano do Treinador (starter, pro, elite)
+      },
     });
 
-    return NextResponse.json(data);
+    // 3. ADICIONADO: Lógica de negócio SaaS - Contar atletas ativos
+    const activeClientsCount = await prisma.client.count({
+      where: {
+        managerId: user.id,
+        status: "active",
+        deletedAt: null
+      }
+    });
+
+    // Devolve os dados normais + a contagem para a barra de progresso no frontend
+    return NextResponse.json({
+      ...data,
+      activeClientsCount
+    });
+    
   } catch (error) {
     console.error("auth/me GET error:", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });

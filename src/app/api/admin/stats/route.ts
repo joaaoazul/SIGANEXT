@@ -28,7 +28,7 @@ export async function GET() {
       usersLast24h,
     ] = await Promise.all([
       prisma.user.count(),
-      prisma.client.count(),
+      prisma.client.count({ where: { deletedAt: null } }), // <-- CORREÇÃO APLICADA AQUI
       prisma.client.count({ where: { status: "active", deletedAt: null } }),
       prisma.client.count({ where: { deletedAt: { not: null } } }),
       prisma.trainingPlan.count(),

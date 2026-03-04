@@ -10,34 +10,42 @@ datasource db {
 // ==================== AUTH & USERS ====================
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password      String
-  name          String
-  role          String    @default("admin") // admin, employee, client
-  avatar        String?
-  coverImage    String?   // Banner / cover photo
-  phone         String?
-  bio           String?   // Short bio
-  specialties   String?   // Comma-separated specialties (e.g. "Hipertrofia, Perda de peso")
-  location      String?   // City / region
-  socialLinks   String?   // JSON: { instagram, facebook, linkedin, website }
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  consentDate    DateTime? // RGPD consent timestamp
-  consentIp      String?   // IP at time of consent
-  consentVersion String?   // Version of privacy policy consented to
-  healthDataConsent Boolean @default(false) // Explicit consent for health data (Art. 9)
-  managedClients Client[]  @relation("ManagedBy")
-  clientProfile  Client?   @relation("ClientUser")
+  id                String    @id @default(cuid())
+  email             String    @unique
+  password          String
+  name              String
+  role              String    @default("admin") // admin, employee, client
+  
+  // ─── CAMPOS DE SAAS B2B (Faturação do Treinador) ───
+  plan              String    @default("starter") // "starter", "pro", "elite"
+  planStatus        String    @default("active")  // "active", "past_due", "canceled"
+  stripeCustomerId  String?   // Para futura integração com pagamentos
+  // ───────────────────────────────────────────────────
+
+  avatar            String?
+  coverImage        String?   // Banner / cover photo
+  phone             String?
+  bio               String?   // Short bio
+  specialties       String?   // Comma-separated specialties (e.g. "Hipertrofia, Perda de peso")
+  location          String?   // City / region
+  socialLinks       String?   // JSON: { instagram, facebook, linkedin, website }
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  consentDate       DateTime? // RGPD consent timestamp
+  consentIp         String?   // IP at time of consent
+  consentVersion    String?   // Version of privacy policy consented to
+  healthDataConsent Boolean   @default(false) // Explicit consent for health data (Art. 9)
+  
+  managedClients    Client[]  @relation("ManagedBy")
+  clientProfile     Client?   @relation("ClientUser")
   sentNotifications Notification[] @relation("SentNotifications")
-  sentFeedbacks  Feedback[] @relation("SentFeedbacks")
+  sentFeedbacks     Feedback[] @relation("SentFeedbacks")
   
   // Employee-specific
-  permissions    String?   // JSON string of permissions
+  permissions       String?   // JSON string of permissions
   
   // Bookings created by admin
-  bookingSlots  BookingSlot[]
+  bookingSlots      BookingSlot[]
 }
 
 // ==================== CLIENTS ====================
