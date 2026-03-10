@@ -8,7 +8,7 @@ import { rateLimit, getClientIP } from "@/lib/rate-limit";
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIP(request);
-    const rl = rateLimit(`delete-account:${ip}`, { max: 3, windowSecs: 60 * 60 });
+    const rl = await rateLimit(`delete-account:${ip}`, { max: 3, windowSecs: 60 * 60 });
     if (!rl.success) {
       return NextResponse.json({ error: "Demasiadas tentativas. Tente mais tarde." }, { status: 429 });
     }

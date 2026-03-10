@@ -63,9 +63,11 @@ export async function POST(request: NextRequest) {
     const url = await uploadFile(BUCKET_NAME, path, compressed, "image/webp");
 
     return NextResponse.json({ url, label: label || "photo", path });
-  } catch (error: any) {
-    console.error("Upload error:", error?.message || error);
-    console.error("Upload error stack:", error?.stack);
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const errStack = error instanceof Error ? error.stack : undefined;
+    console.error("Upload error:", errMsg);
+    if (errStack) console.error("Upload error stack:", errStack);
     return NextResponse.json({ error: "Erro ao fazer upload" }, { status: 500 });
   }
 }

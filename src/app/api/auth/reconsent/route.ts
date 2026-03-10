@@ -7,7 +7,7 @@ import { logAuditFromRequest } from "@/lib/audit";
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIP(request);
-    const rl = rateLimit(`reconsent:${ip}`, { max: 10, windowSecs: 60 * 60 });
+    const rl = await rateLimit(`reconsent:${ip}`, { max: 10, windowSecs: 60 * 60 });
     if (!rl.success) {
       return NextResponse.json({ error: "Demasiadas tentativas." }, { status: 429 });
     }

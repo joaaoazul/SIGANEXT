@@ -10,7 +10,7 @@ import { validatePassword } from "@/lib/schemas/password";
 export async function PUT(request: NextRequest) {
   // Rate limit: 5 password change attempts per 15 minutes
   const ip = getClientIP(request);
-  const rl = rateLimit(`password:${ip}`, { max: 5, windowSecs: 15 * 60 });
+  const rl = await rateLimit(`password:${ip}`, { max: 5, windowSecs: 15 * 60 });
   if (!rl.success) {
     return NextResponse.json(
       { error: "Demasiadas tentativas. Tente novamente mais tarde." },

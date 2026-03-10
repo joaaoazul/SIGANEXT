@@ -88,7 +88,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/termos") ||
     pathname.startsWith("/dpia") ||
     pathname.startsWith("/dpa") ||
-    pathname.startsWith("/violacao-dados");
+    pathname.startsWith("/violacao-dados") ||
+    pathname.startsWith("/offline");
 
   if (isPublic) {
     if (token && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {

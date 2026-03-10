@@ -7,7 +7,7 @@ import { sanitizeFilename } from "@/lib/security";
 export async function GET(request: NextRequest) {
   try {
     const ip = getClientIP(request);
-    const rl = rateLimit(`export:${ip}`, { max: 5, windowSecs: 60 * 60 });
+    const rl = await rateLimit(`export:${ip}`, { max: 5, windowSecs: 60 * 60 });
     if (!rl.success) {
       return NextResponse.json({ error: "Demasiados pedidos de exportação. Tente mais tarde." }, { status: 429 });
     }

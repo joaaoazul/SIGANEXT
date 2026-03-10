@@ -199,6 +199,6 @@ export async function POST(request: NextRequest) {
     if (msg.includes("Unique constraint") || msg === "UNIQUE_EMAIL") {
       return NextResponse.json({ error: "Email já registado" }, { status: 400 });
     }
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: "Erro ao criar cliente" }, { status: 500 });
   }
 }

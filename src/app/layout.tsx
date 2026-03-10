@@ -4,6 +4,7 @@ import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import { ToastProvider } from "@/components/Toast";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ServiceWorkerRegistrar } from "@/components/ServiceWorker";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -21,10 +22,20 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "SIGA180 - Gestão para Personal Trainers",
   description: "Plataforma SaaS de gestão completa para Personal Trainers. Gerir clientes, treinos, nutrição e muito mais.",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "SIGA180",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icons/apple-touch-icon.png", sizes: "180x180" },
+    ],
   },
 };
 
@@ -40,6 +51,7 @@ export default function RootLayout({
           <ToastProvider>
             {children}
             <CookieBanner />
+            <ServiceWorkerRegistrar />
           </ToastProvider>
         </ThemeProvider>
       </body>

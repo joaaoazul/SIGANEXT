@@ -22,28 +22,33 @@ export async function GET(request: NextRequest) {
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
   if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
-  const { searchParams } = new URL(request.url);
-  const date = searchParams.get("date");
+  try {
+    const { searchParams } = new URL(request.url);
+    const date = searchParams.get("date");
 
-  const where: Record<string, unknown> = { userId: user.id };
-  if (date) {
-    const start = new Date(date);
-    const end = new Date(date);
-    end.setDate(end.getDate() + 1);
-    where.date = { gte: start, lt: end };
-  }
+    const where: Record<string, unknown> = { userId: user.id };
+    if (date) {
+      const start = new Date(date);
+      const end = new Date(date);
+      end.setDate(end.getDate() + 1);
+      where.date = { gte: start, lt: end };
+    }
 
-  const slots = await prisma.bookingSlot.findMany({
-    where,
-    include: {
-      bookings: {
-        include: { client: { select: { id: true, name: true, email: true, phone: true } } },
+    const slots = await prisma.bookingSlot.findMany({
+      where,
+      include: {
+        bookings: {
+          include: { client: { select: { id: true, name: true, email: true, phone: true } } },
+        },
       },
-    },
-    orderBy: [{ date: "asc" }, { startTime: "asc" }],
-  });
+      orderBy: [{ date: "asc" }, { startTime: "asc" }],
+    });
 
-  return NextResponse.json(slots);
+    return NextResponse.json(slots);
+  } catch (error) {
+    console.error("Bookings GET error:", error);
+    return NextResponse.json({ error: "Erro ao carregar agendamentos" }, { status: 500 });
+  }
 }
 
 // POST /api/bookings - create a booking slot
@@ -93,25 +98,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Nenhum dia corresponde aos dias selecionados" }, { status: 400 });
     }
 
-    await prisma.bookingSlot.createMany({ data: slotsToCreate });
-    return NextResponse.json({ created: slotsToCreate.length, message: `${slotsToCreate.length} slots criados` }, { status: 201 });
+    try {
+      await prisma.bookingSlot.createMany({ data: slotsToCreate });
+      return NextResponse.json({ created: slotsToCreate.length, message: `${slotsToCreate.length} slots criados` }, { status: 201 });
+    } catch (error) {
+      console.error("Bookings recurring create error:", error);
+      return NextResponse.json({ error: "Erro ao criar slots recorrentes" }, { status: 500 });
+    }
   }
 
   // Single slot
   if (!data.date) return NextResponse.json({ error: "Data é obrigatória" }, { status: 400 });
 
-  const slot = await prisma.bookingSlot.create({
-    data: {
-      userId: user.id,
-      title: data.title,
-      date: new Date(data.date),
-      startTime: data.startTime,
-      endTime: data.endTime,
-      maxClients: data.maxClients,
-      notes: data.notes || null,
-    },
-    include: { bookings: { include: { client: true } } },
-  });
+  try {
+    const slot = await prisma.bookingSlot.create({
+      data: {
+        userId: user.id,
+        title: data.title,
+        date: new Date(data.date),
+        startTime: data.startTime,
+        endTime: data.endTime,
+        maxClients: data.maxClients,
+        notes: data.notes || null,
+      },
+      include: { bookings: { include: { client: true } } },
+    });
 
-  return NextResponse.json(slot, { status: 201 });
+    return NextResponse.json(slot, { status: 201 });
+  } catch (error) {
+    console.error("Bookings create error:", error);
+    return NextResponse.json({ error: "Erro ao criar agendamento" }, { status: 500 });
+  }
 }

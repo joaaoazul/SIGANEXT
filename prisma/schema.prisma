@@ -704,3 +704,13 @@ model AuditLog {
   @@index([createdAt])
   @@index([entity, entityId])
 }
+
+// ==================== RATE LIMITING ====================
+
+model RateLimitEntry {
+  key       String   @id
+  count     Int      @default(1)
+  resetAt   DateTime
+
+  @@index([resetAt])
+}

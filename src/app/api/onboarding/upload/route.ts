@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limit onboarding uploads: 20 per hour per IP
     const ip = getClientIP(request);
-    const rl = rateLimit(`onboarding-upload:${ip}`, { max: 20, windowSecs: 60 * 60 });
+    const rl = await rateLimit(`onboarding-upload:${ip}`, { max: 20, windowSecs: 60 * 60 });
     if (!rl.success) {
       return NextResponse.json(
         { error: "Demasiados uploads. Tente novamente mais tarde." },
