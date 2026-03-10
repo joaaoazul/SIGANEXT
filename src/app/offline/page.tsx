@@ -1,9 +1,6 @@
-import { Metadata } from "next";
-import { WifiOff, RefreshCw } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Offline - SIGA180",
-};
+import { WifiOff, RefreshCw } from "lucide-react";
 
 export default function OfflinePage() {
   return (
