@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, isAdmin } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "superadmin") {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 

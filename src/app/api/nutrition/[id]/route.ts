@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 import { z } from "zod";
 
 const nutritionPlanUpdateSchema = z.object({
@@ -137,6 +138,12 @@ export async function PUT(
       },
     });
 
+    logAuditFromRequest(request, "update_nutrition_plan", {
+      entity: "NutritionPlan", entityId: id,
+      userId: user.id, userEmail: user.email, userRole: user.role,
+      details: { name: plan.name },
+    });
+
     return NextResponse.json(plan);
   } catch (e) {
     console.error("Error updating nutrition plan:", e);
@@ -155,6 +162,12 @@ export async function DELETE(
   try {
     const { id } = await params;
     await prisma.nutritionPlan.delete({ where: { id } });
+
+    logAuditFromRequest(request, "delete_nutrition_plan", {
+      entity: "NutritionPlan", entityId: id,
+      userId: user.id, userEmail: user.email, userRole: user.role,
+    });
+
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Erro ao eliminar plano" }, { status: 500 });

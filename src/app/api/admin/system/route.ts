@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUser } from "@/lib/auth";
+import { getUser, isAdmin } from "@/lib/auth";
 import os from "os";
 import fs from "fs";
 import { execSync } from "child_process";
@@ -8,7 +8,7 @@ import { execSync } from "child_process";
 export async function GET() {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "admin" && user.role !== "superadmin")) {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 

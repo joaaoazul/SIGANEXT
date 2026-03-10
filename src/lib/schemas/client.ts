@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PASSWORD_MIN_LENGTH } from "@/lib/constants";
 
 /**
  * Helper: coerce empty strings to undefined so optional numbers don't fail .min()
@@ -30,7 +31,7 @@ export const clientProfileSchema = z.object({
   // Required
   name: z.string().min(1, "Nome é obrigatório").max(200),
   email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Palavra-passe deve ter pelo menos 6 caracteres").max(100).optional(),
+  password: z.string().min(PASSWORD_MIN_LENGTH, `Palavra-passe deve ter pelo menos ${PASSWORD_MIN_LENGTH} caracteres`).max(100).optional(),
 
   // Personal
   phone: z.preprocess((v) => (v === "" ? undefined : v), z.string().max(30).optional().nullable()),
@@ -92,7 +93,7 @@ export const clientProfileSchema = z.object({
 /** Schema for POST /api/onboarding — requires inviteId and password */
 export const onboardingSchema = clientProfileSchema.extend({
   inviteId: z.string().min(1, "inviteId é obrigatório"),
-  password: z.string().min(6, "Palavra-passe deve ter pelo menos 6 caracteres").max(100),
+  password: z.string().min(PASSWORD_MIN_LENGTH, `Palavra-passe deve ter pelo menos ${PASSWORD_MIN_LENGTH} caracteres`).max(100),
 });
 
 /** Schema for POST /api/clients — password optional (auto-generated if missing) */

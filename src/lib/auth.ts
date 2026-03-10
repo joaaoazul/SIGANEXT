@@ -39,6 +39,20 @@ export async function getUser(_request?: unknown): Promise<UserPayload | null> {
 }
 
 /**
+ * Check if a user has admin-level access (admin or superadmin).
+ */
+export function isAdmin(user: UserPayload | null): user is UserPayload {
+  return !!user && (user.role === "admin" || user.role === "superadmin");
+}
+
+/**
+ * Check if a user is a superadmin specifically.
+ */
+export function isSuperAdmin(user: UserPayload | null): user is UserPayload {
+  return !!user && user.role === "superadmin";
+}
+
+/**
  * For client-role users, resolves the actual Client.id.
  * Handles old JWTs that may contain User.id instead of Client.id.
  */

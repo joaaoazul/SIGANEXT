@@ -1,5 +1,9 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
+// ============================================================================
+// 1. CLIENTE SUPABASE ORIGINAL (Mantido para não quebrar BD/Auth no resto da app)
+// ============================================================================
 let _supabase: SupabaseClient | null = null;
 export function getSupabase() {
   if (!_supabase) {
@@ -10,17 +14,29 @@ export function getSupabase() {
   return _supabase;
 }
 
-// Keep backward compat — lazy getter
 export const supabase = new Proxy({} as SupabaseClient, {
   get(_, prop) {
     return (getSupabase() as any)[prop];
   },
 });
 
-export const BUCKET_NAME = "body-photos";
+
+// ============================================================================
+// 2. INTEGRAÇÃO CLOUDFLARE R2 (Novo Storage de Ficheiros)
+// ============================================================================
+const S3 = new S3Client({
+  region: "auto",
+  endpoint: `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  },
+});
+
+export const BUCKET_NAME = "siganext-uploads"; // Nome do bucket criado no painel da Cloudflare
 
 /**
- * Upload a file to Supabase Storage and return the public URL.
+ * Upload a file to Cloudflare R2 and return the public URL.
  * path: e.g. "clients/{clientId}/assessments/{assessmentId}/front.jpg"
  */
 export async function uploadFile(
@@ -29,21 +45,39 @@ export async function uploadFile(
   file: Buffer | Uint8Array,
   contentType: string
 ): Promise<string> {
-  const { error } = await supabase.storage.from(bucket).upload(path, file, {
-    contentType,
-    upsert: true,
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: path,
+    Body: file,
+    ContentType: contentType,
   });
 
-  if (error) throw new Error(`Upload failed: ${error.message}`);
+  // Envia para o R2
+  await S3.send(command);
 
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
+  // Se existir um R2 public URL (r2.dev ou custom domain), usa-o diretamente
+  // Caso contrário, usa o proxy interno /api/files/
+  const r2PublicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+  if (r2PublicUrl) {
+    return `${r2PublicUrl}/${path}`;
+  }
+  
+  // URL relativo — funciona em qualquer ambiente (dev, prod, etc.)
+  return `/api/files/${path}`;
 }
 
 /**
- * Delete a file from Supabase Storage.
+ * Delete a file from Cloudflare R2.
  */
 export async function deleteFile(bucket: string, path: string) {
-  const { error } = await supabase.storage.from(bucket).remove([path]);
-  if (error) console.error("Delete file error:", error.message);
+  try {
+    const command = new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: path,
+    });
+    
+    await S3.send(command);
+  } catch (error: any) {
+    console.error("Delete file error:", error.message);
+  }
 }

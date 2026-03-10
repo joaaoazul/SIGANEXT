@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 
 // GET /api/profile — full profile with stats
 export async function GET(request: NextRequest) {
@@ -155,6 +156,12 @@ export async function PUT(request: NextRequest) {
         },
         select: { id: true, name: true, email: true, phone: true, avatar: true },
       });
+      logAuditFromRequest(request, "update_profile", {
+        entity: "Client",
+        userId: user.id, userEmail: user.email, userRole: user.role,
+        details: { fields: Object.keys(body) },
+      });
+
       return NextResponse.json({ ...updated, role: "client" });
     }
 
@@ -185,6 +192,12 @@ export async function PUT(request: NextRequest) {
         socialLinks: true,
         role: true,
       },
+    });
+
+    logAuditFromRequest(request, "update_profile", {
+      entity: "User",
+      userId: user.id, userEmail: user.email, userRole: user.role,
+      details: { fields: Object.keys(body) },
     });
 
     return NextResponse.json(updated);

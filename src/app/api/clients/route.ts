@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { getUser } from "@/lib/auth";
 import { sendWelcomeEmail } from "@/lib/email";
 import { clientCreateSchema } from "@/lib/schemas/client";
+import { logAuditFromRequest } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const user = await getUser(request);
@@ -189,6 +190,12 @@ export async function POST(request: NextRequest) {
         trainerName: trainer?.name || "O teu treinador",
       });
     } catch { /* email failure is not critical */ }
+
+    logAuditFromRequest(request, "create_client", {
+      entity: "Client", entityId: result2.id,
+      userId: user.id, userEmail: user.email, userRole: user.role,
+      details: { clientEmail: result2.email },
+    });
 
     return NextResponse.json({
       ...result2,

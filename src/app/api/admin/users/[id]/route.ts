@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, isAdmin } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { validatePassword } from "@/lib/schemas/password";
 import bcrypt from "bcryptjs";
 
 export async function GET(
@@ -10,7 +11,7 @@ export async function GET(
 ) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "superadmin") {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 
@@ -58,7 +59,7 @@ export async function PUT(
 ) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "superadmin") {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 
@@ -82,8 +83,9 @@ export async function PUT(
 
     // Password reset by admin
     if (body.newPassword) {
-      if (body.newPassword.length < 6) {
-        return NextResponse.json({ error: "Password deve ter pelo menos 6 caracteres" }, { status: 400 });
+      const pwValidation = validatePassword(body.newPassword);
+      if (!pwValidation.valid) {
+        return NextResponse.json({ error: pwValidation.errors[0] }, { status: 400 });
       }
       data.password = await bcrypt.hash(body.newPassword, 12);
     }
@@ -134,7 +136,7 @@ export async function DELETE(
 ) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "superadmin") {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { z } from "zod";
+import { logAuditFromRequest } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   const user = await getUser(request);
@@ -108,6 +109,12 @@ export async function POST(request: NextRequest) {
         } : undefined,
       },
       include: { meals: { include: { foods: { include: { food: true } } } } },
+    });
+
+    logAuditFromRequest(request, "create_nutrition_plan", {
+      entity: "NutritionPlan", entityId: plan.id,
+      userId: user.id, userEmail: user.email, userRole: user.role,
+      details: { name: plan.name },
     });
 
     return NextResponse.json(plan, { status: 201 });

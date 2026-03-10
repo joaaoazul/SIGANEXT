@@ -35,11 +35,44 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const { pathname } = request.nextUrl;
 
+  // ── CSRF Protection for mutating API requests ──
+  // Verify Origin header matches our domain for state-changing requests
+  if (
+    pathname.startsWith("/api/") &&
+    !pathname.startsWith("/api/auth/login") &&
+    !pathname.startsWith("/api/auth/register") &&
+    !pathname.startsWith("/api/onboarding") &&
+    !pathname.startsWith("/api/invites/validate") &&
+    request.method !== "GET" &&
+    request.method !== "HEAD" &&
+    request.method !== "OPTIONS"
+  ) {
+    const origin = request.headers.get("origin");
+    const host = request.headers.get("host");
+    if (origin && host) {
+      try {
+        const originHost = new URL(origin).host;
+        if (originHost !== host) {
+          return NextResponse.json(
+            { error: "CSRF: Origin mismatch" },
+            { status: 403 }
+          );
+        }
+      } catch {
+        return NextResponse.json(
+          { error: "CSRF: Invalid origin" },
+          { status: 403 }
+        );
+      }
+    }
+  }
+
   // Public routes
   const isPublic =
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/health") ||
     pathname.startsWith("/onboarding") ||
     pathname.startsWith("/api/onboarding") ||
     pathname.startsWith("/api/invites/validate") ||

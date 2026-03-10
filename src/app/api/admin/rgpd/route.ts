@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, isAdmin } from "@/lib/auth";
 
 // GET /api/admin/rgpd — RGPD compliance dashboard (admin only)
 export async function GET() {
   try {
     const user = await getUser();
-    if (!user || (user.role !== "admin" && user.role !== "superadmin")) {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
     }
 
@@ -118,7 +118,7 @@ export async function GET() {
     });
 
     // ── RGPD compliance checklist ──
-    const currentPolicyVersion = "2.0";
+    const { CURRENT_POLICY_VERSION: currentPolicyVersion } = await import("@/lib/constants");
     const compliance = {
       consentManagement: usersWithConsent > 0,
       healthDataConsent: usersWithHealthConsent > 0 || totalUsers === 0,
@@ -127,13 +127,17 @@ export async function GET() {
       incidentManagement: true, // Model exists
       dataIsolation: true, // managerId scoping implemented
       encryptionAtRest: true, // Supabase provides this
-      encryptionInTransit: true, // HTTPS
-      rightToErasure: true, // Inactive client data auto-cleaned
+      encryptionInTransit: true, // HTTPS + HSTS headers
+      rightToErasure: true, // Self-service via /api/auth/delete-account + admin purge
+      selfServiceExport: true, // /api/auth/export-data (DSAR Art. 15 & 20)
+      selfServiceDeletion: true, // /api/auth/delete-account (Art. 17)
       dataMinimization: true, // Only necessary fields collected
       privacyPolicy: true, // /privacy page exists
       cookiePolicy: true, // /cookies page exists
       dpia: true, // /dpia page exists
       dpa: true, // /dpa page exists
+      securityHeaders: true, // CSP, HSTS, X-Frame-Options, etc. in next.config.ts
+      csrfProtection: true, // Origin header validation in middleware
     };
 
     const complianceScore = Object.values(compliance).filter(Boolean).length;

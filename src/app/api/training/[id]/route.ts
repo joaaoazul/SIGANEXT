@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 
 export async function GET(
   request: NextRequest,
@@ -62,6 +63,12 @@ export async function PUT(
       },
     });
 
+    logAuditFromRequest(request, "update_training_plan", {
+      entity: "TrainingPlan", entityId: id,
+      userId: user.id, userEmail: user.email, userRole: user.role,
+      details: { name: plan.name },
+    });
+
     return NextResponse.json(plan);
   } catch {
     return NextResponse.json({ error: "Erro ao atualizar plano" }, { status: 500 });
@@ -79,6 +86,12 @@ export async function DELETE(
 
     const { id } = await params;
     await prisma.trainingPlan.delete({ where: { id } });
+
+    logAuditFromRequest(request, "delete_training_plan", {
+      entity: "TrainingPlan", entityId: id,
+      userId: user.id, userEmail: user.email, userRole: user.role,
+    });
+
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Erro ao eliminar plano" }, { status: 500 });

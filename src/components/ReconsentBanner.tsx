@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-const CURRENT_POLICY_VERSION = "1.0";
+import { CURRENT_POLICY_VERSION } from "@/lib/constants";
 
 export default function ReconsentBanner() {
   const [show, setShow] = useState(false);

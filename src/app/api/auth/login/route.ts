@@ -113,9 +113,12 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch {
+  } catch (error: any) {
+    const fullMsg = error?.message || String(error);
+    console.error("Login error FULL:", fullMsg);
+    if (error?.stack) console.error("Login stack:", error.stack);
     return NextResponse.json(
-      { error: "Erro interno do servidor" },
+      { error: "Erro interno do servidor", debug: process.env.NODE_ENV !== "production" ? fullMsg : undefined },
       { status: 500 }
     );
   }

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { logAuditFromRequest } from "@/lib/audit";
+import { validatePassword } from "@/lib/schemas/password";
 
 // PUT /api/auth/password
 export async function PUT(request: NextRequest) {
@@ -25,8 +27,9 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Passwords obrigatórias" }, { status: 400 });
   }
 
-  if (newPassword.length < 6) {
-    return NextResponse.json({ error: "A nova password deve ter pelo menos 6 caracteres" }, { status: 400 });
+  const pwValidation = validatePassword(newPassword);
+  if (!pwValidation.valid) {
+    return NextResponse.json({ error: pwValidation.errors[0] }, { status: 400 });
   }
 
   if (user.role === "client") {
@@ -41,6 +44,10 @@ export async function PUT(request: NextRequest) {
     const hashed = await bcrypt.hash(newPassword, 10);
     await prisma.client.update({ where: { id: user.id }, data: { password: hashed } });
 
+    logAuditFromRequest(request, "change_password", {
+      entity: "User", userId: user.id, userEmail: user.email, userRole: user.role,
+    });
+
     return NextResponse.json({ success: true });
   }
 
@@ -52,6 +59,10 @@ export async function PUT(request: NextRequest) {
 
   const hashed = await bcrypt.hash(newPassword, 10);
   await prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
+
+  logAuditFromRequest(request, "change_password", {
+    entity: "User", userId: user.id, userEmail: user.email, userRole: user.role,
+  });
 
   return NextResponse.json({ success: true });
 }

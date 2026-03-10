@@ -56,8 +56,9 @@ export async function POST(request: NextRequest) {
     const url = await uploadFile(BUCKET_NAME, path, compressed, "image/webp");
 
     return NextResponse.json({ url, label: label || "photo", path });
-  } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ error: "Erro ao fazer upload" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Upload error:", error?.message || error);
+    console.error("Upload error stack:", error?.stack);
+    return NextResponse.json({ error: "Erro ao fazer upload", details: error?.message }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, isAdmin } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
 
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "superadmin") {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 
@@ -37,7 +37,7 @@ export async function PUT(
 ) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "superadmin") {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 
@@ -99,7 +99,7 @@ export async function DELETE(
 ) {
   try {
     const user = await getUser();
-    if (!user || user.role !== "superadmin") {
+    if (!isAdmin(user)) {
       return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
     }
 
