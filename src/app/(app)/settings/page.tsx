@@ -140,7 +140,7 @@ export default function SettingsPage() {
       <PageHeader title="Definições" description="Gerir o seu perfil e configurações da conta" />
 
       {message && (
-        <div className={`mb-4 p-3 rounded-xl text-sm ${message.includes("sucesso") ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>
+        <div className={`mb-4 p-3 rounded-xl text-sm ${message.includes("sucesso") ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"}`}>
           {message}
         </div>
       )}
@@ -154,7 +154,7 @@ export default function SettingsPage() {
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                  activeTab === tab.key ? "bg-emerald-50 text-emerald-600" : "text-gray-500 hover:bg-gray-50"
+                  activeTab === tab.key ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                 }`}
               >
                 {tab.icon} {tab.label}
@@ -169,20 +169,20 @@ export default function SettingsPage() {
           {/* ABA: PERFIL */}
           {activeTab === "profile" && (
             <div className="card max-w-xl">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <User className="w-5 h-5 text-emerald-600" /> Perfil
               </h3>
               <form onSubmit={handleSaveProfile} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Nome</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Nome</label>
                   <input type="text" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} className="input-field" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Email</label>
                   <input type="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} className="input-field" disabled />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Telefone</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Telefone</label>
                   <input type="tel" value={profile.phone} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} className="input-field" />
                 </div>
                 <button type="submit" disabled={saving} className="btn-primary">
@@ -195,20 +195,20 @@ export default function SettingsPage() {
           {/* ABA: SEGURANÇA */}
           {activeTab === "security" && (
             <div className="card max-w-xl">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <Key className="w-5 h-5 text-emerald-600" /> Alterar Password
               </h3>
               <form onSubmit={handleChangePassword} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Password Atual</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Password Atual</label>
                   <input type="password" value={passwords.current} onChange={(e) => setPasswords({ ...passwords, current: e.target.value })} className="input-field" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Nova Password</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Nova Password</label>
                   <input type="password" value={passwords.newPass} onChange={(e) => setPasswords({ ...passwords, newPass: e.target.value })} className="input-field" required minLength={6} />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Confirmar Nova Password</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Confirmar Nova Password</label>
                   <input type="password" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} className="input-field" required />
                 </div>
                 <button type="submit" disabled={saving} className="btn-primary">
@@ -221,16 +221,16 @@ export default function SettingsPage() {
           {/* ABA: PRIVACIDADE (EXATAMENTE COMO ESTAVA ANTES) */}
           {activeTab === "privacy" && (
             <div className="card max-w-xl space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
                 <Shield className="w-5 h-5 text-emerald-600" /> Dados e Privacidade
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Nos termos do RGPD, tem direito a exportar ou eliminar os seus dados pessoais.{" "}
                 <a href="/privacy" className="text-emerald-600 underline hover:text-emerald-700">Política de Privacidade</a>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <button onClick={handleExportData} disabled={exporting} className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-800 px-5 py-2.5 rounded-xl text-sm font-medium transition">
+                <button onClick={handleExportData} disabled={exporting} className="flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 text-gray-800 dark:text-gray-200 px-5 py-2.5 rounded-xl text-sm font-medium transition">
                   <Download className="w-4 h-4" /> {exporting ? "A exportar..." : "Exportar Meus Dados"}
                 </button>
                 <button onClick={() => setShowDeleteConfirm(!showDeleteConfirm)} className="flex items-center justify-center gap-2 text-red-600 hover:bg-red-50 border border-red-200 px-5 py-2.5 rounded-xl text-sm font-medium transition">
@@ -261,9 +261,9 @@ export default function SettingsPage() {
               )}
 
               {/* Consent Withdrawal */}
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <h4 className="text-sm font-semibold text-gray-900 mb-1">Revogar Consentimento</h4>
-                <p className="text-xs text-gray-500 mb-3">
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Revogar Consentimento</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                   Nos termos do Art. 7.º, n.º 3 do RGPD, pode revogar o seu consentimento a qualquer momento.
                   A sua conta será suspensa mas os dados mantidos pelo período de retenção legal (2 anos).
                 </p>
@@ -311,7 +311,7 @@ export default function SettingsPage() {
               )}  
 
               {/* Legal links */}
-              <div className="mt-4 pt-4 border-t border-gray-200 flex flex-wrap gap-3 text-sm">
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap gap-3 text-sm">
                 <a href="/privacy" className="text-emerald-600 hover:text-emerald-700 underline">Política de Privacidade</a>
                 <a href="/cookies" className="text-emerald-600 hover:text-emerald-700 underline">Política de Cookies</a>
                 <a href="/termos" className="text-emerald-600 hover:text-emerald-700 underline">Termos de Serviço</a>
@@ -352,28 +352,28 @@ export default function SettingsPage() {
             <div className="space-y-6 max-w-3xl">
               
               {/* O Seu Plano (Com Barra de Progresso) */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-emerald-600" /> O Seu Plano
                   </h3>
-                  <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full uppercase tracking-wider">
+                  <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-full uppercase tracking-wider">
                     {currentPlanDetails.label}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">{currentPlanDetails.price}<span className="text-sm font-normal text-gray-500">/mês</span></p>
-                    <p className="text-sm text-gray-500 mt-1">Acesso completo a 100% das ferramentas da plataforma.</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{currentPlanDetails.price}<span className="text-sm font-normal text-gray-500 dark:text-gray-400">/mês</span></p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Acesso completo a 100% das ferramentas da plataforma.</p>
                   </div>
                   
-                  <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                  <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="font-medium text-gray-700">Atletas Ativos</span>
-                      <span className="text-gray-500">{billing.activeClients} / {currentPlanDetails.max === 99999 ? "∞" : currentPlanDetails.max}</span>
+                      <span className="font-medium text-gray-700 dark:text-gray-300">Atletas Ativos</span>
+                      <span className="text-gray-500 dark:text-gray-400">{billing.activeClients} / {currentPlanDetails.max === 99999 ? "∞" : currentPlanDetails.max}</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-1">
                       <div 
                         className={`h-2.5 rounded-full transition-all ${usagePercentage > 90 ? "bg-red-500" : usagePercentage > 75 ? "bg-amber-500" : "bg-emerald-500"}`} 
                         style={{ width: `${usagePercentage}%` }}
@@ -389,19 +389,19 @@ export default function SettingsPage() {
               </div>
 
               {/* Planos Disponíveis */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-emerald-600" /> Evolução de Negócio
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   
                   {/* Starter */}
-                  <div className={`p-5 rounded-2xl border flex flex-col h-full ${billing.plan === "starter" ? "border-emerald-500 bg-emerald-50/30" : "border-gray-200"}`}>
+                  <div className={`p-5 rounded-2xl border flex flex-col h-full ${billing.plan === "starter" ? "border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/20" : "border-gray-200 dark:border-gray-700"}`}>
                     <div className="flex-grow">
-                      <h4 className="text-gray-900 font-semibold mb-1">Arranque</h4>
-                      <p className="text-2xl font-bold text-gray-900 mb-4">39€<span className="text-xs text-gray-500 font-normal">/mês</span></p>
-                      <ul className="space-y-2 mb-6 text-sm text-gray-600">
+                      <h4 className="text-gray-900 dark:text-white font-semibold mb-1">Arranque</h4>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white mb-4">39€<span className="text-xs text-gray-500 dark:text-gray-400 font-normal">/mês</span></p>
+                      <ul className="space-y-2 mb-6 text-sm text-gray-600 dark:text-gray-400">
                         <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Até 15 alunos</li>
                         <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> Acesso a Todas as Ferramentas</li>
                       </ul>
@@ -412,17 +412,17 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Pro */}
-                  <div className={`p-5 rounded-2xl border relative flex flex-col h-full ${billing.plan === "pro" ? "border-emerald-500 bg-emerald-50/30 shadow-md" : "border-gray-200 shadow-sm"}`}>
+                  <div className={`p-5 rounded-2xl border relative flex flex-col h-full ${billing.plan === "pro" ? "border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/20 shadow-md" : "border-gray-200 dark:border-gray-700 shadow-sm"}`}>
                     {billing.plan !== "pro" && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                         Mais Popular
                       </div>
                     )}
                     <div className="flex-grow">
-                      <h4 className="text-gray-900 font-semibold mb-1">Escala</h4>
-                      <p className="text-2xl font-bold text-gray-900 mb-4">79€<span className="text-xs text-gray-500 font-normal">/mês</span></p>
-                      <ul className="space-y-2 mb-6 text-sm text-gray-600">
-                        <li className="flex items-center gap-2 font-medium text-gray-900"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Até 50 alunos</li>
+                      <h4 className="text-gray-900 dark:text-white font-semibold mb-1">Escala</h4>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white mb-4">79€<span className="text-xs text-gray-500 dark:text-gray-400 font-normal">/mês</span></p>
+                      <ul className="space-y-2 mb-6 text-sm text-gray-600 dark:text-gray-400">
+                        <li className="flex items-center gap-2 font-medium text-gray-900 dark:text-white"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Até 50 alunos</li>
                         <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> Acesso a Todas as Ferramentas</li>
                       </ul>
                     </div>
@@ -432,12 +432,12 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Elite */}
-                  <div className={`p-5 rounded-2xl border flex flex-col h-full ${billing.plan === "elite" ? "border-emerald-500 bg-emerald-50/30" : "border-gray-200"}`}>
+                  <div className={`p-5 rounded-2xl border flex flex-col h-full ${billing.plan === "elite" ? "border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/20" : "border-gray-200 dark:border-gray-700"}`}>
                     <div className="flex-grow">
-                      <h4 className="text-gray-900 font-semibold mb-1">Ilimitado</h4>
-                      <p className="text-2xl font-bold text-gray-900 mb-4">129€<span className="text-xs text-gray-500 font-normal">/mês</span></p>
-                      <ul className="space-y-2 mb-6 text-sm text-gray-600">
-                        <li className="flex items-center gap-2 font-medium text-gray-900"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Alunos Ilimitados</li>
+                      <h4 className="text-gray-900 dark:text-white font-semibold mb-1">Ilimitado</h4>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white mb-4">129€<span className="text-xs text-gray-500 dark:text-gray-400 font-normal">/mês</span></p>
+                      <ul className="space-y-2 mb-6 text-sm text-gray-600 dark:text-gray-400">
+                        <li className="flex items-center gap-2 font-medium text-gray-900 dark:text-white"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> Alunos Ilimitados</li>
                         <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> Acesso a Todas as Ferramentas</li>
                       </ul>
                     </div>

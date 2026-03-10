@@ -36,14 +36,14 @@ function generatePassword(len = 10) {
 
 const InputField = ({ label, required, ...props }: { label: string; required?: boolean } & React.InputHTMLAttributes<HTMLInputElement>) => (
   <div>
-    <label className="block text-sm font-medium text-gray-600 mb-1">{label}{required && " *"}</label>
+    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{label}{required && " *"}</label>
     <input {...props} required={required} className="input-field" />
   </div>
 );
 
 const SelectField = ({ label, options, ...props }: { label: string; options: { value: string; label: string }[] } & React.SelectHTMLAttributes<HTMLSelectElement>) => (
   <div>
-    <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{label}</label>
     <select {...props} className="input-field">
       <option value="">Selecionar</option>
       {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -53,7 +53,7 @@ const SelectField = ({ label, options, ...props }: { label: string; options: { v
 
 const TextArea = ({ label, ...props }: { label: string } & React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
   <div>
-    <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{label}</label>
     <textarea {...props} className="input-field min-h-[60px] resize-y" />
   </div>
 );
@@ -248,13 +248,13 @@ export default function ClientsPage() {
   };
 
   const statusBadge = (status: string) => {
-    const classes: Record<string, string> = { active: "bg-emerald-50 text-emerald-600", inactive: "bg-gray-100 text-gray-500", pending: "bg-yellow-50 text-yellow-600" };
+    const classes: Record<string, string> = { active: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400", inactive: "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400", pending: "bg-yellow-50 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400" };
     const labels: Record<string, string> = { active: "Ativo", inactive: "Inativo", pending: "Pendente" };
     return <span className={`badge ${classes[status] || classes.pending}`}>{labels[status] || status}</span>;
   };
 
   const paymentBadge = (status: string) => {
-    const classes: Record<string, string> = { paid: "bg-emerald-50 text-emerald-600", pending: "bg-yellow-50 text-yellow-600", overdue: "bg-red-50 text-red-600" };
+    const classes: Record<string, string> = { paid: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400", pending: "bg-yellow-50 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400", overdue: "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400" };
     const labels: Record<string, string> = { paid: "Pago", pending: "Pendente", overdue: "Em atraso" };
     return <span className={`badge ${classes[status] || classes.pending}`}>{labels[status] || status}</span>;
   };
@@ -282,29 +282,29 @@ export default function ClientsPage() {
       case 1: // Acesso / Password
         return (
           <div className="space-y-5">
-            <p className="text-sm text-gray-500">Define a palavra-passe para o atleta aceder à plataforma.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Define a palavra-passe para o atleta aceder à plataforma.</p>
             <div className="flex gap-3">
-              <label className={`flex-1 flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-colors ${form.passwordMode === "generate" ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:bg-gray-50"}`}>
+              <label className={`flex-1 flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-colors ${form.passwordMode === "generate" ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
                 <input type="radio" checked={form.passwordMode === "generate"} onChange={() => setForm({ ...form, passwordMode: "generate", password: generatePassword() })} className="text-emerald-500" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Gerar automaticamente</p>
-                  <p className="text-xs text-gray-500">Password segura e aleatória</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Gerar automaticamente</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Password segura e aleatória</p>
                 </div>
               </label>
-              <label className={`flex-1 flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-colors ${form.passwordMode === "manual" ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:bg-gray-50"}`}>
+              <label className={`flex-1 flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-colors ${form.passwordMode === "manual" ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
                 <input type="radio" checked={form.passwordMode === "manual"} onChange={() => setForm({ ...form, passwordMode: "manual", password: "" })} className="text-emerald-500" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Definir manualmente</p>
-                  <p className="text-xs text-gray-500">Escolher uma password</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">Definir manualmente</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Escolher uma password</p>
                 </div>
               </label>
             </div>
 
             {form.passwordMode === "generate" ? (
-              <div className="bg-gray-50 rounded-xl p-4">
-                <label className="block text-xs font-medium text-gray-500 mb-2">Password gerada</label>
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">Password gerada</label>
                 <div className="flex items-center gap-3">
-                  <code className="flex-1 text-lg font-mono font-semibold text-gray-900 tracking-wider bg-white border border-gray-200 rounded-lg px-4 py-2.5">
+                  <code className="flex-1 text-lg font-mono font-semibold text-gray-900 dark:text-white tracking-wider bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5">
                     {form.password}
                   </code>
                   <button type="button" onClick={() => f("password", generatePassword())} className="p-2.5 rounded-lg hover:bg-gray-200 transition" title="Gerar nova">
@@ -424,21 +424,21 @@ export default function ClientsPage() {
       {/* Stats Summary */}
       {!loading && clients.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 shadow-sm">
             <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">Total</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.length}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{clients.length}</p>
           </div>
-          <div className="bg-white rounded-xl border border-emerald-100 p-4 shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-emerald-100 dark:border-emerald-900/50 p-4 shadow-sm">
             <p className="text-xs font-medium text-emerald-500 uppercase tracking-wider">Ativos</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.filter(c => c.status === "active").length}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{clients.filter(c => c.status === "active").length}</p>
           </div>
-          <div className="bg-white rounded-xl border border-yellow-100 p-4 shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-yellow-100 dark:border-yellow-900/50 p-4 shadow-sm">
             <p className="text-xs font-medium text-yellow-500 uppercase tracking-wider">Pgto. Pendente</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.filter(c => c.paymentStatus === "pending").length}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{clients.filter(c => c.paymentStatus === "pending").length}</p>
           </div>
-          <div className="bg-white rounded-xl border border-red-100 p-4 shadow-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-red-100 dark:border-red-900/50 p-4 shadow-sm">
             <p className="text-xs font-medium text-red-500 uppercase tracking-wider">Pgto. Em Atraso</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{clients.filter(c => c.paymentStatus === "overdue").length}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{clients.filter(c => c.paymentStatus === "overdue").length}</p>
           </div>
         </div>
       )}
@@ -492,22 +492,22 @@ export default function ClientsPage() {
           </div>
 
           {clients.map((client) => (
-            <div key={client.id} onClick={() => router.push(`/clients/${client.id}`)} className="card hover:bg-gray-50 transition-colors cursor-pointer">
+            <div key={client.id} onClick={() => router.push(`/clients/${client.id}`)} className="card hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer">
               <div className="lg:grid lg:grid-cols-[1fr_1fr_auto_auto_auto_auto] lg:gap-4 lg:items-center space-y-3 lg:space-y-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-sm font-semibold shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-sm font-semibold shrink-0">
                     {client.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{client.name}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{client.name}</p>
                     {client.weight && <p className="text-xs text-gray-400">{client.weight}kg {client.height ? `• ${client.height}cm` : ""}</p>}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm text-gray-500"><Mail className="w-3.5 h-3.5" /><span className="truncate">{client.email}</span></div>
-                  {client.phone && <div className="flex items-center gap-2 text-sm text-gray-500"><Phone className="w-3.5 h-3.5" /><span>{client.phone}</span></div>}
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"><Mail className="w-3.5 h-3.5" /><span className="truncate">{client.email}</span></div>
+                  {client.phone && <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400"><Phone className="w-3.5 h-3.5" /><span>{client.phone}</span></div>}
                 </div>
-                <div className="text-sm text-gray-500">{client.plan || "—"}</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">{client.plan || "—"}</div>
                 {statusBadge(client.status)}
                 {paymentBadge(client.paymentStatus)}
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
@@ -517,14 +517,14 @@ export default function ClientsPage() {
                   {menuOpen === client.id && (
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(null)} />
-                      <div className="absolute right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-xl py-1 w-44">
-                        <button onClick={() => { router.push(`/clients/${client.id}`); setMenuOpen(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
+                      <div className="absolute right-0 top-10 z-20 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-1 w-44">
+                        <button onClick={() => { router.push(`/clients/${client.id}`); setMenuOpen(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                           <Eye className="w-4 h-4" /> Ver Detalhes
                         </button>
-                        <button onClick={() => openEdit(client)} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
+                        <button onClick={() => openEdit(client)} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                           <Edit className="w-4 h-4" /> Editar
                         </button>
-                        <button onClick={() => { setDeleteTarget({ id: client.id, name: client.name }); setDeleteConfirmText(""); setMenuOpen(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                        <button onClick={() => { setDeleteTarget({ id: client.id, name: client.name }); setDeleteConfirmText(""); setMenuOpen(null); }} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">
                           <Trash2 className="w-4 h-4" /> Eliminar
                         </button>
                       </div>
@@ -546,23 +546,23 @@ export default function ClientsPage() {
       >
         {createResult ? (
           <div className="text-center space-y-5 py-4">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
               <Check className="w-7 h-7 text-emerald-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Cliente criado com sucesso!</h3>
-              <p className="text-sm text-gray-500 mt-1">O atleta já pode aceder à plataforma com as credenciais abaixo.</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Cliente criado com sucesso!</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">O atleta já pode aceder à plataforma com as credenciais abaixo.</p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4 space-y-3 text-left">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-3 text-left">
               <div>
                 <p className="text-xs font-medium text-gray-400">Email</p>
-                <p className="text-sm font-medium text-gray-900">{form.email}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{form.email}</p>
               </div>
               {createResult.generatedPassword && (
                 <div>
                   <p className="text-xs font-medium text-gray-400">Password</p>
                   <div className="flex items-center gap-2">
-                    <code className="text-sm font-mono font-semibold text-gray-900">{createResult.generatedPassword}</code>
+                    <code className="text-sm font-mono font-semibold text-gray-900 dark:text-white">{createResult.generatedPassword}</code>
                     <button onClick={() => copyToClipboard(createResult.generatedPassword!)} className="p-1 rounded hover:bg-gray-200">
                       {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
                     </button>
@@ -605,7 +605,7 @@ export default function ClientsPage() {
             </div>
 
             {/* Step title */}
-            <h3 className="text-base font-semibold text-gray-900 mb-4">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">
               {stepsMeta[step].label}
               {step >= 2 && <span className="text-xs font-normal text-gray-400 ml-2">— opcional, pode preencher depois</span>}
             </h3>
@@ -614,10 +614,10 @@ export default function ClientsPage() {
             {renderStep()}
 
             {/* Error */}
-            {createError && <p className="text-sm text-red-500 mt-4 bg-red-50 rounded-lg p-3">{createError}</p>}
+            {createError && <p className="text-sm text-red-500 mt-4 bg-red-50 dark:bg-red-900/20 rounded-lg p-3">{createError}</p>}
 
             {/* Navigation */}
-            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
@@ -684,21 +684,21 @@ export default function ClientsPage() {
         <div className="space-y-4">
           {!inviteResult ? (
             <>
-              <p className="text-sm text-gray-500">Envia um código ou link mágico para o atleta se registar.</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Envia um código ou link mágico para o atleta se registar.</p>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">Email do Atleta</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">Email do Atleta</label>
                 <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="atleta@email.com" className="input-field" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">Tipo de Convite</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">Tipo de Convite</label>
                 <div className="flex gap-3">
-                  <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors ${inviteType === "magic_code" ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:bg-gray-50"}`}>
+                  <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors ${inviteType === "magic_code" ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
                     <input type="radio" checked={inviteType === "magic_code"} onChange={() => setInviteType("magic_code")} className="text-emerald-500 focus:ring-emerald-500" />
-                    <div><p className="text-sm font-medium text-gray-900">Código</p><p className="text-xs text-gray-500">6 dígitos</p></div>
+                    <div><p className="text-sm font-medium text-gray-900 dark:text-white">Código</p><p className="text-xs text-gray-500 dark:text-gray-400">6 dígitos</p></div>
                   </label>
-                  <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors ${inviteType === "magic_link" ? "border-emerald-500 bg-emerald-50" : "border-gray-200 hover:bg-gray-50"}`}>
+                  <label className={`flex-1 flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors ${inviteType === "magic_link" ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
                     <input type="radio" checked={inviteType === "magic_link"} onChange={() => setInviteType("magic_link")} className="text-emerald-500 focus:ring-emerald-500" />
-                    <div><p className="text-sm font-medium text-gray-900">Link Mágico</p><p className="text-xs text-gray-500">URL único</p></div>
+                    <div><p className="text-sm font-medium text-gray-900 dark:text-white">Link Mágico</p><p className="text-xs text-gray-500 dark:text-gray-400">URL único</p></div>
                   </label>
                 </div>
               </div>
@@ -708,15 +708,15 @@ export default function ClientsPage() {
             </>
           ) : (
             <div className="text-center space-y-4">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 mb-2">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mb-2">
                 <Check className="w-6 h-6 text-emerald-600" />
               </div>
-              <h3 className="text-base font-semibold text-gray-900">Convite Criado!</h3>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white">Convite Criado!</h3>
               {inviteResult.code && (
                 <div>
-                  <p className="text-sm text-gray-500 mb-2">Código de convite:</p>
-                  <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-center gap-3">
-                    <span className="text-2xl font-bold tracking-[0.3em] text-gray-900">{inviteResult.code}</span>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Código de convite:</p>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center gap-3">
+                    <span className="text-2xl font-bold tracking-[0.3em] text-gray-900 dark:text-white">{inviteResult.code}</span>
                     <button onClick={() => copyToClipboard(inviteResult.code)} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors">
                       {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4 text-gray-400" />}
                     </button>
@@ -725,9 +725,9 @@ export default function ClientsPage() {
               )}
               {inviteResult.magicLink && (
                 <div>
-                  <p className="text-sm text-gray-500 mb-2">Link de registo:</p>
-                  <div className="bg-gray-50 rounded-lg p-3 flex items-center gap-2">
-                    <input type="text" value={inviteResult.magicLink} readOnly className="flex-1 bg-transparent text-xs text-gray-600 border-0 p-0 focus:ring-0" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Link de registo:</p>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 flex items-center gap-2">
+                    <input type="text" value={inviteResult.magicLink} readOnly className="flex-1 bg-transparent text-xs text-gray-600 dark:text-gray-400 border-0 p-0 focus:ring-0" />
                     <button onClick={() => copyToClipboard(inviteResult.magicLink!)} className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors flex-shrink-0">
                       {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4 text-gray-400" />}
                     </button>
@@ -744,12 +744,12 @@ export default function ClientsPage() {
       {/* ─── Delete Confirmation Modal ───────────────────── */}
       <Modal isOpen={!!deleteTarget} onClose={() => { setDeleteTarget(null); setDeleteConfirmText(""); }} title="Eliminar Cliente" size="sm">
         <div className="space-y-4">
-          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
             <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-red-800">
+            <div className="text-sm text-red-800 dark:text-red-300">
               <p className="font-semibold mb-1">Esta ação é irreversível!</p>
               <p>Ao eliminar <strong>{deleteTarget?.name}</strong>, todos os dados serão permanentemente apagados:</p>
-              <ul className="mt-2 ml-4 list-disc space-y-0.5 text-red-700">
+              <ul className="mt-2 ml-4 list-disc space-y-0.5 text-red-700 dark:text-red-400">
                 <li>Conta de acesso (login)</li>
                 <li>Planos de treino e nutrição atribuídos</li>
                 <li>Check-ins e avaliações corporais</li>
@@ -760,7 +760,7 @@ export default function ClientsPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Escreve <span className="font-bold text-red-600">APAGAR</span> para confirmar:
             </label>
             <input

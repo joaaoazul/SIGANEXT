@@ -27,14 +27,14 @@ interface ToolDef {
 }
 
 const tools: ToolDef[] = [
-  { key: "imc", label: "Calculadora IMC", description: "Índice de Massa Corporal", icon: <Scale className="w-5 h-5" />, color: "bg-blue-50 text-blue-600", hoverBorder: "hover:border-blue-200", hoverBg: "hover:bg-blue-50/50" },
-  { key: "water", label: "Água Diária", description: "Ingestão de água recomendada", icon: <Droplets className="w-5 h-5" />, color: "bg-cyan-50 text-cyan-600", hoverBorder: "hover:border-cyan-200", hoverBg: "hover:bg-cyan-50/50" },
-  { key: "macros", label: "Macronutrientes", description: "Distribuição de macros", icon: <Target className="w-5 h-5" />, color: "bg-emerald-50 text-emerald-600", hoverBorder: "hover:border-emerald-200", hoverBg: "hover:bg-emerald-50/50" },
-  { key: "tmb", label: "TMB / BMR", description: "Taxa Metabólica Basal", icon: <Flame className="w-5 h-5" />, color: "bg-orange-50 text-orange-600", hoverBorder: "hover:border-orange-200", hoverBg: "hover:bg-orange-50/50" },
-  { key: "fcmax", label: "FC Máxima", description: "Frequência cardíaca e zonas", icon: <Heart className="w-5 h-5" />, color: "bg-red-50 text-red-600", hoverBorder: "hover:border-red-200", hoverBg: "hover:bg-red-50/50" },
-  { key: "1rm", label: "1RM", description: "Repetição máxima estimada", icon: <Dumbbell className="w-5 h-5" />, color: "bg-purple-50 text-purple-600", hoverBorder: "hover:border-purple-200", hoverBg: "hover:bg-purple-50/50" },
-  { key: "bf", label: "% Gordura Corporal", description: "Estimativa por medidas", icon: <Percent className="w-5 h-5" />, color: "bg-amber-50 text-amber-600", hoverBorder: "hover:border-amber-200", hoverBg: "hover:bg-amber-50/50" },
-  { key: "calories", label: "Calorias Diárias", description: "TDEE - Gasto calórico total", icon: <Calculator className="w-5 h-5" />, color: "bg-indigo-50 text-indigo-600", hoverBorder: "hover:border-indigo-200", hoverBg: "hover:bg-indigo-50/50" },
+  { key: "imc", label: "Calculadora IMC", description: "Índice de Massa Corporal", icon: <Scale className="w-5 h-5" />, color: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400", hoverBorder: "hover:border-blue-200 dark:hover:border-blue-700", hoverBg: "hover:bg-blue-50/50 dark:hover:bg-blue-900/20" },
+  { key: "water", label: "Água Diária", description: "Ingestão de água recomendada", icon: <Droplets className="w-5 h-5" />, color: "bg-cyan-50 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400", hoverBorder: "hover:border-cyan-200 dark:hover:border-cyan-700", hoverBg: "hover:bg-cyan-50/50 dark:hover:bg-cyan-900/20" },
+  { key: "macros", label: "Macronutrientes", description: "Distribuição de macros", icon: <Target className="w-5 h-5" />, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400", hoverBorder: "hover:border-emerald-200 dark:hover:border-emerald-700", hoverBg: "hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20" },
+  { key: "tmb", label: "TMB / BMR", description: "Taxa Metabólica Basal", icon: <Flame className="w-5 h-5" />, color: "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400", hoverBorder: "hover:border-orange-200 dark:hover:border-orange-700", hoverBg: "hover:bg-orange-50/50 dark:hover:bg-orange-900/20" },
+  { key: "fcmax", label: "FC Máxima", description: "Frequência cardíaca e zonas", icon: <Heart className="w-5 h-5" />, color: "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400", hoverBorder: "hover:border-red-200 dark:hover:border-red-700", hoverBg: "hover:bg-red-50/50 dark:hover:bg-red-900/20" },
+  { key: "1rm", label: "1RM", description: "Repetição máxima estimada", icon: <Dumbbell className="w-5 h-5" />, color: "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400", hoverBorder: "hover:border-purple-200 dark:hover:border-purple-700", hoverBg: "hover:bg-purple-50/50 dark:hover:bg-purple-900/20" },
+  { key: "bf", label: "% Gordura Corporal", description: "Estimativa por medidas", icon: <Percent className="w-5 h-5" />, color: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400", hoverBorder: "hover:border-amber-200 dark:hover:border-amber-700", hoverBg: "hover:bg-amber-50/50 dark:hover:bg-amber-900/20" },
+  { key: "calories", label: "Calorias Diárias", description: "TDEE - Gasto calórico total", icon: <Calculator className="w-5 h-5" />, color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400", hoverBorder: "hover:border-indigo-200 dark:hover:border-indigo-700", hoverBg: "hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20" },
 ];
 
 // =================== MAIN WIDGET ===================
@@ -43,10 +43,10 @@ export default function ToolsWidget() {
 
   return (
     <>
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
         <div className="flex items-center gap-2 p-5 pb-0">
           <Calculator className="w-5 h-5 text-emerald-500" />
-          <h2 className="text-base font-semibold text-gray-900">Ferramentas do PT</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white">Ferramentas do PT</h2>
         </div>
         <div className="p-5">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -54,13 +54,13 @@ export default function ToolsWidget() {
               <button
                 key={tool.key}
                 onClick={() => setActiveTool(tool.key)}
-                className={`flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 ${tool.hoverBorder} ${tool.hoverBg} transition-all group text-left`}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100 dark:border-gray-800 ${tool.hoverBorder} ${tool.hoverBg} transition-all group text-left`}
               >
                 <div className={`w-10 h-10 rounded-lg ${tool.color} flex items-center justify-center transition-colors`}>
                   {tool.icon}
                 </div>
-                <span className="text-xs font-semibold text-gray-700 text-center leading-tight">{tool.label}</span>
-                <span className="text-[10px] text-gray-400 text-center leading-tight">{tool.description}</span>
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 text-center leading-tight">{tool.label}</span>
+                <span className="text-[10px] text-gray-400 dark:text-gray-500 text-center leading-tight">{tool.description}</span>
               </button>
             ))}
           </div>
@@ -91,10 +91,10 @@ function ToolModal({ tool, onClose }: { tool: ToolKey; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">{titles[tool]}</h2>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition">
+      <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{titles[tool]}</h2>
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -114,13 +114,13 @@ function ToolModal({ tool, onClose }: { tool: ToolKey; onClose: () => void }) {
 }
 
 // =================== SHARED STYLES ===================
-const inputCls = "w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent";
+const inputCls = "w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent";
 const selectCls = inputCls + " appearance-none";
-const labelCls = "block text-sm font-medium text-gray-600 mb-1";
+const labelCls = "block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1";
 const btnCls = "w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition";
 
 function ResultCard({ children }: { children: React.ReactNode }) {
-  return <div className="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-2">{children}</div>;
+  return <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl space-y-2">{children}</div>;
 }
 
 // =================== 1. IMC ===================
@@ -147,7 +147,7 @@ function IMCCalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Calcula o Índice de Massa Corporal com base no peso e altura.</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Calcula o Índice de Massa Corporal com base no peso e altura.</p>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelCls}>Peso (kg)</label>
@@ -162,7 +162,7 @@ function IMCCalculator() {
       {result && (
         <ResultCard>
           <div className="text-center">
-            <p className="text-3xl font-bold text-gray-900">{result.imc.toFixed(1)}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">{result.imc.toFixed(1)}</p>
             <p className={`text-sm font-semibold mt-1 ${result.color}`}>{result.category}</p>
           </div>
           <div className="mt-3">
@@ -172,7 +172,7 @@ function IMCCalculator() {
                 style={{ left: `${Math.min(Math.max(((result.imc - 15) / 30) * 100, 0), 100)}%` }}
               />
             </div>
-            <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+            <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500 mt-1">
               <span>15</span><span>18.5</span><span>25</span><span>30</span><span>35</span><span>45</span>
             </div>
           </div>
@@ -204,7 +204,7 @@ function WaterCalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Calcula a quantidade ideal de água diária com base no peso, atividade e clima.</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Calcula a quantidade ideal de água diária com base no peso, atividade e clima.</p>
       <div>
         <label className={labelCls}>Peso (kg)</label>
         <input type="number" value={weight} onChange={e => setWeight(e.target.value)} className={inputCls} placeholder="75" />
@@ -234,11 +234,11 @@ function WaterCalculator() {
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
               <p className="text-3xl font-bold text-cyan-600">{result.liters.toFixed(1)}L</p>
-              <p className="text-xs text-gray-500 mt-1">Litros por dia</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Litros por dia</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-cyan-600">{result.glasses}</p>
-              <p className="text-xs text-gray-500 mt-1">Copos (250ml)</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Copos (250ml)</p>
             </div>
           </div>
           <div className="flex gap-1 justify-center mt-2 flex-wrap">
@@ -287,7 +287,7 @@ function MacrosCalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Calcula a distribuição ideal de Proteína, Hidratos de Carbono e Gordura.</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Calcula a distribuição ideal de Proteína, Hidratos de Carbono e Gordura.</p>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelCls}>Calorias diárias (kcal)</label>
@@ -306,22 +306,22 @@ function MacrosCalculator() {
       <button onClick={calculate} className={btnCls}>Calcular Macros</button>
       {result && (
         <ResultCard>
-          <p className="text-center text-sm text-gray-500 mb-3">Total: <strong className="text-gray-900">{result.totalCal} kcal</strong></p>
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">Total: <strong className="text-gray-900 dark:text-white">{result.totalCal} kcal</strong></p>
           <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="bg-white rounded-lg p-3 border border-emerald-100">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-emerald-100 dark:border-emerald-800">
               <p className="text-xl font-bold text-emerald-600">{result.protein}g</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Proteína</p>
-              <p className="text-[10px] text-gray-300">{result.protein * 4} kcal</p>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Proteína</p>
+              <p className="text-[10px] text-gray-300 dark:text-gray-600">{result.protein * 4} kcal</p>
             </div>
-            <div className="bg-white rounded-lg p-3 border border-blue-100">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-100 dark:border-blue-800">
               <p className="text-xl font-bold text-blue-600">{result.carbs}g</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Hidratos</p>
-              <p className="text-[10px] text-gray-300">{result.carbs * 4} kcal</p>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Hidratos</p>
+              <p className="text-[10px] text-gray-300 dark:text-gray-600">{result.carbs * 4} kcal</p>
             </div>
-            <div className="bg-white rounded-lg p-3 border border-amber-100">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-amber-100 dark:border-amber-800">
               <p className="text-xl font-bold text-amber-600">{result.fat}g</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">Gordura</p>
-              <p className="text-[10px] text-gray-300">{result.fat * 9} kcal</p>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Gordura</p>
+              <p className="text-[10px] text-gray-300 dark:text-gray-600">{result.fat * 9} kcal</p>
             </div>
           </div>
         </ResultCard>
@@ -367,7 +367,7 @@ function TMBCalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Calcula as calorias que o corpo gasta em repouso absoluto.</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Calcula as calorias que o corpo gasta em repouso absoluto.</p>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelCls}>Sexo</label>
@@ -403,8 +403,8 @@ function TMBCalculator() {
         <ResultCard>
           <div className="text-center">
             <p className="text-3xl font-bold text-orange-600">{Math.round(result.tmb)} kcal</p>
-            <p className="text-xs text-gray-500 mt-1">Calorias em repouso por dia</p>
-            <p className="text-[10px] text-gray-400 mt-0.5">Fórmula: {result.formula}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Calorias em repouso por dia</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Fórmula: {result.formula}</p>
           </div>
         </ResultCard>
       )}
@@ -433,7 +433,7 @@ function FCMaxCalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Calcula a FC máxima e as zonas de treino cardíaco (Fórmula de Karvonen: 220 - idade).</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Calcula a FC máxima e as zonas de treino cardíaco (Fórmula de Karvonen: 220 - idade).</p>
       <div>
         <label className={labelCls}>Idade</label>
         <input type="number" value={age} onChange={e => setAge(e.target.value)} className={inputCls} placeholder="30" />
@@ -443,7 +443,7 @@ function FCMaxCalculator() {
         <ResultCard>
           <div className="text-center mb-3">
             <p className="text-3xl font-bold text-red-600">{result.fcmax} bpm</p>
-            <p className="text-xs text-gray-500">FC Máxima</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">FC Máxima</p>
           </div>
           <div className="space-y-1.5">
             {result.zones.map((z) => (
@@ -493,7 +493,7 @@ function OneRMCalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Estima a repetição máxima (1RM) com base no peso e repetições realizadas (Fórmula de Brzycki).</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Estima a repetição máxima (1RM) com base no peso e repetições realizadas (Fórmula de Brzycki).</p>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelCls}>Peso levantado (kg)</label>
@@ -509,18 +509,18 @@ function OneRMCalculator() {
         <ResultCard>
           <div className="text-center mb-3">
             <p className="text-3xl font-bold text-purple-600">{Math.round(result.oneRM)} kg</p>
-            <p className="text-xs text-gray-500">1RM Estimado</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">1RM Estimado</p>
           </div>
           <div className="space-y-1">
             {result.percentages.map((p) => (
               <div key={p.pct} className="flex items-center gap-2 text-xs">
-                <span className="w-10 text-right font-semibold text-gray-500">{p.pct}%</span>
-                <div className="flex-1 h-5 bg-gray-100 rounded-full overflow-hidden relative">
+                <span className="w-10 text-right font-semibold text-gray-500 dark:text-gray-400">{p.pct}%</span>
+                <div className="flex-1 h-5 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden relative">
                   <div
                     className="h-full bg-purple-400 rounded-full"
                     style={{ width: `${p.pct}%` }}
                   />
-                  <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-gray-700">
+                  <span className="absolute inset-0 flex items-center justify-center text-[10px] font-semibold text-gray-700 dark:text-gray-300">
                     {p.weight} kg · {p.reps} reps
                   </span>
                 </div>
@@ -580,7 +580,7 @@ function BodyFatCalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Estimativa pelo Método US Navy. Medidas em centímetros.</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Estimativa pelo Método US Navy. Medidas em centímetros.</p>
       <div>
         <label className={labelCls}>Sexo</label>
         <select value={gender} onChange={e => setGender(e.target.value)} className={selectCls}>
@@ -654,7 +654,7 @@ function TDEECalculator() {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400">Calcula o gasto calórico total diário (TDEE) incluindo atividade física.</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500">Calcula o gasto calórico total diário (TDEE) incluindo atividade física.</p>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className={labelCls}>Sexo</label>
@@ -693,23 +693,23 @@ function TDEECalculator() {
         <ResultCard>
           <div className="text-center mb-3">
             <p className="text-3xl font-bold text-indigo-600">{result.tdee} kcal</p>
-            <p className="text-xs text-gray-500">Gasto Calórico Total Diário</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Gasto Calórico Total Diário</p>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="bg-white rounded-lg p-2.5 border border-red-100">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-2.5 border border-red-100 dark:border-red-800">
               <p className="text-lg font-bold text-red-500">{result.cut}</p>
-              <p className="text-[10px] text-gray-400">Definição (-20%)</p>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500">Definição (-20%)</p>
             </div>
-            <div className="bg-white rounded-lg p-2.5 border border-emerald-100">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-2.5 border border-emerald-100 dark:border-emerald-800">
               <p className="text-lg font-bold text-emerald-500">{result.tdee}</p>
-              <p className="text-[10px] text-gray-400">Manutenção</p>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500">Manutenção</p>
             </div>
-            <div className="bg-white rounded-lg p-2.5 border border-blue-100">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-2.5 border border-blue-100 dark:border-blue-800">
               <p className="text-lg font-bold text-blue-500">{result.bulk}</p>
-              <p className="text-[10px] text-gray-400">Volume (+15%)</p>
+              <p className="text-[10px] text-gray-400 dark:text-gray-500">Volume (+15%)</p>
             </div>
           </div>
-          <p className="text-[10px] text-gray-400 text-center mt-2">TMB base: {result.tmb} kcal</p>
+          <p className="text-[10px] text-gray-400 dark:text-gray-500 text-center mt-2">TMB base: {result.tmb} kcal</p>
         </ResultCard>
       )}
     </div>
