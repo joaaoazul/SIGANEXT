@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Validate folder path to prevent path injection
     if (!validateUploadFolder(folder)) {
+      console.error("Upload rejected: invalid folder pattern:", folder);
       return NextResponse.json({ error: "Pasta inválida" }, { status: 400 });
     }
 

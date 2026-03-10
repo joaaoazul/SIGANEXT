@@ -41,16 +41,20 @@ export function sanitizeFilePath(path: string): string | null {
 export function validateUploadFolder(folder: string): boolean {
   if (!folder || typeof folder !== "string") return false;
 
-  // Allowed patterns:
+  // Allowed patterns — must cover all folder values used in the frontend:
   // - clients/{cuid}/assessments
   // - clients/{cuid}/checkins
   // - clients/{cuid}/photos
-  // - onboarding/{cuid}
+  // - clients/{cuid}/avatar
+  // - profile/{cuid}
   // - profiles/{cuid}
+  // - onboarding/{cuid}
+  // - food-logs/{date}
   const validPatterns = [
     /^clients\/[a-zA-Z0-9_-]+\/(assessments|checkins|photos|avatar)$/,
+    /^profiles?\/[a-zA-Z0-9_-]+$/,
     /^onboarding\/[a-zA-Z0-9_-]+$/,
-    /^profiles\/[a-zA-Z0-9_-]+$/,
+    /^food-logs\/[a-zA-Z0-9_-]+$/,
   ];
 
   return validPatterns.some((pattern) => pattern.test(folder));
