@@ -22,6 +22,7 @@ import {
   Activity,
   MoreHorizontal,
   Shield,
+  Bell,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -47,6 +48,7 @@ const athleteNavigation = [
   { name: "Nutrição", href: "/athlete/nutrition", icon: UtensilsCrossed },
   { name: "Progresso", href: "/athlete/progress", icon: Activity },
   { name: "Agenda", href: "/athlete/bookings", icon: CalendarDays },
+  { name: "Notificações", href: "/athlete/notifications", icon: Bell },
   { name: "Pagamentos", href: "/athlete/payments", icon: CreditCard },
   { name: "Conteúdos", href: "/athlete/content", icon: BookOpen },
   { name: "Mensagens", href: "/athlete/messages", icon: MessageCircle },
@@ -119,20 +121,20 @@ export default function Sidebar() {
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-gray-100 shrink-0">
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-gray-100 dark:border-gray-800 shrink-0">
         <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-500 shrink-0">
           <Dumbbell className="w-4 h-4 text-white" />
         </div>
         {!collapsed && (
           <div className="overflow-hidden">
-            <h1 className="text-base font-bold text-gray-900 tracking-tight leading-tight">SIGA180</h1>
+            <h1 className="text-base font-bold text-gray-900 dark:text-white tracking-tight leading-tight">SIGA180</h1>
             <p className="text-[9px] text-gray-400 uppercase tracking-widest">{brandSubtitle}</p>
           </div>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto" aria-label="Navegação principal">
         {navigation.map((item) => {
           const active = isActive(item.href);
           return (
@@ -142,8 +144,8 @@ export default function Sidebar() {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 group ${
                 active
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                  ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
+                  : "text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200"
               }`}
               title={collapsed ? item.name : undefined}
             >
@@ -155,17 +157,18 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 py-3 border-t border-gray-100 space-y-0.5">
+      <div className="px-3 py-3 border-t border-gray-100 dark:border-gray-800 space-y-0.5">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-all duration-150 w-full"
+          className="hidden lg:flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-200 transition-all duration-150 w-full"
+          aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
         >
           <ChevronLeft className={`w-[18px] h-[18px] shrink-0 transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`} />
           {!collapsed && <span>Recolher</span>}
         </button>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium text-gray-400 hover:bg-red-50 hover:text-red-600 transition-all duration-150 w-full"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 transition-all duration-150 w-full"
         >
           <LogOut className="w-[18px] h-[18px] shrink-0" />
           {!collapsed && <span>Sair</span>}
@@ -182,20 +185,20 @@ export default function Sidebar() {
       )}
 
       {/* Mobile sidebar drawer (swipe from left) */}
-      <aside className={`lg:hidden fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-100 z-50 transform transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+      <aside className={`lg:hidden fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 z-50 transform transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <button onClick={() => setMobileOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-700" aria-label="Fechar menu">
           <X className="w-5 h-5" />
         </button>
         {sidebarContent}
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className={`hidden lg:block h-screen bg-white border-r border-gray-100 sticky top-0 transition-all duration-300 ${collapsed ? "w-[68px]" : "w-56"}`}>
+      <aside className={`hidden lg:block h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 sticky top-0 transition-all duration-300 ${collapsed ? "w-[68px]" : "w-56"}`}>
         {sidebarContent}
       </aside>
 
       {/* Mobile bottom navigation bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 safe-area-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 safe-area-bottom" aria-label="Navegação móvel">
         <div className="flex items-center justify-around h-16 px-1">
           {bottomNav.map((item) => {
             const active = isActive(item.href);
@@ -219,6 +222,7 @@ export default function Sidebar() {
             className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors ${
               isMoreActive ? "text-emerald-600" : "text-gray-400"
             }`}
+            aria-label="Mais opções"
           >
             <MoreHorizontal className={`w-5 h-5 ${isMoreActive ? "text-emerald-600" : ""}`} />
             <span className={`text-[10px] font-medium ${isMoreActive ? "text-emerald-600" : ""}`}>Mais</span>
@@ -230,7 +234,7 @@ export default function Sidebar() {
       {moreOpen && (
         <>
           <div className="lg:hidden fixed inset-0 bg-black/20 z-40" onClick={() => setMoreOpen(false)} />
-          <div className="lg:hidden fixed bottom-16 left-0 right-0 z-50 bg-white rounded-t-2xl border-t border-gray-200 shadow-2xl safe-area-bottom animate-slide-up">
+          <div className="lg:hidden fixed bottom-16 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-2xl border-t border-gray-200 dark:border-gray-800 shadow-2xl safe-area-bottom animate-slide-up">
             <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-2 mb-1" />
             <div className="px-2 py-2 max-h-[60vh] overflow-y-auto">
               <div className="grid grid-cols-3 gap-1">

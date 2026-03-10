@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { User, CreditCard, Shield, Save, Key, Download, Trash2, AlertTriangle, CheckCircle2, Zap } from "lucide-react";
+import { User, CreditCard, Shield, Save, Key, Download, Trash2, AlertTriangle, CheckCircle2, Zap, Sun, Moon, Monitor } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("profile");
   const [profile, setProfile] = useState({ name: "", email: "", phone: "" });
   const [passwords, setPasswords] = useState({ current: "", newPass: "", confirm: "" });
@@ -119,6 +121,7 @@ export default function SettingsPage() {
     { key: "profile", label: "Perfil", icon: <User className="w-4 h-4" /> },
     { key: "security", label: "Segurança", icon: <Shield className="w-4 h-4" /> },
     { key: "privacy", label: "Privacidade", icon: <Shield className="w-4 h-4" /> },
+    { key: "appearance", label: "Aparência", icon: <Sun className="w-4 h-4" /> },
     { key: "billing", label: "Subscrição", icon: <CreditCard className="w-4 h-4" /> },
   ];
 
@@ -312,6 +315,34 @@ export default function SettingsPage() {
                 <a href="/privacy" className="text-emerald-600 hover:text-emerald-700 underline">Política de Privacidade</a>
                 <a href="/cookies" className="text-emerald-600 hover:text-emerald-700 underline">Política de Cookies</a>
                 <a href="/termos" className="text-emerald-600 hover:text-emerald-700 underline">Termos de Serviço</a>
+              </div>
+            </div>
+          )}
+
+          {/* ABA: APARÊNCIA */}
+          {activeTab === "appearance" && (
+            <div className="space-y-6 max-w-xl">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tema</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Escolha o tema de aparência da aplicação.</p>
+              <div className="grid grid-cols-3 gap-3">
+                {([
+                  { value: "light" as const, label: "Claro", icon: <Sun className="w-5 h-5" /> },
+                  { value: "dark" as const, label: "Escuro", icon: <Moon className="w-5 h-5" /> },
+                  { value: "system" as const, label: "Sistema", icon: <Monitor className="w-5 h-5" /> },
+                ]).map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setTheme(opt.value)}
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                      theme === opt.value
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
+                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-500 dark:text-gray-400"
+                    }`}
+                  >
+                    {opt.icon}
+                    <span className="text-sm font-medium">{opt.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           )}

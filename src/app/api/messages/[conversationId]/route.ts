@@ -66,16 +66,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     });
     if (!participant) return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
 
-    const { content, type = "text" } = await request.json();
-    if (!content?.trim()) return NextResponse.json({ error: "Mensagem vazia" }, { status: 400 });
+    const { content, type = "text", fileUrl } = await request.json();
+    if (!content?.trim() && !fileUrl) return NextResponse.json({ error: "Mensagem vazia" }, { status: 400 });
 
     const message = await prisma.message.create({
       data: {
         conversationId,
         senderType: "user",
         senderId: user.id,
-        content: content.trim(),
+        content: content?.trim() || "",
         type,
+        fileUrl: fileUrl || null,
       },
     });
 

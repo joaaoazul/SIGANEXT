@@ -26,6 +26,7 @@ import {
   CheckCircle,
   XCircle,
   UserCog,
+  Download,
 } from "lucide-react";
 
 interface UserRow {
@@ -358,9 +359,25 @@ export default function AdminUsersPage() {
     }
   };
 
+  const exportUsersCSV = () => {
+    const headers = ["Nome", "Email", "Role", "Telefone", "Criado", "Clientes"];
+    const rows = users.map(u => [
+      u.name, u.email, u.role, u.phone || "",
+      new Date(u.createdAt).toLocaleDateString("pt-PT"),
+      u._count.managedClients.toString(),
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `utilizadores_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div>
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
           <Users className="w-6 h-6 text-blue-400" />
           Gestão de Utilizadores
@@ -371,6 +388,10 @@ export default function AdminUsersPage() {
         {pagination && (
           <p className="text-gray-600 text-xs mt-0.5">{pagination.total} utilizador(es) registados</p>
         )}
+      </div>
+        <button onClick={exportUsersCSV} className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 rounded-lg text-xs text-gray-300 hover:bg-gray-700 transition">
+          <Download className="w-3.5 h-3.5" /> Exportar CSV
+        </button>
       </div>
 
       {actionMsg && (

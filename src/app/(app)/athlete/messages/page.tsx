@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, Send, ArrowLeft, User, Plus, Search, X } from "lucide-react";
+import { MessageCircle, Send, ArrowLeft, User, Plus, Search, X, Check, CheckCheck, Paperclip } from "lucide-react";
 
 interface Participant {
   name: string;
@@ -24,6 +24,7 @@ interface Message {
   senderId: string;
   content: string;
   type: string;
+  fileUrl: string | null;
   createdAt: string;
   isRead: boolean;
 }
@@ -115,6 +116,7 @@ export default function AthleteMessagesPage() {
       senderId: meId,
       content,
       type: "text",
+      fileUrl: null,
       createdAt: new Date().toISOString(),
       isRead: false,
     };
@@ -326,17 +328,25 @@ export default function AthleteMessagesPage() {
                               : "bg-gray-100 text-gray-900"
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                          <p
-                            className={`text-[10px] mt-1 ${
-                              isMine ? "text-emerald-100" : "text-gray-400"
-                            }`}
-                          >
-                            {new Date(msg.createdAt).toLocaleTimeString("pt-PT", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </p>
+                          {msg.type === "image" && msg.fileUrl && (
+                            <img src={msg.fileUrl} alt="Imagem" className="rounded-lg max-w-full max-h-60 mb-1" loading="lazy" />
+                          )}
+                          {msg.type === "file" && msg.fileUrl && (
+                            <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 text-sm underline ${isMine ? "text-emerald-100" : "text-emerald-600"}`}>
+                              <Paperclip className="w-3.5 h-3.5" /> Ficheiro
+                            </a>
+                          )}
+                          {msg.content && <p className="text-sm whitespace-pre-wrap">{msg.content}</p>}
+                          <div className="flex items-center gap-1 justify-end mt-1">
+                            <span className={`text-[10px] ${isMine ? "text-emerald-100" : "text-gray-400"}`}>
+                              {new Date(msg.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                            {isMine && (
+                              msg.isRead
+                                ? <CheckCheck className="w-3.5 h-3.5 text-emerald-200" aria-label="Lida" />
+                                : <Check className="w-3.5 h-3.5 text-emerald-300/60" aria-label="Enviada" />
+                            )}
+                          </div>
                         </div>
                       </div>
                     );

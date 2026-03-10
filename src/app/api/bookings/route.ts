@@ -4,12 +4,16 @@ import { getUser } from "@/lib/auth";
 import { z } from "zod";
 
 const bookingSlotSchema = z.object({
-  date: z.string().min(1, "Data é obrigatória"),
+  date: z.string().optional(),
   startTime: z.string().min(1, "Hora início é obrigatória"),
   endTime: z.string().min(1, "Hora fim é obrigatória"),
   maxClients: z.coerce.number().int().min(1).max(50).optional().default(1),
   notes: z.string().max(1000).optional().nullable(),
   title: z.string().max(200).optional().default("PT Session"),
+  isRecurring: z.boolean().optional().default(false),
+  daysOfWeek: z.array(z.number().int().min(0).max(6)).optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
 });
 
 // GET /api/bookings - list booking slots with bookings
@@ -54,6 +58,47 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 });
   }
   const data = result.data;
+
+  // Recurring slot: create one slot per matching day in the date range
+  if (data.isRecurring && data.daysOfWeek?.length && data.dateFrom && data.dateTo) {
+    const from = new Date(data.dateFrom);
+    const to = new Date(data.dateTo);
+    if (to < from) return NextResponse.json({ error: "Data fim deve ser após data início" }, { status: 400 });
+    // Limit to 90 days max
+    const maxDays = 90;
+    const diffDays = Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays > maxDays) return NextResponse.json({ error: `Intervalo máximo de ${maxDays} dias` }, { status: 400 });
+
+    const slotsToCreate = [];
+    const current = new Date(from);
+    while (current <= to) {
+      const jsDay = current.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+      if (data.daysOfWeek.includes(jsDay)) {
+        slotsToCreate.push({
+          userId: user.id,
+          title: data.title,
+          date: new Date(current),
+          startTime: data.startTime,
+          endTime: data.endTime,
+          maxClients: data.maxClients,
+          notes: data.notes || null,
+          isRecurring: true,
+          dayOfWeek: jsDay,
+        });
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    if (slotsToCreate.length === 0) {
+      return NextResponse.json({ error: "Nenhum dia corresponde aos dias selecionados" }, { status: 400 });
+    }
+
+    await prisma.bookingSlot.createMany({ data: slotsToCreate });
+    return NextResponse.json({ created: slotsToCreate.length, message: `${slotsToCreate.length} slots criados` }, { status: 201 });
+  }
+
+  // Single slot
+  if (!data.date) return NextResponse.json({ error: "Data é obrigatória" }, { status: 400 });
 
   const slot = await prisma.bookingSlot.create({
     data: {

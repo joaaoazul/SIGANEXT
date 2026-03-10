@@ -7,6 +7,7 @@ import {
   Timer, Trophy, X, Zap, SkipForward, Check, ArrowLeft,
   Flame, Activity,
 } from "lucide-react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // ==================== TYPES ====================
 
@@ -183,6 +184,7 @@ export default function AthleteTrainingPage() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedWorkout, setExpandedWorkout] = useState<string | null>(null);
+  const [liveConfirm, setLiveConfirm] = useState<{action: () => void; title: string; message: string} | null>(null);
 
   // Live workout state
   const [isLive, setIsLive] = useState(false);
@@ -468,7 +470,7 @@ export default function AthleteTrainingPage() {
 
         {/* Top bar */}
         <div className="flex items-center justify-between">
-          <button onClick={() => { if (confirm("Sair do treino? O progresso será guardado.")) exitLiveMode(); }} className="flex items-center gap-1 text-gray-500 hover:text-gray-700">
+          <button onClick={() => setLiveConfirm({ title: "Sair do treino", message: "Sair do treino? O progresso será guardado.", action: exitLiveMode })} className="flex items-center gap-1 text-gray-500 hover:text-gray-700">
             <ArrowLeft className="w-4 h-4" /> Sair
           </button>
           <div className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-full">
@@ -476,7 +478,7 @@ export default function AthleteTrainingPage() {
             <span className="text-sm font-mono font-bold">{formatTime(workoutTimer)}</span>
           </div>
           <button
-            onClick={() => { if (confirm("Concluir treino agora?")) completeWorkout(); }}
+            onClick={() => setLiveConfirm({ title: "Concluir treino", message: "Concluir treino agora?", action: completeWorkout })}
             className="text-xs font-medium text-emerald-600 hover:text-emerald-700 px-3 py-1.5 bg-emerald-50 rounded-full"
           >
             Concluir
@@ -926,6 +928,16 @@ export default function AthleteTrainingPage() {
       )}
 
       <Toast message={toast.message} show={toast.show} />
+
+      <ConfirmDialog
+        isOpen={!!liveConfirm}
+        onClose={() => setLiveConfirm(null)}
+        onConfirm={() => liveConfirm?.action()}
+        title={liveConfirm?.title || ""}
+        message={liveConfirm?.message || ""}
+        variant="warning"
+        confirmLabel="Sim"
+      />
     </div>
   );
 }

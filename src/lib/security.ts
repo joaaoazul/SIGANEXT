@@ -50,11 +50,13 @@ export function validateUploadFolder(folder: string): boolean {
   // - profiles/{cuid}
   // - onboarding/{cuid}
   // - food-logs/{date}
+  // - messages/{conversationId}
   const validPatterns = [
     /^clients\/[a-zA-Z0-9_-]+\/(assessments|checkins|photos|avatar)$/,
     /^profiles?\/[a-zA-Z0-9_-]+$/,
     /^onboarding\/[a-zA-Z0-9_-]+$/,
     /^food-logs\/[a-zA-Z0-9_-]+$/,
+    /^messages\/[a-zA-Z0-9_-]+$/,
   ];
 
   return validPatterns.some((pattern) => pattern.test(folder));

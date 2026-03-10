@@ -23,6 +23,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Food {
   id: string;
@@ -131,6 +132,7 @@ export default function NutritionPage() {
   const [meals, setMeals] = useState<MealItem[]>([]);
   const [foodSearch, setFoodSearch] = useState("");
   const [activeMealIndex, setActiveMealIndex] = useState<number | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
 
   const fetchPlans = useCallback(async () => {
     setLoading(true);
@@ -355,10 +357,15 @@ export default function NutritionPage() {
     setSaving(false);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Eliminar este plano de nutrição?")) return;
-    await fetch(`/api/nutrition/${id}`, { method: "DELETE" });
-    fetchPlans();
+  const handleDelete = (id: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Eliminar este plano de nutrição?",
+      action: async () => {
+        await fetch(`/api/nutrition/${id}`, { method: "DELETE" });
+        fetchPlans();
+      },
+    });
   };
 
   const handleAssign = async (e: React.FormEvent) => {
@@ -885,6 +892,15 @@ export default function NutritionPage() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => { confirmDialog?.action(); setConfirmDialog(null); }}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+      />
     </div>
   );
 }

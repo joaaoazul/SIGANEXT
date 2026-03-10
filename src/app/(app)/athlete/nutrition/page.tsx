@@ -27,6 +27,7 @@ import {
   ChevronRight,
   Apple,
 } from "lucide-react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // ==================== TYPES ====================
 
@@ -183,6 +184,7 @@ export default function AthleteNutritionPage() {
   const [customFood, setCustomFood] = useState({ name: "", calories: "", protein: "", carbs: "", fat: "", quantity: "100", unit: "g" });
   // Photo upload
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
 
   // Load plan
   useEffect(() => {
@@ -276,10 +278,15 @@ export default function AthleteNutritionPage() {
     }
   };
 
-  const deleteMealLog = async (id: string) => {
-    if (!confirm("Apagar esta refeição?")) return;
-    const res = await fetch(`/api/athlete/food-log/${id}`, { method: "DELETE" });
-    if (res.ok) loadDiary();
+  const deleteMealLog = (id: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Apagar esta refeição?",
+      action: async () => {
+        const res = await fetch(`/api/athlete/food-log/${id}`, { method: "DELETE" });
+        if (res.ok) loadDiary();
+      },
+    });
   };
 
   const searchFoods = async (q: string) => {
@@ -1055,6 +1062,15 @@ export default function AthleteNutritionPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => { confirmDialog?.action(); setConfirmDialog(null); }}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+      />
     </div>
   );
 }

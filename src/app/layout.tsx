@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
+import { ToastProvider } from "@/components/Toast";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -33,9 +35,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt">
-      <body className={`${outfit.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
-        {children}
-        <CookieBanner />
+      <body className={`${outfit.variable} font-sans antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100`} suppressHydrationWarning>
+        <ThemeProvider>
+          <ToastProvider>
+            {children}
+            <CookieBanner />
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

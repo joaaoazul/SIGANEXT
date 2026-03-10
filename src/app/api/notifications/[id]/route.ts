@@ -9,9 +9,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params;
   const body = await request.json();
+  const isAthlete = user.role === "client";
+
+  // Athletes can mark their own notifications as read
+  const where = isAthlete
+    ? { id, OR: [{ clientId: user.id }, { isGlobal: true }] }
+    : { id, senderId: user.id };
 
   const notification = await prisma.notification.update({
-    where: { id, senderId: user.id },
+    where,
     data: { isRead: body.isRead ?? true },
   });
 
@@ -24,6 +30,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
   const { id } = await params;
+  // Only PTs can delete notifications they sent
+  if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+
   await prisma.notification.delete({ where: { id, senderId: user.id } });
   return NextResponse.json({ success: true });
 }

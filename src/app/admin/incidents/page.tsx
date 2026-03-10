@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import {
   AlertTriangle,
   Plus,
@@ -194,11 +195,14 @@ export default function AdminIncidentsPage() {
     }
   };
 
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
+
   const handleDelete = async (id: string) => {
-    if (!confirm("Eliminar este incidente permanentemente?")) return;
-    await fetch(`/api/admin/incidents/${id}`, { method: "DELETE" });
-    if (selected?.id === id) setSelected(null);
-    fetchIncidents();
+    setConfirmDialog({
+      title: "Eliminar incidente",
+      message: "Eliminar este incidente permanentemente?",
+      action: async () => { await fetch(`/api/admin/incidents/${id}`, { method: "DELETE" }); if (selected?.id === id) setSelected(null); fetchIncidents(); },
+    });
   };
 
   // Detail view
@@ -554,6 +558,16 @@ export default function AdminIncidentsPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => confirmDialog?.action()}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+        confirmLabel="Eliminar"
+      />
     </div>
   );
 }

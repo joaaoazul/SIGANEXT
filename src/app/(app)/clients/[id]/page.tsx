@@ -78,7 +78,7 @@ interface ClientDetail {
   }[];
 }
 
-type TabKey = "resumo" | "medico" | "lifestyle" | "desporto" | "objetivos" | "nutricao" | "avaliacoes" | "ferramentas" | "checkins" | "planos";
+type TabKey = "resumo" | "medico" | "lifestyle" | "desporto" | "objetivos" | "nutricao" | "avaliacoes" | "ferramentas" | "checkins" | "planos" | "diario";
 
 const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: "resumo", label: "Resumo", icon: User },
@@ -87,6 +87,7 @@ const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?
   { key: "desporto", label: "Desporto", icon: Dumbbell },
   { key: "objetivos", label: "Objetivos", icon: Target },
   { key: "nutricao", label: "Nutrição", icon: Utensils },
+  { key: "diario", label: "Diário Alimentar", icon: Flame },
   { key: "avaliacoes", label: "Avaliações", icon: Activity },
   { key: "ferramentas", label: "Ferramentas", icon: Calculator },
   { key: "checkins", label: "Check-ins", icon: ClipboardCheck },
@@ -119,6 +120,106 @@ const expLabels: Record<string, string> = {
 };
 const smokingLabels: Record<string, string> = { never: "Nunca fumou", former: "Ex-fumador", current: "Fumador" };
 const alcoholLabels: Record<string, string> = { none: "Nenhum", occasional: "Ocasional", moderate: "Moderado", heavy: "Frequente" };
+
+// ─── Food Log Tab Component ─────────────────────────────────────
+function FoodLogTab({ clientId }: { clientId: string }) {
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/clients/${clientId}/food-logs?date=${date}&days=1`)
+      .then(r => r.json())
+      .then(d => setData(d))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [clientId, date]);
+
+  const mealTypeLabels: Record<string, string> = {
+    breakfast: "Pequeno-Almoço", lunch: "Almoço", dinner: "Jantar",
+    snack_morning: "Lanche Manhã", snack_afternoon: "Lanche Tarde", snack_evening: "Lanche Noite", other: "Outro",
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <input type="date" value={date} onChange={e => setDate(e.target.value)} className="input-field max-w-[180px]" />
+        <span className="text-sm text-gray-500">
+          {new Date(date).toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}
+        </span>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-8 text-gray-400">A carregar...</div>
+      ) : !data?.foodLogs?.length ? (
+        <div className="card text-center py-8">
+          <Flame className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+          <p className="text-sm text-gray-400">Sem registos neste dia</p>
+        </div>
+      ) : (
+        <>
+          {/* Daily summary */}
+          {data.dailySummary && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "Calorias", value: `${Math.round(data.dailySummary.totalCalories)} kcal`, color: "text-orange-600 bg-orange-50" },
+                { label: "Proteína", value: `${Math.round(data.dailySummary.totalProtein)}g`, color: "text-blue-600 bg-blue-50" },
+                { label: "Carbs", value: `${Math.round(data.dailySummary.totalCarbs)}g`, color: "text-amber-600 bg-amber-50" },
+                { label: "Gordura", value: `${Math.round(data.dailySummary.totalFat)}g`, color: "text-red-600 bg-red-50" },
+              ].map(s => (
+                <div key={s.label} className="card text-center py-3">
+                  <p className="text-xs text-gray-500">{s.label}</p>
+                  <p className={`text-lg font-bold ${s.color.split(" ")[0]}`}>{s.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Water */}
+          {data.waterLogs?.length > 0 && (
+            <div className="card flex items-center gap-3">
+              <Droplets className="w-5 h-5 text-blue-500" />
+              <span className="text-sm font-medium text-gray-700">
+                Água: {data.waterLogs.reduce((a: number, w: any) => a + (w.amount || 0), 0)} ml
+              </span>
+            </div>
+          )}
+
+          {/* Meals */}
+          {data.foodLogs.map((log: any) => (
+            <div key={log.id} className="card">
+              <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                {mealTypeLabels[log.mealType] || log.mealType}
+                <span className="text-xs font-normal text-gray-400 ml-2">
+                  {new Date(log.date).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
+                </span>
+              </h4>
+              {log.entries?.length > 0 ? (
+                <div className="space-y-2">
+                  {log.entries.map((entry: any) => (
+                    <div key={entry.id} className="flex items-center justify-between text-sm">
+                      <div className="flex-1">
+                        <span className="text-gray-700">{entry.food?.name || "Alimento"}</span>
+                        <span className="text-gray-400 ml-2">({entry.quantity}g)</span>
+                      </div>
+                      <span className="text-gray-500 text-xs">{Math.round((entry.food?.calories || 0) * entry.quantity / 100)} kcal</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400">Sem alimentos registados</p>
+              )}
+              {log.photoUrl && (
+                <img src={log.photoUrl} alt="Foto da refeição" className="mt-3 rounded-lg max-h-40 object-cover" loading="lazy" />
+              )}
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function ClientDetailPage() {
   const params = useParams();
@@ -993,6 +1094,9 @@ export default function ClientDetailPage() {
             </SectionCard>
           </div>
         );
+
+      case "diario":
+        return <FoodLogTab clientId={client.id} />;
     }
   };
 

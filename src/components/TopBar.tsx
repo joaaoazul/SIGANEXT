@@ -37,6 +37,7 @@ export default function TopBar() {
   const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const pageName = Object.entries(pageNames).find(([path]) =>
@@ -49,6 +50,16 @@ export default function TopBar() {
     fetch("/api/auth/me").then(r => r.json()).then(d => {
       if (d?.id) setUser(d);
     }).catch(() => {});
+
+    // Poll unread notifications
+    const fetchUnread = () => {
+      fetch("/api/notifications").then(r => r.json()).then(d => {
+        if (typeof d.unreadCount === "number") setUnreadNotifs(d.unreadCount);
+      }).catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -67,10 +78,10 @@ export default function TopBar() {
     .toUpperCase() || "PT";
 
   return (
-    <header className="h-14 border-b border-gray-100 bg-white flex items-center justify-between px-3 sm:px-4 lg:px-6 shrink-0">
+    <header className="h-14 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center justify-between px-3 sm:px-4 lg:px-6 shrink-0">
       {/* Left: Page name badge */}
       <div className="flex items-center gap-3">
-        <span className="text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50 px-2.5 sm:px-3 py-1 rounded-lg truncate max-w-[160px] sm:max-w-none">
+        <span className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2.5 sm:px-3 py-1 rounded-lg truncate max-w-[160px] sm:max-w-none">
           {pageName}
         </span>
       </div>
@@ -81,8 +92,9 @@ export default function TopBar() {
         {user && !isAthlete && (
           <Link
             href="/clients"
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition"
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition"
             title="Adicionar"
+            aria-label="Adicionar"
           >
             <Plus className="w-5 h-5" />
           </Link>
@@ -90,35 +102,42 @@ export default function TopBar() {
 
         {/* Notifications */}
         <Link
-          href={isAthlete ? "/athlete/settings" : "/notifications"}
-          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition relative"
+          href={isAthlete ? "/athlete/notifications" : "/notifications"}
+          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition relative"
           title="Notificações"
+          aria-label={`Notificações${unreadNotifs > 0 ? ` (${unreadNotifs} não lidas)` : ""}`}
         >
           <Bell className="w-5 h-5" />
+          {unreadNotifs > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" aria-hidden="true">
+              {unreadNotifs > 9 ? "9+" : unreadNotifs}
+            </span>
+          )}
         </Link>
 
         {/* Avatar + Menu */}
         <div className="relative ml-1" ref={menuRef}>
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-50 transition"
+            className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+            aria-label="Menu de utilizador"
           >
-            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-700 dark:text-emerald-400 text-xs font-bold">
               {initials}
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
           </button>
 
           {showMenu && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50">
-              <div className="px-3 py-2 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-900">{user?.name || "Treinador"}</p>
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg py-1 z-50">
+              <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-800">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name || "Treinador"}</p>
                 <p className="text-xs text-gray-400">{user?.email}</p>
               </div>
-              <Link href="/profile" onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition">
+              <Link href="/profile" onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                 Meu Perfil
               </Link>
-              <Link href={isAthlete ? "/athlete/settings" : "/settings"} onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition">
+              <Link href={isAthlete ? "/athlete/settings" : "/settings"} onClick={() => setShowMenu(false)} className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                 Definições
               </Link>
               <button

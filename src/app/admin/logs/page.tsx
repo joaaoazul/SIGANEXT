@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Filter,
   RefreshCcw,
+  Download,
 } from "lucide-react";
 
 interface AuditLog {
@@ -81,6 +82,20 @@ export default function AdminLogsPage() {
 
   useEffect(() => { fetchLogs(); }, [fetchLogs]);
 
+  const exportLogsCSV = () => {
+    const headers = ["Data", "Ação", "Entidade", "Email", "Role", "IP", "Detalhes"];
+    const rows = logs.map(l => [
+      new Date(l.createdAt).toLocaleString("pt-PT"),
+      l.action, l.entity || "", l.userEmail || "", l.userRole || "", l.ip || "", l.details || "",
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `audit_logs_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -93,12 +108,17 @@ export default function AdminLogsPage() {
             {pagination ? `${pagination.total} entrada(s)` : "A carregar..."}
           </p>
         </div>
-        <button
-          onClick={() => { setPage(1); fetchLogs(); }}
-          className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 rounded-lg text-xs text-gray-300 hover:bg-gray-700 transition"
-        >
-          <RefreshCcw className="w-3.5 h-3.5" /> Atualizar
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={exportLogsCSV} className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 rounded-lg text-xs text-gray-300 hover:bg-gray-700 transition">
+            <Download className="w-3.5 h-3.5" /> Exportar CSV
+          </button>
+          <button
+            onClick={() => { setPage(1); fetchLogs(); }}
+            className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 rounded-lg text-xs text-gray-300 hover:bg-gray-700 transition"
+          >
+            <RefreshCcw className="w-3.5 h-3.5" /> Atualizar
+          </button>
+        </div>
       </div>
 
       {/* Filters */}

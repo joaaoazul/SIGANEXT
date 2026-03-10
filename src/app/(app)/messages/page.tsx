@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, Send, Plus, Search, ArrowLeft, User } from "lucide-react";
+import { MessageCircle, Send, Plus, Search, ArrowLeft, User, Check, CheckCheck, Image, Paperclip, X as XIcon } from "lucide-react";
 
 interface Participant {
   name: string;
@@ -24,6 +24,7 @@ interface Message {
   senderId: string;
   content: string;
   type: string;
+  fileUrl: string | null;
   createdAt: string;
   isRead: boolean;
 }
@@ -48,6 +49,8 @@ export default function MessagesPage() {
   const pollRef = useRef<NodeJS.Timeout>(null);
   const convPollRef = useRef<NodeJS.Timeout>(null);
   const prevMsgCountRef = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   useEffect(() => {
     fetchConversations();
@@ -137,6 +140,7 @@ export default function MessagesPage() {
       senderId: "",
       content,
       type: "text",
+      fileUrl: null,
       createdAt: new Date().toISOString(),
       isRead: false,
     };
@@ -267,10 +271,25 @@ export default function MessagesPage() {
                 messages.map((msg) => (
                   <div key={msg.id} className={`flex ${msg.senderType === "user" ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${msg.senderType === "user" ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-900"}`}>
-                      <p className="text-sm">{msg.content}</p>
-                      <p className={`text-[10px] mt-1 ${msg.senderType === "user" ? "text-emerald-200" : "text-gray-400"}`}>
-                        {new Date(msg.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
-                      </p>
+                      {msg.type === "image" && msg.fileUrl && (
+                        <img src={msg.fileUrl} alt="Imagem" className="rounded-lg max-w-full max-h-60 mb-1" loading="lazy" />
+                      )}
+                      {msg.type === "file" && msg.fileUrl && (
+                        <a href={msg.fileUrl} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 text-sm underline ${msg.senderType === "user" ? "text-emerald-100" : "text-emerald-600"}`}>
+                          <Paperclip className="w-3.5 h-3.5" /> Ficheiro
+                        </a>
+                      )}
+                      {msg.content && <p className="text-sm">{msg.content}</p>}
+                      <div className={`flex items-center gap-1 justify-end mt-1`}>
+                        <span className={`text-[10px] ${msg.senderType === "user" ? "text-emerald-200" : "text-gray-400"}`}>
+                          {new Date(msg.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                        {msg.senderType === "user" && (
+                          msg.isRead
+                            ? <CheckCheck className="w-3.5 h-3.5 text-emerald-200" aria-label="Lida" />
+                            : <Check className="w-3.5 h-3.5 text-emerald-300/60" aria-label="Enviada" />
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))
@@ -282,14 +301,58 @@ export default function MessagesPage() {
             <div className="p-3 border-t border-gray-100">
               <div className="flex items-center gap-2">
                 <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*,.pdf,.doc,.docx"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file || !selectedConv) return;
+                    setUploadingFile(true);
+                    try {
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      formData.append("folder", `messages/${selectedConv}`);
+                      const upRes = await fetch("/api/upload", { method: "POST", body: formData });
+                      if (upRes.ok) {
+                        const { url } = await upRes.json();
+                        const isImage = file.type.startsWith("image/");
+                        await fetch(`/api/messages/${selectedConv}`, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ content: isImage ? "" : file.name, type: isImage ? "image" : "file", fileUrl: url }),
+                        });
+                        fetchMessages(selectedConv);
+                        fetchConversations();
+                      }
+                    } finally {
+                      setUploadingFile(false);
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingFile}
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
+                  aria-label="Enviar ficheiro"
+                >
+                  {uploadingFile ? (
+                    <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Paperclip className="w-4 h-4" />
+                  )}
+                </button>
+                <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
                   placeholder="Escrever mensagem..."
                   className="flex-1 px-4 py-2.5 rounded-full bg-gray-100 border-0 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                  aria-label="Escrever mensagem"
                 />
-                <button onClick={sendMessage} disabled={!newMessage.trim()} className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <button onClick={sendMessage} disabled={!newMessage.trim()} className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" aria-label="Enviar mensagem">
                   <Send className="w-4 h-4" />
                 </button>
               </div>

@@ -5,6 +5,8 @@ import { BookOpen, Plus, Search, Filter, Pencil, Trash2, Video, FileText, Link2,
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import Pagination from "@/components/Pagination";
 
 interface Content {
   id: string; title: string; description: string | null;
@@ -20,6 +22,8 @@ export default function ContentPage() {
   const [typeFilter, setTypeFilter] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Content | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
+  const [page, setPage] = useState(1);
   const [form, setForm] = useState({
     title: "", description: "", type: "video", category: "", url: "", thumbnailUrl: "", isPublished: true,
   });
@@ -34,6 +38,7 @@ export default function ContentPage() {
       if (!res.ok) throw new Error("Erro ao carregar conteúdo");
       const data = await res.json();
       setContents(Array.isArray(data) ? data : []);
+      setPage(1);
     } catch (e) { console.error(e); setContents([]); }
     setLoading(false);
   }, [search, typeFilter]);
@@ -71,10 +76,15 @@ export default function ContentPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Eliminar este conteúdo?")) return;
-    await fetch(`/api/content/${id}`, { method: "DELETE" });
-    fetchContents();
+  const handleDelete = (id: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Eliminar este conteúdo?",
+      action: async () => {
+        await fetch(`/api/content/${id}`, { method: "DELETE" });
+        fetchContents();
+      },
+    });
   };
 
   const typeLabels: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
@@ -127,8 +137,9 @@ export default function ContentPage() {
           action={<button onClick={openCreate} className="btn-primary"><Plus className="w-4 h-4" /> Novo Conteúdo</button>}
         />
       ) : (
+        <>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {contents.map((c) => {
+          {contents.slice((page - 1) * 20, page * 20).map((c) => {
             const t = typeLabels[c.type] || typeLabels.link;
             return (
               <div key={c.id} className="card hover:bg-gray-50 transition-colors group">
@@ -169,6 +180,8 @@ export default function ContentPage() {
             );
           })}
         </div>
+        <Pagination currentPage={page} totalPages={Math.ceil(contents.length / 20)} onPageChange={setPage} totalItems={contents.length} itemsPerPage={20} />
+        </>
       )}
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editing ? "Editar Conteúdo" : "Novo Conteúdo"} size="lg">
@@ -215,6 +228,15 @@ export default function ContentPage() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => { confirmDialog?.action(); setConfirmDialog(null); }}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+      />
     </div>
   );
 }

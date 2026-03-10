@@ -8,6 +8,8 @@ import {
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import Pagination, { usePagination } from "@/components/Pagination";
 
 interface Exercise {
   id: string;
@@ -54,6 +56,8 @@ export default function ExercisesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editExercise, setEditExercise] = useState<Exercise | null>(null);
   const [detailExercise, setDetailExercise] = useState<Exercise | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
+  const [page, setPage] = useState(1);
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -75,6 +79,7 @@ export default function ExercisesPage() {
       if (!res.ok) throw new Error("Erro ao carregar exercícios");
       const data = await res.json();
       setExercises(Array.isArray(data) ? data : []);
+      setPage(1);
     } catch (e) { console.error(e); setExercises([]); }
     setLoading(false);
   }, [search, muscleFilter, difficultyFilter]);
@@ -102,10 +107,15 @@ export default function ExercisesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tens a certeza que queres eliminar este exercício?")) return;
-    await fetch(`/api/exercises/${id}`, { method: "DELETE" });
-    fetchExercises();
+  const handleDelete = (id: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Tens a certeza que queres eliminar este exercício?",
+      action: async () => {
+        await fetch(`/api/exercises/${id}`, { method: "DELETE" });
+        fetchExercises();
+      },
+    });
   };
 
   const resetForm = () => {
@@ -234,8 +244,9 @@ export default function ExercisesPage() {
         />
       ) : viewMode === "grid" ? (
         /* Grid View */
+        <>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {exercises.map((ex) => (
+          {exercises.slice((page - 1) * 18, page * 18).map((ex) => (
             <div key={ex.id} className="card hover:shadow-md transition-all group cursor-pointer" onClick={() => setDetailExercise(ex)}>
               {/* Thumbnail / Color Header */}
               {ex.thumbnailUrl ? (
@@ -284,10 +295,13 @@ export default function ExercisesPage() {
             </div>
           ))}
         </div>
+        <Pagination currentPage={page} totalPages={Math.ceil(exercises.length / 18)} onPageChange={setPage} totalItems={exercises.length} itemsPerPage={18} />
+        </>
       ) : (
         /* List View */
+        <>
         <div className="space-y-2">
-          {exercises.map((ex) => (
+          {exercises.slice((page - 1) * 18, page * 18).map((ex) => (
             <div key={ex.id} className="card !py-3 hover:shadow-md transition-all group cursor-pointer" onClick={() => setDetailExercise(ex)}>
               <div className="flex items-center gap-4">
                 {ex.thumbnailUrl ? (
@@ -327,6 +341,8 @@ export default function ExercisesPage() {
             </div>
           ))}
         </div>
+        <Pagination currentPage={page} totalPages={Math.ceil(exercises.length / 18)} onPageChange={setPage} totalItems={exercises.length} itemsPerPage={18} />
+        </>
       )}
 
       {/* Exercise Detail Modal */}
@@ -481,6 +497,15 @@ export default function ExercisesPage() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => { confirmDialog?.action(); setConfirmDialog(null); }}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+      />
     </div>
   );
 }

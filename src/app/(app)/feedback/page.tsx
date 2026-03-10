@@ -5,6 +5,8 @@ import { MessageSquare, Plus, Filter, Star, Send, Eye, Trash2 } from "lucide-rea
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import Pagination from "@/components/Pagination";
 
 interface Feedback {
   id: string;
@@ -27,6 +29,8 @@ export default function FeedbackPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showDetail, setShowDetail] = useState<Feedback | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
+  const [page, setPage] = useState(1);
   const [responseText, setResponseText] = useState("");
   const [form, setForm] = useState({
     clientId: "", type: "general", subject: "", message: "", rating: "",
@@ -41,6 +45,7 @@ export default function FeedbackPage() {
       if (!res.ok) throw new Error("Erro ao carregar feedbacks");
       const data = await res.json();
       setFeedbacks(Array.isArray(data) ? data : []);
+      setPage(1);
     } catch (e) { console.error(e); setFeedbacks([]); }
     setLoading(false);
   }, [statusFilter]);
@@ -90,10 +95,15 @@ export default function FeedbackPage() {
     fetchFeedbacks();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Eliminar este feedback?")) return;
-    await fetch(`/api/feedback/${id}`, { method: "DELETE" });
-    fetchFeedbacks();
+  const handleDelete = (id: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Eliminar este feedback?",
+      action: async () => {
+        await fetch(`/api/feedback/${id}`, { method: "DELETE" });
+        fetchFeedbacks();
+      },
+    });
   };
 
   const statusBadge = (status: string) => {
@@ -142,8 +152,9 @@ export default function FeedbackPage() {
           action={<button onClick={() => setShowModal(true)} className="btn-primary"><Plus className="w-4 h-4" /> Enviar Feedback</button>}
         />
       ) : (
+        <>
         <div className="space-y-3">
-          {feedbacks.map((fb) => (
+          {feedbacks.slice((page - 1) * 20, page * 20).map((fb) => (
             <div key={fb.id} className="card hover:bg-gray-50 transition-colors">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -187,6 +198,8 @@ export default function FeedbackPage() {
             </div>
           ))}
         </div>
+        <Pagination currentPage={page} totalPages={Math.ceil(feedbacks.length / 20)} onPageChange={setPage} totalItems={feedbacks.length} itemsPerPage={20} />
+        </>
       )}
 
       {/* Send feedback */}
@@ -260,6 +273,15 @@ export default function FeedbackPage() {
           </div>
         )}
       </Modal>
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => { confirmDialog?.action(); setConfirmDialog(null); }}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+      />
     </div>
   );
 }

@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Calendar, Plus, Clock, User, Trash2, Check, X, ChevronLeft, ChevronRight, UserPlus } from "lucide-react";
+import { Calendar, Plus, Clock, User, Trash2, Check, X, ChevronLeft, ChevronRight, UserPlus, Repeat } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Client { id: string; name: string; email: string; phone: string; }
 interface Booking { id: string; clientId: string; status: string; notes: string | null; client: Client; }
 interface Slot {
   id: string; date: string; startTime: string; endTime: string;
   maxClients: number; isActive: boolean; notes: string | null; title: string;
+  isRecurring: boolean;
   bookings: Booking[];
 }
 
@@ -28,7 +30,7 @@ export default function BookingsPage() {
   });
   const [showSlotModal, setShowSlotModal] = useState(false);
   const [showBookModal, setShowBookModal] = useState<string | null>(null);
-  const [slotForm, setSlotForm] = useState({ date: "", startTime: "09:00", endTime: "10:00", maxClients: "1", notes: "" });
+  const [slotForm, setSlotForm] = useState({ date: "", startTime: "09:00", endTime: "10:00", maxClients: "1", notes: "", isRecurring: false, daysOfWeek: [] as number[], dateFrom: "", dateTo: "" });
   const [bookForm, setBookForm] = useState({ clientId: "", notes: "" });
 
   const fetchSlots = useCallback(async () => {
@@ -71,14 +73,17 @@ export default function BookingsPage() {
 
   const handleCreateSlot = async (e: React.FormEvent) => {
     e.preventDefault();
+    const body = slotForm.isRecurring
+      ? { startTime: slotForm.startTime, endTime: slotForm.endTime, maxClients: slotForm.maxClients, notes: slotForm.notes, isRecurring: true, daysOfWeek: slotForm.daysOfWeek, dateFrom: slotForm.dateFrom, dateTo: slotForm.dateTo }
+      : { date: slotForm.date, startTime: slotForm.startTime, endTime: slotForm.endTime, maxClients: slotForm.maxClients, notes: slotForm.notes };
     const res = await fetch("/api/bookings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(slotForm),
+      body: JSON.stringify(body),
     });
     if (res.ok) {
       setShowSlotModal(false);
-      setSlotForm({ date: "", startTime: "09:00", endTime: "10:00", maxClients: "1", notes: "" });
+      setSlotForm({ date: "", startTime: "09:00", endTime: "10:00", maxClients: "1", notes: "", isRecurring: false, daysOfWeek: [], dateFrom: "", dateTo: "" });
       fetchSlots();
     }
   };
@@ -98,10 +103,14 @@ export default function BookingsPage() {
     }
   };
 
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
+
   const handleDeleteSlot = async (id: string) => {
-    if (!confirm("Eliminar este slot?")) return;
-    await fetch(`/api/bookings/${id}`, { method: "DELETE" });
-    fetchSlots();
+    setConfirmDialog({
+      title: "Eliminar slot",
+      message: "Eliminar este slot?",
+      action: async () => { await fetch(`/api/bookings/${id}`, { method: "DELETE" }); fetchSlots(); },
+    });
   };
 
   const handleBookingStatus = async (bookingId: string, status: string) => {
@@ -114,9 +123,11 @@ export default function BookingsPage() {
   };
 
   const handleCancelBooking = async (bookingId: string) => {
-    if (!confirm("Cancelar esta marcação?")) return;
-    await fetch(`/api/bookings/booking/${bookingId}`, { method: "DELETE" });
-    fetchSlots();
+    setConfirmDialog({
+      title: "Cancelar marcação",
+      message: "Cancelar esta marcação?",
+      action: async () => { await fetch(`/api/bookings/booking/${bookingId}`, { method: "DELETE" }); fetchSlots(); },
+    });
   };
 
   const today = new Date().toISOString().split("T")[0];
@@ -136,13 +147,13 @@ export default function BookingsPage() {
       {/* Week navigation */}
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => navigateWeek(-1)} className="p-2 hover:bg-white rounded-lg">
+          <button onClick={() => navigateWeek(-1)} className="p-2 hover:bg-white rounded-lg" aria-label="Semana anterior">
             <ChevronLeft className="w-5 h-5 text-gray-500" />
           </button>
           <h2 className="text-sm font-medium text-gray-900">
             {new Date(weekDays[0]).toLocaleDateString("pt-PT", { day: "numeric", month: "long" })} — {new Date(weekDays[6]).toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" })}
           </h2>
-          <button onClick={() => navigateWeek(1)} className="p-2 hover:bg-white rounded-lg">
+          <button onClick={() => navigateWeek(1)} className="p-2 hover:bg-white rounded-lg" aria-label="Semana seguinte">
             <ChevronRight className="w-5 h-5 text-gray-500" />
           </button>
         </div>
@@ -211,8 +222,11 @@ export default function BookingsPage() {
                     <div className="flex items-center gap-1.5 text-emerald-600">
                       <Clock className="w-4 h-4" />
                       <span className="text-sm font-semibold">{slot.startTime} - {slot.endTime}</span>
-                    </div>
-                    <span className={`badge ${slot.isActive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>
+                    </div>                    {slot.isRecurring && (
+                      <span className="badge bg-purple-50 text-purple-600 flex items-center gap-1">
+                        <Repeat className="w-3 h-3" /> Recorrente
+                      </span>
+                    )}                    <span className={`badge ${slot.isActive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>
                       {slot.isActive ? "Disponível" : "Indisponível"}
                     </span>
                     <span className="text-xs text-gray-400">
@@ -221,11 +235,11 @@ export default function BookingsPage() {
                   </div>
                   <div className="flex gap-1">
                     {slot.isActive && slot.bookings.length < slot.maxClients && (
-                      <button onClick={() => setShowBookModal(slot.id)} className="p-2 hover:bg-emerald-50 rounded-lg" title="Agendar cliente">
+                      <button onClick={() => setShowBookModal(slot.id)} className="p-2 hover:bg-emerald-50 rounded-lg" title="Agendar cliente" aria-label="Agendar cliente">
                         <UserPlus className="w-4 h-4 text-emerald-600" />
                       </button>
                     )}
-                    <button onClick={() => handleDeleteSlot(slot.id)} className="p-2 hover:bg-red-50 rounded-lg">
+                    <button onClick={() => handleDeleteSlot(slot.id)} className="p-2 hover:bg-red-50 rounded-lg" aria-label="Eliminar slot">
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>
@@ -249,16 +263,16 @@ export default function BookingsPage() {
                             {b.status === "confirmed" ? "Confirmado" : b.status === "completed" ? "Concluído" : b.status === "cancelled" ? "Cancelado" : "Pendente"}
                           </span>
                           {b.status === "pending" && (
-                            <button onClick={() => handleBookingStatus(b.id, "confirmed")} className="p-1 hover:bg-emerald-50 rounded" title="Confirmar">
+                            <button onClick={() => handleBookingStatus(b.id, "confirmed")} className="p-1 hover:bg-emerald-50 rounded" title="Confirmar" aria-label="Confirmar">
                               <Check className="w-3.5 h-3.5 text-emerald-600" />
                             </button>
                           )}
                           {b.status === "confirmed" && (
-                            <button onClick={() => handleBookingStatus(b.id, "completed")} className="p-1 hover:bg-blue-50 rounded" title="Concluir">
+                            <button onClick={() => handleBookingStatus(b.id, "completed")} className="p-1 hover:bg-blue-50 rounded" title="Concluir" aria-label="Concluir">
                               <Check className="w-3.5 h-3.5 text-blue-600" />
                             </button>
                           )}
-                          <button onClick={() => handleCancelBooking(b.id)} className="p-1 hover:bg-red-50 rounded" title="Cancelar">
+                          <button onClick={() => handleCancelBooking(b.id)} className="p-1 hover:bg-red-50 rounded" title="Cancelar" aria-label="Cancelar">
                             <X className="w-3.5 h-3.5 text-red-600" />
                           </button>
                         </div>
@@ -275,10 +289,67 @@ export default function BookingsPage() {
       {/* Create slot modal */}
       <Modal isOpen={showSlotModal} onClose={() => setShowSlotModal(false)} title="Novo Slot de Horário">
         <form onSubmit={handleCreateSlot} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Data *</label>
-            <input type="date" value={slotForm.date} onChange={(e) => setSlotForm({ ...slotForm, date: e.target.value })} className="input-field" required />
-          </div>
+          {/* Recurring toggle */}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={slotForm.isRecurring}
+              onChange={(e) => setSlotForm({ ...slotForm, isRecurring: e.target.checked })}
+              className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+            />
+            <Repeat className="w-4 h-4 text-emerald-600" />
+            <span className="text-sm font-medium text-gray-700">Slot recorrente</span>
+          </label>
+
+          {slotForm.isRecurring ? (
+            <>
+              {/* Days of week */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Dias da semana *</label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { day: 1, label: "Seg" }, { day: 2, label: "Ter" }, { day: 3, label: "Qua" },
+                    { day: 4, label: "Qui" }, { day: 5, label: "Sex" }, { day: 6, label: "Sáb" }, { day: 0, label: "Dom" },
+                  ].map(({ day, label }) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => {
+                        const days = slotForm.daysOfWeek.includes(day)
+                          ? slotForm.daysOfWeek.filter(d => d !== day)
+                          : [...slotForm.daysOfWeek, day];
+                        setSlotForm({ ...slotForm, daysOfWeek: days });
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        slotForm.daysOfWeek.includes(day)
+                          ? "bg-emerald-500 text-white"
+                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* Date range */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">De *</label>
+                  <input type="date" value={slotForm.dateFrom} onChange={(e) => setSlotForm({ ...slotForm, dateFrom: e.target.value })} className="input-field" required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">Até *</label>
+                  <input type="date" value={slotForm.dateTo} onChange={(e) => setSlotForm({ ...slotForm, dateTo: e.target.value })} className="input-field" required />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">Data *</label>
+              <input type="date" value={slotForm.date} onChange={(e) => setSlotForm({ ...slotForm, date: e.target.value })} className="input-field" required />
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Hora Início *</label>
@@ -299,7 +370,7 @@ export default function BookingsPage() {
           </div>
           <div className="flex justify-end gap-3">
             <button type="button" onClick={() => setShowSlotModal(false)} className="btn-secondary">Cancelar</button>
-            <button type="submit" className="btn-primary">Criar</button>
+            <button type="submit" className="btn-primary">{slotForm.isRecurring ? "Criar Recorrentes" : "Criar"}</button>
           </div>
         </form>
       </Modal>
@@ -324,6 +395,16 @@ export default function BookingsPage() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => confirmDialog?.action()}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        confirmLabel="Confirmar"
+        variant="danger"
+      />
     </div>
   );
 }

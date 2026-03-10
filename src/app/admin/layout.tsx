@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -11,6 +12,8 @@ import {
   Shield,
   Server,
   Lock,
+  Menu,
+  X,
 } from "lucide-react";
 
 const NAV = [
@@ -24,6 +27,7 @@ const NAV = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen bg-gray-950">
@@ -73,21 +77,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Shield className="w-5 h-5 text-red-500" />
             <span className="text-sm font-bold text-white">Admin</span>
           </div>
-          <div className="flex gap-1">
-            {NAV.map(({ href, icon: Icon }) => {
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
+            aria-label="Menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+        {mobileMenuOpen && (
+          <nav className="mt-3 pb-2 space-y-1 border-t border-gray-800 pt-3">
+            {NAV.map(({ href, label, icon: Icon }) => {
               const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
               return (
                 <Link
                   key={href}
                   href={href}
-                  className={`p-2 rounded-lg ${active ? "bg-red-500/10 text-red-400" : "text-gray-500"}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-red-500/10 text-red-400"
+                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                  }`}
                 >
                   <Icon className="w-4 h-4" />
+                  {label}
                 </Link>
               );
             })}
-          </div>
-        </div>
+            <Link
+              href="/dashboard"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-500 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar à App
+            </Link>
+          </nav>
+        )}
       </div>
 
       {/* Main content */}

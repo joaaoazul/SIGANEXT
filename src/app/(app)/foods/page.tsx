@@ -5,6 +5,8 @@ import { Apple, Plus, Search, Filter, Edit, Trash2, Pill } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import Pagination from "@/components/Pagination";
 
 interface Food {
   id: string;
@@ -39,6 +41,8 @@ export default function FoodsPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editFood, setEditFood] = useState<Food | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
+  const [page, setPage] = useState(1);
   const [form, setForm] = useState({
     name: "", category: "protein", calories: "", protein: "", carbs: "", fat: "",
     fiber: "", sugar: "", sodium: "", isSupplement: false, brand: "", servingSize: "", servingUnit: "g",
@@ -54,6 +58,7 @@ export default function FoodsPage() {
       if (!res.ok) throw new Error("Erro ao carregar alimentos");
       const data = await res.json();
       setFoods(Array.isArray(data) ? data : []);
+      setPage(1);
     } catch (e) { console.error(e); setFoods([]); }
     setLoading(false);
   }, [search, categoryFilter]);
@@ -77,10 +82,15 @@ export default function FoodsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Eliminar este alimento?")) return;
-    await fetch(`/api/foods/${id}`, { method: "DELETE" });
-    fetchFoods();
+  const handleDelete = (id: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Eliminar este alimento?",
+      action: async () => {
+        await fetch(`/api/foods/${id}`, { method: "DELETE" });
+        fetchFoods();
+      },
+    });
   };
 
   const resetForm = () => {
@@ -158,6 +168,7 @@ export default function FoodsPage() {
           action={<button onClick={() => { resetForm(); setShowModal(true); }} className="btn-primary"><Plus className="w-4 h-4" /> Adicionar</button>}
         />
       ) : (
+        <>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -173,7 +184,7 @@ export default function FoodsPage() {
               </tr>
             </thead>
             <tbody>
-              {foods.map((food) => (
+              {foods.slice((page - 1) * 20, page * 20).map((food) => (
                 <tr key={food.id} className="border-b border-gray-200/30 hover:bg-gray-50 transition">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
@@ -209,6 +220,8 @@ export default function FoodsPage() {
             </tbody>
           </table>
         </div>
+        <Pagination currentPage={page} totalPages={Math.ceil(foods.length / 20)} onPageChange={setPage} totalItems={foods.length} itemsPerPage={20} />
+        </>
       )}
 
       <Modal
@@ -295,6 +308,15 @@ export default function FoodsPage() {
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => { confirmDialog?.action(); setConfirmDialog(null); }}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+      />
     </div>
   );
 }

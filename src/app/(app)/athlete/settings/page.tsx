@@ -16,7 +16,11 @@ import {
   Trash2,
   Shield,
   AlertTriangle,
+  Sun,
+  Moon,
+  Monitor,
 } from "lucide-react";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface Profile {
   id: string;
@@ -30,6 +34,7 @@ interface Profile {
 
 export default function AthleteSettingsPage() {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -438,6 +443,32 @@ export default function AthleteSettingsPage() {
           <a href="/privacy" className="text-emerald-600 hover:text-emerald-700 underline">Política de Privacidade</a>
           <a href="/cookies" className="text-emerald-600 hover:text-emerald-700 underline">Política de Cookies</a>
           <a href="/termos" className="text-emerald-600 hover:text-emerald-700 underline">Termos de Serviço</a>
+        </div>
+      </div>
+
+      {/* Aparência */}
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Aparência</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Escolha o tema da aplicação.</p>
+        <div className="grid grid-cols-3 gap-3">
+          {([
+            { value: "light" as const, label: "Claro", icon: <Sun className="w-5 h-5" /> },
+            { value: "dark" as const, label: "Escuro", icon: <Moon className="w-5 h-5" /> },
+            { value: "system" as const, label: "Sistema", icon: <Monitor className="w-5 h-5" /> },
+          ]).map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => setTheme(opt.value)}
+              className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                theme === opt.value
+                  ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
+                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-500 dark:text-gray-400"
+              }`}
+            >
+              {opt.icon}
+              <span className="text-sm font-medium">{opt.label}</span>
+            </button>
+          ))}
         </div>
       </div>
 

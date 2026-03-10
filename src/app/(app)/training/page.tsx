@@ -10,6 +10,7 @@ import {
 import PageHeader from "@/components/PageHeader";
 import Modal from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Exercise {
   id: string;
@@ -140,6 +141,7 @@ export default function TrainingPage() {
   const [savingFields, setSavingFields] = useState<Set<string>>(new Set());
   const [editingExercise, setEditingExercise] = useState<string | null>(null);
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{action: () => void; title: string; message: string} | null>(null);
 
   const [form, setForm] = useState({ name: "", description: "", duration: "", goal: "", difficulty: "intermediate" });
   const [workoutForm, setWorkoutForm] = useState({ name: "", notes: "" });
@@ -209,11 +211,16 @@ export default function TrainingPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Eliminar este plano de treino?")) return;
-    await fetch(`/api/training/${id}`, { method: "DELETE" });
-    fetchPlans();
-    showToast("Plano eliminado");
+  const handleDelete = (id: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Eliminar este plano de treino?",
+      action: async () => {
+        await fetch(`/api/training/${id}`, { method: "DELETE" });
+        fetchPlans();
+        showToast("Plano eliminado");
+      },
+    });
   };
 
   const handleAssign = async (e: React.FormEvent) => {
@@ -247,11 +254,16 @@ export default function TrainingPage() {
     }
   };
 
-  const handleDeleteWorkout = async (workoutId: string) => {
-    if (!confirm("Eliminar este treino?")) return;
-    await fetch(`/api/training/workouts?id=${workoutId}`, { method: "DELETE" });
-    fetchPlans();
-    showToast("Treino eliminado");
+  const handleDeleteWorkout = (workoutId: string) => {
+    setConfirmDialog({
+      title: "Confirmar",
+      message: "Eliminar este treino?",
+      action: async () => {
+        await fetch(`/api/training/workouts?id=${workoutId}`, { method: "DELETE" });
+        fetchPlans();
+        showToast("Treino eliminado");
+      },
+    });
   };
 
   const handleAddExercise = async (exercise: Exercise) => {
@@ -1067,6 +1079,15 @@ export default function TrainingPage() {
 
       {/* Toast */}
       <Toast message={toast.message} show={toast.show} />
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        onClose={() => setConfirmDialog(null)}
+        onConfirm={() => { confirmDialog?.action(); setConfirmDialog(null); }}
+        title={confirmDialog?.title || ""}
+        message={confirmDialog?.message || ""}
+        variant="danger"
+      />
     </div>
   );
 }
