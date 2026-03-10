@@ -68,9 +68,15 @@ export async function PUT(
 
     const data: Record<string, unknown> = {};
 
-    // Role update
-    if (body.role && ["admin", "superadmin", "employee", "client", "suspended"].includes(body.role)) {
-      data.role = body.role;
+    // Role update — prevent privilege escalation
+    // Only superadmins can grant admin/superadmin roles
+    if (body.role) {
+      const allowedRoles = user.role === "superadmin"
+        ? ["admin", "superadmin", "employee", "client", "suspended"]
+        : ["employee", "client", "suspended"];
+      if (allowedRoles.includes(body.role)) {
+        data.role = body.role;
+      }
     }
 
     // Basic field updates

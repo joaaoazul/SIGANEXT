@@ -14,6 +14,14 @@ export async function PUT(
     const { id } = await params;
     const data = await request.json();
 
+    // Ownership check: verify exercise belongs to this user
+    const existing = await prisma.exercise.findFirst({
+      where: { id, userId: user.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Exercício não encontrado" }, { status: 404 });
+    }
+
     const exercise = await prisma.exercise.update({
       where: { id },
       data: {
@@ -44,6 +52,15 @@ export async function DELETE(
     if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
     const { id } = await params;
+
+    // Ownership check: verify exercise belongs to this user
+    const existing = await prisma.exercise.findFirst({
+      where: { id, userId: user.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Exercício não encontrado" }, { status: 404 });
+    }
+
     await prisma.exercise.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch {

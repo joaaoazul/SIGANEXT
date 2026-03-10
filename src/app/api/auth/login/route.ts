@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { logAuditFromRequest } from "@/lib/audit";
+import { normalizeEmail } from "@/lib/security";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +18,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password } = await request.json();
+    const body = await request.json();
+    const email = normalizeEmail(body.email);
+    const { password } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -48,6 +51,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.name,
         role: user.role,
+        tokenVersion: user.tokenVersion ?? 0,
       });
 
       const response = NextResponse.json({
@@ -90,6 +94,7 @@ export async function POST(request: NextRequest) {
       email: client.email,
       name: client.name,
       role: "client",
+      tokenVersion: client.tokenVersion ?? 0,
     });
 
     const response = NextResponse.json({
@@ -113,12 +118,11 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error: any) {
-    const fullMsg = error?.message || String(error);
-    console.error("Login error FULL:", fullMsg);
-    if (error?.stack) console.error("Login stack:", error.stack);
+  } catch (error: unknown) {
+    const fullMsg = error instanceof Error ? error.message : String(error);
+    console.error("Login error:", fullMsg);
     return NextResponse.json(
-      { error: "Erro interno do servidor", debug: process.env.NODE_ENV !== "production" ? fullMsg : undefined },
+      { error: "Erro interno do servidor" },
       { status: 500 }
     );
   }

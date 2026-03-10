@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { sanitizeFilename } from "@/lib/security";
 
 export async function GET(request: NextRequest) {
   try {
@@ -117,11 +118,13 @@ export async function GET(request: NextRequest) {
         feedbacks: safeData.feedbacks,
       };
 
+      const safeName = sanitizeFilename(safeData.name);
+
       return new NextResponse(JSON.stringify(exportData, null, 2), {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Content-Disposition": `attachment; filename="dados-pessoais-${safeData.name.replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json"`,
+          "Content-Disposition": `attachment; filename="dados-pessoais-${safeName}-${new Date().toISOString().slice(0, 10)}.json"`,
         },
       });
     }
@@ -154,11 +157,13 @@ export async function GET(request: NextRequest) {
       personalData: dbUser,
     };
 
+    const safeName = sanitizeFilename(dbUser.name);
+
     return new NextResponse(JSON.stringify(exportData, null, 2), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="dados-pessoais-${dbUser.name.replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json"`,
+        "Content-Disposition": `attachment; filename="dados-pessoais-${safeName}-${new Date().toISOString().slice(0, 10)}.json"`,
       },
     });
   } catch (error) {

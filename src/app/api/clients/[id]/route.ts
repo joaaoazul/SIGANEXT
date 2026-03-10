@@ -12,7 +12,8 @@ export async function GET(
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
     const { id } = await params;
-    const ownerFilter = user.role === "client" ? {} : { managerId: user.id };
+    // Security: athletes can only view their own data (IDOR prevention)
+    const ownerFilter = user.role === "client" ? { id: user.id } : { managerId: user.id };
     const client = await prisma.client.findFirst({
       where: { id, deletedAt: null, ...ownerFilter },
       include: {

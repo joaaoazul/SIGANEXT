@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, isAdmin } from "@/lib/auth";
+import { safePaginationLimit } from "@/lib/security";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get("page") || "1");
-    const limit = parseInt(url.searchParams.get("limit") || "50");
+    const limit = safePaginationLimit(parseInt(url.searchParams.get("limit") || "50"));
     const action = url.searchParams.get("action") || "";
     const entity = url.searchParams.get("entity") || "";
     const userId = url.searchParams.get("userId") || "";

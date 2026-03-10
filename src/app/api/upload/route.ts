@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/auth";
 import { uploadFile, BUCKET_NAME } from "@/lib/supabase";
 import sharp from "sharp";
+import { validateUploadFolder } from "@/lib/security";
 
 const MAX_DIMENSION = 1920;
 const QUALITY = 80;
@@ -28,6 +29,11 @@ export async function POST(request: NextRequest) {
 
     if (!file || !folder) {
       return NextResponse.json({ error: "Ficheiro e pasta são obrigatórios" }, { status: 400 });
+    }
+
+    // Validate folder path to prevent path injection
+    if (!validateUploadFolder(folder)) {
+      return NextResponse.json({ error: "Pasta inválida" }, { status: 400 });
     }
 
     // Validate file type
@@ -59,6 +65,6 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Upload error:", error?.message || error);
     console.error("Upload error stack:", error?.stack);
-    return NextResponse.json({ error: "Erro ao fazer upload", details: error?.message }, { status: 500 });
+    return NextResponse.json({ error: "Erro ao fazer upload" }, { status: 500 });
   }
 }

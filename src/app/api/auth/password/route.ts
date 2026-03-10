@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUser } from "@/lib/auth";
+import { getUser, signToken } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { logAuditFromRequest } from "@/lib/audit";
@@ -41,14 +41,32 @@ export async function PUT(request: NextRequest) {
     const valid = await bcrypt.compare(currentPassword, dbClient.password);
     if (!valid) return NextResponse.json({ error: "Password atual incorreta" }, { status: 400 });
 
-    const hashed = await bcrypt.hash(newPassword, 10);
-    await prisma.client.update({ where: { id: user.id }, data: { password: hashed } });
+    const hashed = await bcrypt.hash(newPassword, 12);
+    const newVersion = (dbClient.tokenVersion ?? 0) + 1;
+    await prisma.client.update({
+      where: { id: user.id },
+      data: { password: hashed, tokenVersion: newVersion },
+    });
 
     logAuditFromRequest(request, "change_password", {
       entity: "User", userId: user.id, userEmail: user.email, userRole: user.role,
     });
 
-    return NextResponse.json({ success: true });
+    // Issue new token with updated version, invalidating all previous tokens
+    const newToken = signToken({
+      id: user.id, email: user.email, name: user.name, role: user.role,
+      tokenVersion: newVersion,
+    });
+
+    const response = NextResponse.json({ success: true });
+    response.cookies.set("token", newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+    return response;
   }
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
@@ -57,12 +75,30 @@ export async function PUT(request: NextRequest) {
   const valid = await bcrypt.compare(currentPassword, dbUser.password);
   if (!valid) return NextResponse.json({ error: "Password atual incorreta" }, { status: 400 });
 
-  const hashed = await bcrypt.hash(newPassword, 10);
-  await prisma.user.update({ where: { id: user.id }, data: { password: hashed } });
+  const hashed = await bcrypt.hash(newPassword, 12);
+  const newVersion = (dbUser.tokenVersion ?? 0) + 1;
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hashed, tokenVersion: newVersion },
+  });
 
   logAuditFromRequest(request, "change_password", {
     entity: "User", userId: user.id, userEmail: user.email, userRole: user.role,
   });
 
-  return NextResponse.json({ success: true });
+  // Issue new token with updated version, invalidating all previous tokens
+  const newToken = signToken({
+    id: user.id, email: user.email, name: user.name, role: user.role,
+    tokenVersion: newVersion,
+  });
+
+  const response = NextResponse.json({ success: true });
+  response.cookies.set("token", newToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 7,
+    path: "/",
+  });
+  return response;
 }

@@ -35,6 +35,7 @@ model User {
   consentIp         String?   // IP at time of consent
   consentVersion    String?   // Version of privacy policy consented to
   healthDataConsent Boolean   @default(false) // Explicit consent for health data (Art. 9)
+  tokenVersion      Int       @default(0)     // Incremented on password change to invalidate JWTs
   
   managedClients    Client[]  @relation("ManagedBy")
   clientProfile     Client?   @relation("ClientUser")
@@ -113,6 +114,7 @@ model Client {
   consentIp      String?   // IP do pedido de consentimento
   consentVersion String?   // Versão da política de privacidade aceite
   healthDataConsent Boolean @default(false) // Consentimento explícito para dados de saúde (Art. 9.º)
+  tokenVersion   Int       @default(0)     // Incremented on password change to invalidate JWTs
   
   // Subscription
   plan          String?

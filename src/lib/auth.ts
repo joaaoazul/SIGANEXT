@@ -11,6 +11,7 @@ export interface UserPayload {
   email: string;
   name: string;
   role: string;
+  tokenVersion?: number;
 }
 
 export function signToken(payload: UserPayload): string {
@@ -25,6 +26,7 @@ export function verifyToken(token: string): UserPayload | null {
       email: decoded.email,
       name: decoded.name,
       role: decoded.role,
+      tokenVersion: decoded.tokenVersion ?? 0,
     };
   } catch {
     return null;
@@ -35,7 +37,34 @@ export async function getUser(_request?: unknown): Promise<UserPayload | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   if (!token) return null;
-  return verifyToken(token);
+  const payload = verifyToken(token);
+  if (!payload) return null;
+
+  // Validate tokenVersion to ensure JWT hasn't been invalidated
+  // (e.g., after password change or account compromise)
+  try {
+    if (payload.role === "client") {
+      const client = await prisma.client.findUnique({
+        where: { id: payload.id },
+        select: { tokenVersion: true },
+      });
+      if (client && client.tokenVersion !== (payload.tokenVersion ?? 0)) {
+        return null; // Token was invalidated
+      }
+    } else {
+      const user = await prisma.user.findUnique({
+        where: { id: payload.id },
+        select: { tokenVersion: true },
+      });
+      if (user && user.tokenVersion !== (payload.tokenVersion ?? 0)) {
+        return null; // Token was invalidated
+      }
+    }
+  } catch {
+    // If DB check fails, still allow the request (graceful degradation)
+  }
+
+  return payload;
 }
 
 /**

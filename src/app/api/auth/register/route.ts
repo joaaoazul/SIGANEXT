@@ -4,6 +4,9 @@ import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { logAuditFromRequest } from "@/lib/audit";
+import { validatePassword } from "@/lib/schemas/password";
+import { normalizeEmail } from "@/lib/security";
+import { CURRENT_POLICY_VERSION } from "@/lib/constants";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,13 +20,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, name, consent, healthConsent } = await request.json();
+    const body = await request.json();
+    const email = normalizeEmail(body.email);
+    const { password, name, consent, healthConsent } = body;
 
     if (!email || !password || !name) {
       return NextResponse.json(
         { error: "Todos os campos são obrigatórios" },
         { status: 400 }
       );
+    }
+
+    // Validate password strength
+    const pwValidation = validatePassword(password);
+    if (!pwValidation.valid) {
+      return NextResponse.json({ error: pwValidation.errors[0] }, { status: 400 });
     }
 
     if (!consent) {
@@ -44,15 +55,21 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12);
     const consentIp = getClientIP(request);
 
+    // Security: first registered user becomes admin, subsequent users default to 'employee'
+    // and require admin approval/promotion for elevated roles
+    const userCount = await prisma.user.count();
+    const role = userCount === 0 ? "admin" : "employee";
+
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        name,
-        role: "admin",
+        name: name.trim(),
+        role,
+        tokenVersion: 0,
         consentDate: new Date(),
         consentIp: consentIp || null,
-        consentVersion: "1.0",
+        consentVersion: CURRENT_POLICY_VERSION,
         healthDataConsent: !!healthConsent,
       },
     });
@@ -62,6 +79,7 @@ export async function POST(request: NextRequest) {
       email: user.email,
       name: user.name,
       role: user.role,
+      tokenVersion: 0,
     });
 
     const response = NextResponse.json({
@@ -86,7 +104,7 @@ export async function POST(request: NextRequest) {
       entityId: user.id,
       userId: user.id,
       userEmail: user.email,
-      userRole: "admin",
+      userRole: role,
     });
 
     return response;

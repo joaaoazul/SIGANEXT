@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getUser, getClientId } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { sanitizeFilePath } from "@/lib/security";
 
 const S3 = new S3Client({
   region: "auto",
@@ -17,14 +20,20 @@ const CACHE_HEADER = "public, max-age=31536000, immutable";
 
 /**
  * GET /api/files/[...path]
- * Proxy to serve files from Cloudflare R2.
- * This avoids needing a public R2 URL or custom domain.
+ * Authenticated proxy to serve files from Cloudflare R2.
+ * Includes path traversal prevention and ownership verification.
  */
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
+    // ── Authentication required ──
+    const user = await getUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
     const { path } = await params;
     const key = path.join("/");
 
@@ -32,9 +41,40 @@ export async function GET(
       return NextResponse.json({ error: "Path não especificado" }, { status: 400 });
     }
 
+    // ── Path traversal prevention ──
+    const safePath = sanitizeFilePath(key);
+    if (!safePath) {
+      return NextResponse.json({ error: "Caminho inválido" }, { status: 400 });
+    }
+
+    // ── Ownership verification ──
+    // Files under clients/{clientId}/... require ownership check
+    const pathParts = safePath.split("/");
+    if (pathParts[0] === "clients" && pathParts[1]) {
+      const resourceClientId = pathParts[1];
+
+      if (user.role === "client") {
+        // Athletes can only access their own files
+        const clientId = await getClientId(user);
+        if (clientId !== resourceClientId) {
+          return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
+        }
+      } else if (user.role === "admin" || user.role === "employee") {
+        // PTs can only access files of their managed clients
+        const client = await prisma.client.findFirst({
+          where: { id: resourceClientId, managerId: user.id },
+          select: { id: true },
+        });
+        if (!client) {
+          return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
+        }
+      }
+      // superadmin can access all files
+    }
+
     const command = new GetObjectCommand({
       Bucket: BUCKET,
-      Key: key,
+      Key: safePath,
     });
 
     const response = await S3.send(command);
@@ -53,6 +93,7 @@ export async function GET(
         "Content-Type": response.ContentType || "application/octet-stream",
         "Content-Length": String(buffer.length),
         "Cache-Control": CACHE_HEADER,
+        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (error: any) {

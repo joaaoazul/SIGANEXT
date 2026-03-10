@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
   ) {
     const origin = request.headers.get("origin");
     const host = request.headers.get("host");
-    if (origin && host) {
+    if (origin) {
       try {
         const originHost = new URL(origin).host;
         if (originHost !== host) {
@@ -64,6 +64,13 @@ export async function middleware(request: NextRequest) {
           { status: 403 }
         );
       }
+    } else {
+      // Deny mutating API requests without Origin header
+      // Modern browsers always send Origin on fetch/XHR; absence is suspicious
+      return NextResponse.json(
+        { error: "CSRF: Missing origin" },
+        { status: 403 }
+      );
     }
   }
 
@@ -130,6 +137,7 @@ export async function middleware(request: NextRequest) {
         email: payload.email,
         name: payload.name,
         role: payload.role,
+        tokenVersion: payload.tokenVersion ?? 0,
       })
         .setProtectedHeader({ alg: "HS256" })
         .setExpirationTime("7d")
@@ -167,6 +175,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    // API routes (excluding public auth, health, invites, onboarding, files)
+    "/api/((?!auth|health|invites/validate|onboarding|files).*)",
     "/dashboard/:path*",
     "/clients/:path*",
     "/exercises/:path*",
