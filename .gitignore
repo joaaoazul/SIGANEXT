@@ -43,6 +43,16 @@ next-env.d.ts
 /src/generated/prisma
 NUL
 
+# Capacitor native build artifacts
+ios/App/Pods/
+ios/App/App/public/
+ios/App/output/
+android/.gradle/
+android/app/build/
+android/app/src/main/assets/public/
+android/build/
+android/capacitor-cordova-android-plugins/build/
+
 # SQLite dev databases
 *.db
 prisma/*.db

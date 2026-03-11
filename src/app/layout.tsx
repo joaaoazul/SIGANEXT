@@ -5,6 +5,7 @@ import CookieBanner from "@/components/CookieBanner";
 import { ToastProvider } from "@/components/Toast";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorker";
+import { CapacitorInit } from "@/components/CapacitorInit";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -69,6 +70,7 @@ export default function RootLayout({
             {children}
             <CookieBanner />
             <ServiceWorkerRegistrar />
+            <CapacitorInit />
           </ToastProvider>
         </ThemeProvider>
       </body>
