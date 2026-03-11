@@ -30,14 +30,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-gray-950">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 bg-gray-900 border-r border-gray-800 p-4">
+      <aside className="hidden lg:flex flex-col w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-4">
         <div className="flex items-center gap-2 mb-8 px-2">
           <Shield className="w-7 h-7 text-red-500" />
           <div>
-            <h1 className="text-lg font-bold text-white">SIGA180</h1>
-            <p className="text-xs text-gray-500">System Admin</p>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white">SIGA180</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">System Admin</p>
           </div>
         </div>
 
@@ -51,7 +51,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   active
                     ? "bg-red-500/10 text-red-400"
-                    : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -63,7 +63,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 px-3 py-2.5 text-sm text-gray-500 hover:text-white transition-colors"
+          className="flex items-center gap-2 px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Voltar à App
@@ -71,22 +71,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 border-b border-gray-800 px-4 py-3">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-red-500" />
-            <span className="text-sm font-bold text-white">Admin</span>
+            <span className="text-sm font-bold text-gray-900 dark:text-white">Admin</span>
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
+            className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
             aria-label="Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
         {mobileMenuOpen && (
-          <nav className="mt-3 pb-2 space-y-1 border-t border-gray-800 pt-3">
+          <nav className="mt-3 pb-2 space-y-1 border-t border-gray-200 dark:border-gray-800 pt-3">
             {NAV.map(({ href, label, icon: Icon }) => {
               const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
               return (
@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     active
                       ? "bg-red-500/10 text-red-400"
-                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                      : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -108,7 +108,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link
               href="/dashboard"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-500 hover:text-white transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Voltar à App

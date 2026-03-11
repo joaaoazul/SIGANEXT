@@ -426,16 +426,16 @@ export default function AthleteNutritionPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Nutrição</h1>
-        <p className="text-gray-500 mt-1 text-sm">Diário alimentar e plano nutricional</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Nutrição</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Diário alimentar e plano nutricional</p>
       </div>
 
       {/* Tab switcher */}
-      <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
+      <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 gap-1">
         <button
           onClick={() => setTab("diary")}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-            tab === "diary" ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
+            tab === "diary" ? "bg-white dark:bg-gray-900 text-emerald-700 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
           <PenLine className="w-4 h-4" />
@@ -444,7 +444,7 @@ export default function AthleteNutritionPage() {
         <button
           onClick={() => setTab("plan")}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
-            tab === "plan" ? "bg-white text-orange-700 shadow-sm" : "text-gray-500 hover:text-gray-700"
+            tab === "plan" ? "bg-white dark:bg-gray-900 text-orange-700 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
           <BookOpen className="w-4 h-4" />
@@ -456,12 +456,12 @@ export default function AthleteNutritionPage() {
       {tab === "diary" && (
         <div className="space-y-5">
           {/* Date picker */}
-          <div className="flex items-center justify-between bg-white rounded-xl border border-gray-100 p-3">
-            <button onClick={() => goDay(-1)} className="p-2 hover:bg-gray-100 rounded-lg transition">
-              <ChevronLeft className="w-5 h-5 text-gray-500" />
+          <div className="flex items-center justify-between bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-3">
+            <button onClick={() => goDay(-1)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition">
+              <ChevronLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
             <div className="text-center">
-              <p className="font-semibold text-gray-900">
+              <p className="font-semibold text-gray-900 dark:text-white">
                 {isToday ? "Hoje" : new Date(selectedDate + "T12:00:00").toLocaleDateString("pt-PT", { weekday: "long" })}
               </p>
               <p className="text-xs text-gray-400">
@@ -471,15 +471,15 @@ export default function AthleteNutritionPage() {
             <button
               onClick={() => goDay(1)}
               disabled={isToday}
-              className={`p-2 rounded-lg transition ${isToday ? "opacity-30" : "hover:bg-gray-100"}`}
+              className={`p-2 rounded-lg transition ${isToday ? "opacity-30" : "hover:bg-gray-100 dark:hover:bg-gray-800"}`}
             >
-              <ChevronRight className="w-5 h-5 text-gray-500" />
+              <ChevronRight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
           </div>
 
           {/* Daily macro summary */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Macros do Dia</h3>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Macros do Dia</h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <MacroProgress
                 label="Calorias" icon={<Flame className="w-4 h-4" />}
@@ -505,24 +505,24 @@ export default function AthleteNutritionPage() {
           </div>
 
           {/* Water tracker */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <GlassWater className="w-5 h-5 text-blue-500" />
-                <h3 className="text-sm font-semibold text-gray-900">Água</h3>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Água</h3>
               </div>
               <span className="text-xs text-gray-400">{waterCurrent}ml / {waterGoal}ml</span>
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={removeWater} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition">
-                <Minus className="w-4 h-4 text-gray-500" />
+              <button onClick={removeWater} className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition">
+                <Minus className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </button>
               <div className="flex-1 flex items-center gap-1">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <div
                     key={i}
                     className={`flex-1 h-6 rounded-full transition-all duration-300 ${
-                      i < waterGlasses ? "bg-blue-400" : "bg-gray-100"
+                      i < waterGlasses ? "bg-blue-400" : "bg-gray-100 dark:bg-gray-800"
                     }`}
                   />
                 ))}
@@ -536,10 +536,10 @@ export default function AthleteNutritionPage() {
           {/* Meal logs */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Refeições</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Refeições</h3>
               <button
                 onClick={() => setShowAddMeal(true)}
-                className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition"
+                className="flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition"
               >
                 <Plus className="w-4 h-4" /> Adicionar
               </button>
@@ -550,12 +550,12 @@ export default function AthleteNutritionPage() {
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500" />
               </div>
             ) : dailyData?.logs.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-dashed border-gray-200 p-8 text-center">
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 p-8 text-center">
                 <Apple className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 text-sm">Ainda não registaste refeições hoje.</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">Ainda não registaste refeições hoje.</p>
                 <button
                   onClick={() => setShowAddMeal(true)}
-                  className="mt-3 text-sm font-medium text-emerald-600 hover:text-emerald-700"
+                  className="mt-3 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700"
                 >
                   + Registar primeira refeição
                 </button>
@@ -571,24 +571,24 @@ export default function AthleteNutritionPage() {
                 const photos = log.photos ? JSON.parse(log.photos) : [];
 
                 return (
-                  <div key={log.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                  <div key={log.id} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
                     <button
                       onClick={() => setExpandedLog(isExpanded ? null : log.id)}
                       className="w-full flex items-center p-4 text-left"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mr-3 text-lg">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center mr-3 text-lg">
                         {mt?.emoji || "🍽️"}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-semibold text-gray-900">{log.name}</h4>
+                          <h4 className="font-semibold text-gray-900 dark:text-white">{log.name}</h4>
                           {log.time && (
                             <span className="text-xs text-gray-400 flex items-center gap-0.5">
                               <Clock className="w-3 h-3" /> {log.time}
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {log.entries.length} alimento{log.entries.length !== 1 ? "s" : ""} · ~{Math.round(mealCal)} kcal
                           {photos.length > 0 && <span className="ml-1">📸 {photos.length}</span>}
                         </p>
@@ -618,17 +618,17 @@ export default function AthleteNutritionPage() {
                         {log.entries.map((entry) => {
                           const factor = entry.quantity / 100;
                           return (
-                            <div key={entry.id} className="flex items-center justify-between bg-gray-50 rounded-xl p-3">
+                            <div key={entry.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
                                 <span className="text-lg">{catEmoji[entry.food?.category || ""] || "🍽️"}</span>
                                 <div className="min-w-0">
-                                  <p className="font-medium text-gray-900 text-sm truncate">{entry.name}</p>
+                                  <p className="font-medium text-gray-900 dark:text-white text-sm truncate">{entry.name}</p>
                                   <p className="text-xs text-gray-400">{entry.quantity}{entry.unit}</p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-3 flex-shrink-0">
                                 <div className="text-right">
-                                  <span className="text-sm font-semibold text-amber-600">{Math.round(entry.calories * factor)} kcal</span>
+                                  <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">{Math.round(entry.calories * factor)} kcal</span>
                                   <div className="flex gap-2 mt-0.5">
                                     <span className="text-[10px] text-red-500">P:{Math.round(entry.protein * factor)}g</span>
                                     <span className="text-[10px] text-yellow-500">HC:{Math.round(entry.carbs * factor)}g</span>
@@ -645,15 +645,15 @@ export default function AthleteNutritionPage() {
 
                         {/* Meal total */}
                         {log.entries.length > 0 && (
-                          <div className="bg-emerald-50 rounded-xl p-3">
+                          <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3">
                             <div className="flex items-center justify-between text-sm">
                               <span className="font-medium text-emerald-800">Total</span>
-                              <span className="text-emerald-600 font-bold">{Math.round(mealCal)} kcal</span>
+                              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{Math.round(mealCal)} kcal</span>
                             </div>
                             <div className="flex gap-4 text-xs mt-1">
-                              <span className="text-red-600">P: {Math.round(mealProt)}g</span>
-                              <span className="text-yellow-600">HC: {Math.round(mealCarb)}g</span>
-                              <span className="text-orange-600">G: {Math.round(mealFat)}g</span>
+                              <span className="text-red-600 dark:text-red-400">P: {Math.round(mealProt)}g</span>
+                              <span className="text-yellow-600 dark:text-yellow-400">HC: {Math.round(mealCarb)}g</span>
+                              <span className="text-orange-600 dark:text-orange-400">G: {Math.round(mealFat)}g</span>
                             </div>
                           </div>
                         )}
@@ -662,11 +662,11 @@ export default function AthleteNutritionPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => { setShowFoodSearch(log.id); setSearchQuery(""); setSearchResults([]); setShowCustomFood(false); }}
-                            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition"
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 rounded-xl transition"
                           >
                             <Plus className="w-4 h-4" /> Adicionar alimento
                           </button>
-                          <label className="flex items-center justify-center gap-1.5 py-2 px-3 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition cursor-pointer">
+                          <label className="flex items-center justify-center gap-1.5 py-2 px-3 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 rounded-xl transition cursor-pointer">
                             <Camera className="w-4 h-4" />
                             {uploadingPhoto === log.id ? "..." : "Foto"}
                             <input
@@ -682,7 +682,7 @@ export default function AthleteNutritionPage() {
                           </label>
                           <button
                             onClick={() => deleteMealLog(log.id)}
-                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -735,8 +735,8 @@ export default function AthleteNutritionPage() {
               </div>
 
               {/* Macro targets */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Targets do Plano</h3>
+              <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Targets do Plano</h3>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   <MacroProgress label="Calorias" icon={<Flame className="w-4 h-4" />}
                     current={consumed.cal} target={activePlan.nutritionPlan.totalCalories} unit="kcal" color="amber" />
@@ -754,7 +754,7 @@ export default function AthleteNutritionPage() {
 
               {/* Meals */}
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-900">Refeições do Plano</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Refeições do Plano</h3>
                 {sortedMeals.map((meal) => {
                   const isChecked = checkedMeals.has(meal.id);
                   const isCurrent = currentMealId === meal.id;
@@ -765,9 +765,9 @@ export default function AthleteNutritionPage() {
                   const isExp = expandedMeal === meal.id;
 
                   return (
-                    <div key={meal.id} className={`bg-white rounded-2xl border overflow-hidden transition-all duration-300 ${
-                      isChecked ? "border-emerald-200 bg-emerald-50/30"
-                        : isCurrent ? "border-orange-300 ring-2 ring-orange-100" : "border-gray-100"
+                    <div key={meal.id} className={`bg-white dark:bg-gray-900 rounded-2xl border overflow-hidden transition-all duration-300 ${
+                      isChecked ? "border-emerald-200 bg-emerald-50/30 dark:bg-emerald-900/10"
+                        : isCurrent ? "border-orange-300 ring-2 ring-orange-100" : "border-gray-100 dark:border-gray-800"
                     }`}>
                       <div className="flex items-center p-4 sm:p-5">
                         <button onClick={() => toggleMealCheck(meal.id)}
@@ -780,7 +780,7 @@ export default function AthleteNutritionPage() {
                           className="flex items-center justify-between flex-1 text-left">
                           <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              isChecked ? "bg-emerald-100" : isCurrent ? "bg-orange-100" : "bg-gray-100"
+                              isChecked ? "bg-emerald-100" : isCurrent ? "bg-orange-100" : "bg-gray-100 dark:bg-gray-800"
                             }`}>
                               <UtensilsCrossed className={`w-5 h-5 ${
                                 isChecked ? "text-emerald-600" : isCurrent ? "text-orange-600" : "text-gray-400"
@@ -788,12 +788,12 @@ export default function AthleteNutritionPage() {
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className={`font-semibold ${isChecked ? "text-emerald-700 line-through" : "text-gray-900"}`}>{meal.name}</h4>
+                                <h4 className={`font-semibold ${isChecked ? "text-emerald-700 line-through" : "text-gray-900 dark:text-white"}`}>{meal.name}</h4>
                                 {isCurrent && !isChecked && (
                                   <span className="text-[10px] font-semibold bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full">AGORA</span>
                                 )}
                               </div>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
                                 {meal.time && <span className="inline-flex items-center gap-0.5 mr-2"><Clock className="w-3 h-3" /> {meal.time}</span>}
                                 {meal.foods.length} alimentos · ~{Math.round(totalCal)} kcal
                               </p>
@@ -803,8 +803,8 @@ export default function AthleteNutritionPage() {
                         </button>
                       </div>
                       {isExp && (
-                        <div className="px-5 pb-5 space-y-3 border-t border-gray-100 pt-4">
-                          {meal.notes && <p className="text-sm text-gray-500 italic bg-gray-50 p-3 rounded-lg">📝 {meal.notes}</p>}
+                        <div className="px-5 pb-5 space-y-3 border-t border-gray-100 dark:border-gray-800 pt-4">
+                          {meal.notes && <p className="text-sm text-gray-500 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">📝 {meal.notes}</p>}
                           {meal.foods.map((mf) => {
                             const cal = Math.round((mf.food.calories * mf.quantity) / 100);
                             const prot = Math.round((mf.food.protein * mf.quantity) / 100);
@@ -812,36 +812,36 @@ export default function AthleteNutritionPage() {
                             const ft = Math.round((mf.food.fat * mf.quantity) / 100);
                             const fib = mf.food.fiber ? Math.round((mf.food.fiber * mf.quantity) / 100) : null;
                             return (
-                              <div key={mf.id} className="bg-gray-50 rounded-xl p-3">
+                              <div key={mf.id} className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3">
                                 <div className="flex items-start justify-between mb-1.5">
                                   <div className="flex items-center gap-2">
                                     <span className="text-lg">{catEmoji[mf.food.category] || "🍽️"}</span>
                                     <div>
-                                      <p className="font-medium text-gray-900 text-sm">{mf.food.name}</p>
+                                      <p className="font-medium text-gray-900 dark:text-white text-sm">{mf.food.name}</p>
                                       <p className="text-xs text-gray-400">{mf.quantity}{mf.unit}{mf.food.brand && ` · ${mf.food.brand}`}</p>
                                     </div>
                                   </div>
-                                  <span className="text-sm font-semibold text-amber-600">{cal} kcal</span>
+                                  <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">{cal} kcal</span>
                                 </div>
                                 <div className="flex gap-3 mt-2">
-                                  <span className="text-xs text-red-600 bg-red-50 px-2 py-0.5 rounded-full">P: {prot}g</span>
-                                  <span className="text-xs text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full">HC: {crb}g</span>
-                                  <span className="text-xs text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full">G: {ft}g</span>
-                                  {fib !== null && fib > 0 && <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Fibra: {fib}g</span>}
+                                  <span className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-full">P: {prot}g</span>
+                                  <span className="text-xs text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-0.5 rounded-full">HC: {crb}g</span>
+                                  <span className="text-xs text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded-full">G: {ft}g</span>
+                                  {fib !== null && fib > 0 && <span className="text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-0.5 rounded-full">Fibra: {fib}g</span>}
                                 </div>
                                 {mf.notes && <p className="text-xs text-gray-400 italic mt-2">{mf.notes}</p>}
                               </div>
                             );
                           })}
-                          <div className="bg-orange-50 rounded-xl p-3">
+                          <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-3">
                             <div className="flex items-center justify-between text-sm mb-2">
                               <span className="font-medium text-orange-800">Total da refeição</span>
-                              <span className="text-orange-600 font-bold">{Math.round(totalCal)} kcal</span>
+                              <span className="text-orange-600 dark:text-orange-400 font-bold">{Math.round(totalCal)} kcal</span>
                             </div>
-                            <div className="flex gap-4 text-xs text-gray-500">
-                              <span className="text-red-600">P: {Math.round(totalProt)}g</span>
-                              <span className="text-yellow-600">HC: {Math.round(totalCarb)}g</span>
-                              <span className="text-orange-600">G: {Math.round(totalFat)}g</span>
+                            <div className="flex gap-4 text-xs text-gray-500 dark:text-gray-400">
+                              <span className="text-red-600 dark:text-red-400">P: {Math.round(totalProt)}g</span>
+                              <span className="text-yellow-600 dark:text-yellow-400">HC: {Math.round(totalCarb)}g</span>
+                              <span className="text-orange-600 dark:text-orange-400">G: {Math.round(totalFat)}g</span>
                             </div>
                           </div>
                         </div>
@@ -852,10 +852,10 @@ export default function AthleteNutritionPage() {
               </div>
             </>
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-12 text-center">
               <UtensilsCrossed className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900">Sem plano nutricional</h3>
-              <p className="text-gray-500 mt-2">O teu PT ainda não te atribuiu um plano nutricional.</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sem plano nutricional</h3>
+              <p className="text-gray-500 dark:text-gray-400 mt-2">O teu PT ainda não te atribuiu um plano nutricional.</p>
               <p className="text-gray-400 mt-1 text-sm">Podes usar o Diário para registar as tuas refeições!</p>
             </div>
           )}
@@ -863,15 +863,15 @@ export default function AthleteNutritionPage() {
           {/* Past Plans */}
           {pastPlans.length > 0 && (
             <div className="space-y-3">
-              <button onClick={() => setShowPastPlans(!showPastPlans)} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
+              <button onClick={() => setShowPastPlans(!showPastPlans)} className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition">
                 {showPastPlans ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 <span className="font-semibold">Planos Anteriores ({pastPlans.length})</span>
               </button>
               {showPastPlans && pastPlans.map((plan) => (
-                <div key={plan.id} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between opacity-60">
+                <div key={plan.id} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-4 flex items-center justify-between opacity-60">
                   <div>
-                    <h3 className="font-medium text-gray-900">{plan.nutritionPlan.name}</h3>
-                    <p className="text-xs text-gray-500">
+                    <h3 className="font-medium text-gray-900 dark:text-white">{plan.nutritionPlan.name}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {new Date(plan.startDate).toLocaleDateString("pt-PT")}
                       {plan.endDate && ` — ${new Date(plan.endDate).toLocaleDateString("pt-PT")}`}
                     </p>
@@ -892,10 +892,10 @@ export default function AthleteNutritionPage() {
       {/* ═══════════════ ADD MEAL MODAL ═══════════════ */}
       {showAddMeal && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4" onClick={() => setShowAddMeal(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900">Registar Refeição</h3>
-              <button onClick={() => setShowAddMeal(false)} className="p-1 hover:bg-gray-100 rounded-lg">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Registar Refeição</h3>
+              <button onClick={() => setShowAddMeal(false)} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
@@ -905,18 +905,18 @@ export default function AthleteNutritionPage() {
                   key={mt.value}
                   onClick={() => { setAddingMealType(mt); }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl transition text-left ${
-                    addingMealType.value === mt.value ? "bg-emerald-50 border-2 border-emerald-300" : "bg-gray-50 hover:bg-gray-100 border-2 border-transparent"
+                    addingMealType.value === mt.value ? "bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-300" : "bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-transparent"
                   }`}
                 >
                   <span className="text-2xl">{mt.emoji}</span>
                   <div>
-                    <p className="font-medium text-gray-900">{mt.label}</p>
+                    <p className="font-medium text-gray-900 dark:text-white">{mt.label}</p>
                     {mt.time && <p className="text-xs text-gray-400">{mt.time}</p>}
                   </div>
                 </button>
               ))}
             </div>
-            <div className="p-4 border-t border-gray-100">
+            <div className="p-4 border-t border-gray-100 dark:border-gray-800">
               <button
                 onClick={addMealLog}
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition"
@@ -931,17 +931,17 @@ export default function AthleteNutritionPage() {
       {/* ═══════════════ FOOD SEARCH MODAL ═══════════════ */}
       {showFoodSearch && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-4" onClick={() => { setShowFoodSearch(null); setShowCustomFood(false); }}>
-          <div className="bg-white rounded-2xl w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-900">Adicionar Alimento</h3>
-              <button onClick={() => { setShowFoodSearch(null); setShowCustomFood(false); }} className="p-1 hover:bg-gray-100 rounded-lg">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md max-h-[85vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Adicionar Alimento</h3>
+              <button onClick={() => { setShowFoodSearch(null); setShowCustomFood(false); }} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                 <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
 
             {!showCustomFood ? (
               <>
-                <div className="p-4 border-b border-gray-100">
+                <div className="p-4 border-b border-gray-100 dark:border-gray-800">
                   <div className="relative">
                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
@@ -949,7 +949,7 @@ export default function AthleteNutritionPage() {
                       placeholder="Pesquisar alimento (ex: frango, arroz...)"
                       value={searchQuery}
                       onChange={(e) => searchFoods(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
                       autoFocus
                     />
                   </div>
@@ -965,7 +965,7 @@ export default function AthleteNutritionPage() {
                   ) : searchResults.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-gray-400 text-sm">Nenhum alimento encontrado</p>
-                      <button onClick={() => setShowCustomFood(true)} className="mt-2 text-sm font-medium text-emerald-600 hover:text-emerald-700">
+                      <button onClick={() => setShowCustomFood(true)} className="mt-2 text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-700">
                         + Adicionar manualmente
                       </button>
                     </div>
@@ -974,12 +974,12 @@ export default function AthleteNutritionPage() {
                       <button
                         key={food.id}
                         onClick={() => addFoodEntry(showFoodSearch, food)}
-                        className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-emerald-50 rounded-xl text-left transition"
+                        className="w-full flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl text-left transition"
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{catEmoji[food.category] || "🍽️"}</span>
                           <div>
-                            <p className="font-medium text-gray-900 text-sm">{food.name}</p>
+                            <p className="font-medium text-gray-900 dark:text-white text-sm">{food.name}</p>
                             <p className="text-xs text-gray-400">
                               {food.servingSize ? `${food.servingSize}${food.servingUnit || "g"}` : "100g"}
                               {food.brand && ` · ${food.brand}`}
@@ -987,7 +987,7 @@ export default function AthleteNutritionPage() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-semibold text-amber-600">{food.calories} kcal</p>
+                          <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">{food.calories} kcal</p>
                           <p className="text-[10px] text-gray-400">P:{food.protein}g HC:{food.carbs}g G:{food.fat}g</p>
                         </div>
                       </button>
@@ -995,8 +995,8 @@ export default function AthleteNutritionPage() {
                   )}
                 </div>
 
-                <div className="p-4 border-t border-gray-100">
-                  <button onClick={() => setShowCustomFood(true)} className="w-full py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+                <div className="p-4 border-t border-gray-100 dark:border-gray-800">
+                  <button onClick={() => setShowCustomFood(true)} className="w-full py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition">
                     Não encontras? Adicionar manualmente
                   </button>
                 </div>
@@ -1006,19 +1006,19 @@ export default function AthleteNutritionPage() {
                 <input
                   type="text" placeholder="Nome do alimento *"
                   value={customFood.name} onChange={e => setCustomFood({...customFood, name: e.target.value})}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-800 dark:text-white"
                   autoFocus
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Quantidade</label>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Quantidade</label>
                     <input type="number" value={customFood.quantity} onChange={e => setCustomFood({...customFood, quantity: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-800 dark:text-white" />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Unidade</label>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Unidade</label>
                     <select value={customFood.unit} onChange={e => setCustomFood({...customFood, unit: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-800 dark:text-white">
                       <option value="g">gramas</option>
                       <option value="ml">ml</option>
                       <option value="unid">unidade</option>
@@ -1028,28 +1028,28 @@ export default function AthleteNutritionPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Calorias (kcal) /100g</label>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Calorias (kcal) /100g</label>
                     <input type="number" value={customFood.calories} onChange={e => setCustomFood({...customFood, calories: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-800 dark:text-white" />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Proteína (g) /100g</label>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Proteína (g) /100g</label>
                     <input type="number" value={customFood.protein} onChange={e => setCustomFood({...customFood, protein: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-800 dark:text-white" />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Hidratos (g) /100g</label>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Hidratos (g) /100g</label>
                     <input type="number" value={customFood.carbs} onChange={e => setCustomFood({...customFood, carbs: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-800 dark:text-white" />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Gordura (g) /100g</label>
+                    <label className="text-xs text-gray-500 dark:text-gray-400 mb-1 block">Gordura (g) /100g</label>
                     <input type="number" value={customFood.fat} onChange={e => setCustomFood({...customFood, fat: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                      className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:bg-gray-800 dark:text-white" />
                   </div>
                 </div>
                 <div className="flex gap-2 pt-2">
-                  <button onClick={() => setShowCustomFood(false)} className="flex-1 py-2.5 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">
+                  <button onClick={() => setShowCustomFood(false)} className="flex-1 py-2.5 text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition">
                     Voltar
                   </button>
                   <button onClick={() => addCustomFoodEntry(showFoodSearch)} disabled={!customFood.name}
@@ -1090,12 +1090,12 @@ function MacroProgress({ label, icon, current, target, unit, color }: {
   const c = colors[color];
 
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-4">
+    <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-4">
       <div className="flex items-center justify-between mb-2">
         <div className={c.iconColor}>{icon}</div>
         {t > 0 && <span className="text-[10px] text-gray-400 font-medium">{pct}%</span>}
       </div>
-      <p className="text-xs text-gray-500 mb-0.5">{label}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">{label}</p>
       <p className={`text-lg font-bold ${c.text}`}>
         {current}
         <span className="text-xs font-normal text-gray-400">

@@ -146,7 +146,7 @@ export default function TopBar() {
                   router.push("/login");
                   router.refresh();
                 }}
-                className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition"
+                className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
               >
                 Sair
               </button>

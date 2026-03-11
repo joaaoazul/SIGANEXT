@@ -136,19 +136,19 @@ export default function NotificationsPage() {
               <div className="shrink-0 mt-0.5">{typeIcon(n.type)}</div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className={`text-sm font-medium ${!n.isRead ? "text-gray-900" : "text-gray-500"}`}>{n.title}</h4>
+                  <h4 className={`text-sm font-medium ${!n.isRead ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"}`}>{n.title}</h4>
                   {!n.isRead && <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />}
                 </div>
-                <p className="text-sm text-gray-500 line-clamp-2">{n.message}</p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{n.message}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {new Date(n.createdAt).toLocaleDateString("pt-PT")} às {new Date(n.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
                 </p>
               </div>
               <div className="flex gap-1 shrink-0">
-                <button onClick={() => toggleRead(n.id, n.isRead)} className="p-1.5 hover:bg-white rounded-lg" title={n.isRead ? "Marcar não lida" : "Marcar lida"}>
-                  <Check className={`w-4 h-4 ${n.isRead ? "text-gray-500" : "text-emerald-600"}`} />
+                <button onClick={() => toggleRead(n.id, n.isRead)} className="p-1.5 hover:bg-white dark:hover:bg-gray-700 rounded-lg" title={n.isRead ? "Marcar não lida" : "Marcar lida"}>
+                  <Check className={`w-4 h-4 ${n.isRead ? "text-gray-500 dark:text-gray-400" : "text-emerald-600"}`} />
                 </button>
-                <button onClick={() => handleDelete(n.id)} className="p-1.5 hover:bg-red-50 rounded-lg">
+                <button onClick={() => handleDelete(n.id)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                   <Trash2 className="w-4 h-4 text-red-600" />
                 </button>
               </div>
@@ -160,11 +160,11 @@ export default function NotificationsPage() {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Nova Notificação">
         <form onSubmit={handleCreate} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Título *</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Título *</label>
             <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="input-field" required />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Tipo</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Tipo</label>
             <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="input-field">
               <option value="info">Info</option>
               <option value="warning">Aviso</option>
@@ -173,7 +173,7 @@ export default function NotificationsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Mensagem *</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Mensagem *</label>
             <textarea value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="input-field min-h-[80px]" required />
           </div>
           <div className="flex justify-end gap-3">

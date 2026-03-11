@@ -147,14 +147,14 @@ export default function BookingsPage() {
       {/* Week navigation */}
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => navigateWeek(-1)} className="p-2 hover:bg-white rounded-lg" aria-label="Semana anterior">
-            <ChevronLeft className="w-5 h-5 text-gray-500" />
+          <button onClick={() => navigateWeek(-1)} className="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-lg" aria-label="Semana anterior">
+            <ChevronLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
-          <h2 className="text-sm font-medium text-gray-900">
+          <h2 className="text-sm font-medium text-gray-900 dark:text-white">
             {new Date(weekDays[0]).toLocaleDateString("pt-PT", { day: "numeric", month: "long" })} — {new Date(weekDays[6]).toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" })}
           </h2>
-          <button onClick={() => navigateWeek(1)} className="p-2 hover:bg-white rounded-lg" aria-label="Semana seguinte">
-            <ChevronRight className="w-5 h-5 text-gray-500" />
+          <button onClick={() => navigateWeek(1)} className="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-lg" aria-label="Semana seguinte">
+            <ChevronRight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
         <div className="grid grid-cols-7 gap-1">
@@ -168,11 +168,11 @@ export default function BookingsPage() {
                 onClick={() => setSelectedDate(day)}
                 className={`p-1 sm:p-2 rounded-lg text-center transition-colors ${
                   isSelected ? "bg-emerald-50 ring-1 ring-emerald-500" :
-                  isToday ? "bg-white" : "hover:bg-gray-50"
+                  isToday ? "bg-white dark:bg-gray-900" : "hover:bg-gray-50 dark:hover:bg-gray-800"
                 }`}
               >
                 <div className="text-xs text-gray-400 mb-1">{dayNames[i]}</div>
-                <div className={`text-sm font-semibold ${isToday ? "text-emerald-600" : "text-gray-900"}`}>
+                <div className={`text-sm font-semibold ${isToday ? "text-emerald-600" : "text-gray-900 dark:text-white"}`}>
                   {new Date(day).getDate()}
                 </div>
                 {daySlots.length > 0 && (
@@ -191,7 +191,7 @@ export default function BookingsPage() {
 
       {/* Day view */}
       <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-3">
+        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
           <Calendar className="w-4 h-4 inline mr-1" />
           {new Date(selectedDate).toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
         </h3>
@@ -223,10 +223,10 @@ export default function BookingsPage() {
                       <Clock className="w-4 h-4" />
                       <span className="text-sm font-semibold">{slot.startTime} - {slot.endTime}</span>
                     </div>                    {slot.isRecurring && (
-                      <span className="badge bg-purple-50 text-purple-600 flex items-center gap-1">
+                      <span className="badge bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400 flex items-center gap-1">
                         <Repeat className="w-3 h-3" /> Recorrente
                       </span>
-                    )}                    <span className={`badge ${slot.isActive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>
+                    )}                    <span className={`badge ${slot.isActive ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400"}`}>
                       {slot.isActive ? "Disponível" : "Indisponível"}
                     </span>
                     <span className="text-xs text-gray-400">
@@ -235,11 +235,11 @@ export default function BookingsPage() {
                   </div>
                   <div className="flex gap-1">
                     {slot.isActive && slot.bookings.length < slot.maxClients && (
-                      <button onClick={() => setShowBookModal(slot.id)} className="p-2 hover:bg-emerald-50 rounded-lg" title="Agendar cliente" aria-label="Agendar cliente">
+                      <button onClick={() => setShowBookModal(slot.id)} className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg" title="Agendar cliente" aria-label="Agendar cliente">
                         <UserPlus className="w-4 h-4 text-emerald-600" />
                       </button>
                     )}
-                    <button onClick={() => handleDeleteSlot(slot.id)} className="p-2 hover:bg-red-50 rounded-lg" aria-label="Eliminar slot">
+                    <button onClick={() => handleDeleteSlot(slot.id)} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg" aria-label="Eliminar slot">
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>
@@ -248,31 +248,31 @@ export default function BookingsPage() {
                 {slot.bookings.length > 0 && (
                   <div className="space-y-2">
                     {slot.bookings.map(b => (
-                      <div key={b.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 bg-gray-50 rounded-lg">
+                      <div key={b.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
                         <div className="min-w-0">
-                          <span className="text-sm text-gray-900 font-medium truncate block">{b.client.name}</span>
+                          <span className="text-sm text-gray-900 dark:text-white font-medium truncate block">{b.client.name}</span>
                           {b.notes && <span className="text-xs text-gray-400">— {b.notes}</span>}
                         </div>
                         <div className="flex items-center gap-1 flex-shrink-0">
                           <span className={`badge text-xs ${
-                            b.status === "confirmed" ? "bg-emerald-50 text-emerald-600" :
-                            b.status === "completed" ? "bg-blue-50 text-blue-600" :
-                            b.status === "cancelled" ? "bg-red-50 text-red-600" :
-                            "bg-yellow-50 text-yellow-600"
+                            b.status === "confirmed" ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" :
+                            b.status === "completed" ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" :
+                            b.status === "cancelled" ? "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400" :
+                            "bg-yellow-50 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400"
                           }`}>
                             {b.status === "confirmed" ? "Confirmado" : b.status === "completed" ? "Concluído" : b.status === "cancelled" ? "Cancelado" : "Pendente"}
                           </span>
                           {b.status === "pending" && (
-                            <button onClick={() => handleBookingStatus(b.id, "confirmed")} className="p-1 hover:bg-emerald-50 rounded" title="Confirmar" aria-label="Confirmar">
+                            <button onClick={() => handleBookingStatus(b.id, "confirmed")} className="p-1 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded" title="Confirmar" aria-label="Confirmar">
                               <Check className="w-3.5 h-3.5 text-emerald-600" />
                             </button>
                           )}
                           {b.status === "confirmed" && (
-                            <button onClick={() => handleBookingStatus(b.id, "completed")} className="p-1 hover:bg-blue-50 rounded" title="Concluir" aria-label="Concluir">
+                            <button onClick={() => handleBookingStatus(b.id, "completed")} className="p-1 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded" title="Concluir" aria-label="Concluir">
                               <Check className="w-3.5 h-3.5 text-blue-600" />
                             </button>
                           )}
-                          <button onClick={() => handleCancelBooking(b.id)} className="p-1 hover:bg-red-50 rounded" title="Cancelar" aria-label="Cancelar">
+                          <button onClick={() => handleCancelBooking(b.id)} className="p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded" title="Cancelar" aria-label="Cancelar">
                             <X className="w-3.5 h-3.5 text-red-600" />
                           </button>
                         </div>
@@ -298,14 +298,14 @@ export default function BookingsPage() {
               className="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
             />
             <Repeat className="w-4 h-4 text-emerald-600" />
-            <span className="text-sm font-medium text-gray-700">Slot recorrente</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Slot recorrente</span>
           </label>
 
           {slotForm.isRecurring ? (
             <>
               {/* Days of week */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">Dias da semana *</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Dias da semana *</label>
                 <div className="flex flex-wrap gap-2">
                   {[
                     { day: 1, label: "Seg" }, { day: 2, label: "Ter" }, { day: 3, label: "Qua" },
@@ -323,7 +323,7 @@ export default function BookingsPage() {
                       className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                         slotForm.daysOfWeek.includes(day)
                           ? "bg-emerald-500 text-white"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                          : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
                       }`}
                     >
                       {label}
@@ -334,38 +334,38 @@ export default function BookingsPage() {
               {/* Date range */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">De *</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">De *</label>
                   <input type="date" value={slotForm.dateFrom} onChange={(e) => setSlotForm({ ...slotForm, dateFrom: e.target.value })} className="input-field" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">Até *</label>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Até *</label>
                   <input type="date" value={slotForm.dateTo} onChange={(e) => setSlotForm({ ...slotForm, dateTo: e.target.value })} className="input-field" required />
                 </div>
               </div>
             </>
           ) : (
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Data *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Data *</label>
               <input type="date" value={slotForm.date} onChange={(e) => setSlotForm({ ...slotForm, date: e.target.value })} className="input-field" required />
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Hora Início *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Hora Início *</label>
               <input type="time" value={slotForm.startTime} onChange={(e) => setSlotForm({ ...slotForm, startTime: e.target.value })} className="input-field" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Hora Fim *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Hora Fim *</label>
               <input type="time" value={slotForm.endTime} onChange={(e) => setSlotForm({ ...slotForm, endTime: e.target.value })} className="input-field" required />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Máx. Clientes</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Máx. Clientes</label>
             <input type="number" min="1" max="20" value={slotForm.maxClients} onChange={(e) => setSlotForm({ ...slotForm, maxClients: e.target.value })} className="input-field" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Notas</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Notas</label>
             <input type="text" value={slotForm.notes} onChange={(e) => setSlotForm({ ...slotForm, notes: e.target.value })} className="input-field" placeholder="Ex: Aula de grupo, PT privado..." />
           </div>
           <div className="flex justify-end gap-3">
@@ -379,14 +379,14 @@ export default function BookingsPage() {
       <Modal isOpen={!!showBookModal} onClose={() => setShowBookModal(null)} title="Agendar Cliente">
         <form onSubmit={handleBook} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Cliente *</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Cliente *</label>
             <select value={bookForm.clientId} onChange={(e) => setBookForm({ ...bookForm, clientId: e.target.value })} className="input-field" required>
               <option value="">Selecionar</option>
               {clients.map(c => (<option key={c.id} value={c.id}>{c.name}</option>))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Notas</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Notas</label>
             <input type="text" value={bookForm.notes} onChange={(e) => setBookForm({ ...bookForm, notes: e.target.value })} className="input-field" placeholder="Notas opcionais..." />
           </div>
           <div className="flex justify-end gap-3">

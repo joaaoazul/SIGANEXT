@@ -23,10 +23,10 @@ const typeIcons: Record<string, typeof Bell> = {
 };
 
 const typeColors: Record<string, string> = {
-  info: "bg-blue-100 text-blue-600",
-  warning: "bg-amber-100 text-amber-600",
-  success: "bg-emerald-100 text-emerald-600",
-  reminder: "bg-purple-100 text-purple-600",
+  info: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+  warning: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+  success: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
+  reminder: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
 };
 
 export default function AthleteNotificationsPage() {
@@ -95,11 +95,11 @@ export default function AthleteNotificationsPage() {
         <div className="space-y-2">
           {notifications.map((n) => {
             const Icon = typeIcons[n.type] || Bell;
-            const colorClass = typeColors[n.type] || "bg-gray-100 text-gray-600";
+            const colorClass = typeColors[n.type] || "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400";
             return (
               <div
                 key={n.id}
-                className={`card flex items-start gap-3 cursor-pointer transition hover:shadow-sm ${!n.isRead ? "border-l-4 border-l-emerald-500 bg-emerald-50/30" : ""}`}
+                className={`card flex items-start gap-3 cursor-pointer transition hover:shadow-sm ${!n.isRead ? "border-l-4 border-l-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/10" : ""}`}
                 onClick={() => !n.isRead && markAsRead(n.id)}
                 role="button"
                 tabIndex={0}
@@ -111,11 +111,11 @@ export default function AthleteNotificationsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className={`text-sm font-medium ${!n.isRead ? "text-gray-900" : "text-gray-600"}`}>{n.title}</h3>
-                    {n.isGlobal && <span className="text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full">Geral</span>}
+                    <h3 className={`text-sm font-medium ${!n.isRead ? "text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-400"}`}>{n.title}</h3>
+                    {n.isGlobal && <span className="text-[10px] bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-1.5 py-0.5 rounded-full">Geral</span>}
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{n.message}</p>
-                  <p className="text-[10px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString("pt-PT")}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{n.message}</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString("pt-PT")}</p>
                 </div>
                 {!n.isRead && (
                   <div className="w-2 h-2 bg-emerald-500 rounded-full shrink-0 mt-2" aria-hidden="true" />

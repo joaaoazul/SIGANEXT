@@ -51,10 +51,10 @@ function ProgressBar({ percent, label, detail }: { percent: number; label: strin
   return (
     <div>
       <div className="flex justify-between text-xs mb-1.5">
-        <span className="text-gray-400">{label}</span>
-        <span className="text-gray-300">{detail}</span>
+        <span className="text-gray-500 dark:text-gray-400">{label}</span>
+        <span className="text-gray-600 dark:text-gray-300">{detail}</span>
       </div>
-      <div className="w-full bg-gray-800 rounded-full h-2">
+      <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
         <div className={`h-2 rounded-full transition-all duration-500 ${color}`} style={{ width: `${Math.min(percent, 100)}%` }} />
       </div>
       <div className="text-right mt-0.5">
@@ -96,7 +96,7 @@ export default function ServerPage() {
   }
 
   if (!data) {
-    return <div className="text-center py-20"><p className="text-gray-400">Erro ao carregar dados do servidor.</p></div>;
+    return <div className="text-center py-20"><p className="text-gray-500 dark:text-gray-400">Erro ao carregar dados do servidor.</p></div>;
   }
 
   const overallHealth =
@@ -111,11 +111,11 @@ export default function ServerPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Server className="w-6 h-6 text-cyan-500" />
             Infraestrutura
           </h1>
-          <p className="text-gray-500 text-sm mt-1">Monitorização do servidor em tempo real</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Monitorização do servidor em tempo real</p>
         </div>
         <div className="flex items-center gap-3">
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${overallHealth ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
@@ -123,7 +123,7 @@ export default function ServerPage() {
             {overallHealth ? "Operacional" : "Atenção"}
           </div>
           {lastUpdated && <span className="text-xs text-gray-600">{lastUpdated.toLocaleTimeString("pt-PT")}</span>}
-          <button onClick={() => { setLoading(true); fetchData(); }} className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 rounded-lg text-xs text-gray-300 hover:bg-gray-700 transition">
+          <button onClick={() => { setLoading(true); fetchData(); }} className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
             <RefreshCcw className="w-3.5 h-3.5" /> Refresh
           </button>
         </div>
@@ -137,18 +137,18 @@ export default function ServerPage() {
           { icon: Activity, label: "RAM", value: `${data.memory.percent}%`, color: data.memory.percent > 85 ? "text-red-400" : "text-emerald-400" },
           { icon: HardDrive, label: "Disco", value: `${data.disk.percent}%`, color: data.disk.percent > 90 ? "text-red-400" : "text-emerald-400" },
         ].map((s, i) => (
-          <div key={i} className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+          <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
             <s.icon className={`w-5 h-5 ${s.color} mb-2`} />
-            <p className="text-2xl font-bold text-white">{s.value}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{s.value}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Resources */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-5">
-          <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5 space-y-5">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Activity className="w-4 h-4 text-emerald-500" /> Recursos
           </h2>
           <ProgressBar percent={data.memory.percent} label="Memória RAM" detail={`${formatBytes(data.memory.used)} / ${formatBytes(data.memory.total)}`} />
@@ -158,8 +158,8 @@ export default function ServerPage() {
           )}
         </div>
 
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-          <h2 className="text-sm font-semibold text-white flex items-center gap-2 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
             <Server className="w-4 h-4 text-blue-500" /> Servidor
           </h2>
           <div className="space-y-3 text-sm">
@@ -173,8 +173,8 @@ export default function ServerPage() {
               { label: "Load Avg", value: data.cpu.loadAvg.join(" / ") },
             ].map((r) => (
               <div key={r.label} className="flex justify-between">
-                <span className="text-gray-500">{r.label}</span>
-                <span className="text-gray-300 font-medium text-right max-w-[60%] truncate">{r.value}</span>
+                <span className="text-gray-500 dark:text-gray-400">{r.label}</span>
+                <span className="text-gray-600 dark:text-gray-300 font-medium text-right max-w-[60%] truncate">{r.value}</span>
               </div>
             ))}
           </div>
@@ -182,8 +182,8 @@ export default function ServerPage() {
       </div>
 
       {/* Services */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-        <h2 className="text-sm font-semibold text-white flex items-center gap-2 mb-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
           <Shield className="w-4 h-4 text-blue-500" /> Serviços
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -196,53 +196,53 @@ export default function ServerPage() {
             <div key={svc.name} className={`rounded-xl border p-4 ${svc.active ? "border-emerald-500/20 bg-emerald-500/5" : "border-red-500/20 bg-red-500/5"}`}>
               <div className="flex items-center gap-2 mb-2">
                 <svc.icon className={`w-4 h-4 ${svc.active ? "text-emerald-400" : "text-red-400"}`} />
-                <span className="text-xs font-semibold text-white">{svc.name}</span>
+                <span className="text-xs font-semibold text-gray-900 dark:text-white">{svc.name}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 {svc.active ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <XCircle className="w-3 h-3 text-red-500" />}
                 <span className={`text-[10px] font-medium ${svc.active ? "text-emerald-400" : "text-red-400"}`}>{svc.active ? "Ativo" : "Inativo"}</span>
               </div>
-              <p className="text-[10px] text-gray-500 mt-1">{svc.info}</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">{svc.info}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* PM2 Processes */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-        <h2 className="text-sm font-semibold text-white flex items-center gap-2 mb-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
           <Terminal className="w-4 h-4 text-purple-500" /> Processos PM2
         </h2>
         {data.pm2.length === 0 ? (
-          <p className="text-xs text-gray-500 py-4 text-center">Sem dados PM2 (apenas disponível no servidor)</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 py-4 text-center">Sem dados PM2 (apenas disponível no servidor)</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-gray-800">
-                  <th className="text-left py-2 px-3 text-gray-500 font-medium">Nome</th>
-                  <th className="text-left py-2 px-3 text-gray-500 font-medium">Estado</th>
-                  <th className="text-right py-2 px-3 text-gray-500 font-medium">CPU</th>
-                  <th className="text-right py-2 px-3 text-gray-500 font-medium">Memória</th>
-                  <th className="text-right py-2 px-3 text-gray-500 font-medium">Uptime</th>
-                  <th className="text-right py-2 px-3 text-gray-500 font-medium">Restarts</th>
+                <tr className="border-b border-gray-200 dark:border-gray-800">
+                  <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">Nome</th>
+                  <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">Estado</th>
+                  <th className="text-right py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">CPU</th>
+                  <th className="text-right py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">Memória</th>
+                  <th className="text-right py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">Uptime</th>
+                  <th className="text-right py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">Restarts</th>
                 </tr>
               </thead>
               <tbody>
                 {data.pm2.map((proc, i) => (
-                  <tr key={i} className="border-b border-gray-800/50">
-                    <td className="py-2.5 px-3 font-medium text-white">{proc.name}</td>
+                  <tr key={i} className="border-b border-gray-200/50 dark:border-gray-800/50">
+                    <td className="py-2.5 px-3 font-medium text-gray-900 dark:text-white">{proc.name}</td>
                     <td className="py-2.5 px-3">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${proc.status === "online" ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${proc.status === "online" ? "bg-emerald-500" : "bg-red-500"}`} />
                         {proc.status}
                       </span>
                     </td>
-                    <td className="py-2.5 px-3 text-right text-gray-400">{proc.cpu}%</td>
-                    <td className="py-2.5 px-3 text-right text-gray-400">{formatBytes(proc.memory)}</td>
-                    <td className="py-2.5 px-3 text-right text-gray-400">{proc.uptime ? formatUptime((Date.now() - proc.uptime) / 1000) : "—"}</td>
+                    <td className="py-2.5 px-3 text-right text-gray-500 dark:text-gray-400">{proc.cpu}%</td>
+                    <td className="py-2.5 px-3 text-right text-gray-500 dark:text-gray-400">{formatBytes(proc.memory)}</td>
+                    <td className="py-2.5 px-3 text-right text-gray-500 dark:text-gray-400">{proc.uptime ? formatUptime((Date.now() - proc.uptime) / 1000) : "—"}</td>
                     <td className="py-2.5 px-3 text-right">
-                      <span className={proc.restarts > 5 ? "text-orange-400 font-medium" : "text-gray-400"}>{proc.restarts}</span>
+                      <span className={proc.restarts > 5 ? "text-orange-400 font-medium" : "text-gray-500 dark:text-gray-400"}>{proc.restarts}</span>
                     </td>
                   </tr>
                 ))}
@@ -254,13 +254,13 @@ export default function ServerPage() {
 
       {/* Last Deploy */}
       {data.lastDeploy.hash && (
-        <div className="bg-gray-900/50 rounded-xl border border-gray-800/50 p-4">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Último Deploy</h2>
+        <div className="bg-white/50 dark:bg-gray-900/50 rounded-xl border border-gray-200/50 dark:border-gray-800/50 p-4">
+          <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Último Deploy</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-            <div><span className="text-gray-500">Commit</span><p className="font-mono text-gray-300 mt-0.5">{data.lastDeploy.hash}</p></div>
-            <div><span className="text-gray-500">Mensagem</span><p className="text-gray-300 mt-0.5 truncate">{data.lastDeploy.message}</p></div>
-            <div><span className="text-gray-500">Data</span><p className="text-gray-300 mt-0.5">{data.lastDeploy.date ? new Date(data.lastDeploy.date).toLocaleString("pt-PT") : "—"}</p></div>
-            <div><span className="text-gray-500">Autor</span><p className="text-gray-300 mt-0.5">{data.lastDeploy.author}</p></div>
+            <div><span className="text-gray-500 dark:text-gray-400">Commit</span><p className="font-mono text-gray-600 dark:text-gray-300 mt-0.5">{data.lastDeploy.hash}</p></div>
+            <div><span className="text-gray-500 dark:text-gray-400">Mensagem</span><p className="text-gray-600 dark:text-gray-300 mt-0.5 truncate">{data.lastDeploy.message}</p></div>
+            <div><span className="text-gray-500 dark:text-gray-400">Data</span><p className="text-gray-600 dark:text-gray-300 mt-0.5">{data.lastDeploy.date ? new Date(data.lastDeploy.date).toLocaleString("pt-PT") : "—"}</p></div>
+            <div><span className="text-gray-500 dark:text-gray-400">Autor</span><p className="text-gray-600 dark:text-gray-300 mt-0.5">{data.lastDeploy.author}</p></div>
           </div>
         </div>
       )}

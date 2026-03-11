@@ -7,11 +7,11 @@ export default function TermsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-emerald-600 transition mb-4"
+            className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-emerald-600 transition mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Voltar
@@ -21,10 +21,10 @@ export default function TermsPage() {
               <FileText className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                 Termos de Serviço
               </h1>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 Última atualização: 1 de março de 2026 · Versão 1.0
               </p>
             </div>
@@ -37,7 +37,7 @@ export default function TermsPage() {
         <div className="space-y-8">
           {/* Intro */}
           <section>
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
               Estes Termos de Serviço (&ldquo;Termos&rdquo;) regulam a utilização da plataforma SIGA180
               (&ldquo;Plataforma&rdquo;, &ldquo;Serviço&rdquo;), disponibilizada pela SIGA180 (&ldquo;nós&rdquo;, &ldquo;nosso&rdquo;).
               Ao aceder ou utilizar a Plataforma, aceita ficar vinculado a estes Termos.
@@ -46,14 +46,14 @@ export default function TermsPage() {
 
           {/* 1. Descrição do Serviço */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
               <Shield className="w-5 h-5 text-emerald-500" />
               1. Descrição do Serviço
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-3">
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
               A SIGA180 é uma plataforma SaaS de gestão para Personal Trainers que permite:
             </p>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-gray-700 dark:text-gray-300">
               <li className="flex items-start gap-2">
                 <span className="text-emerald-500 mt-0.5">•</span>
                 <span>Gestão de clientes e respetivos dados de saúde e fitness</span>
@@ -79,11 +79,11 @@ export default function TermsPage() {
 
           {/* 2. Contas e Registo */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
               <Users className="w-5 h-5 text-emerald-500" />
               2. Contas e Registo
             </h2>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>2.1.</strong> Para utilizar a Plataforma, deve criar uma conta fornecendo
                 informações verdadeiras, atualizadas e completas.
@@ -110,14 +110,14 @@ export default function TermsPage() {
 
           {/* 3. Utilização Aceitável */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
               <Ban className="w-5 h-5 text-emerald-500" />
               3. Utilização Aceitável
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-3">
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
               Ao utilizar a Plataforma, compromete-se a não:
             </p>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-gray-700 dark:text-gray-300">
               <li className="flex items-start gap-2">
                 <span className="text-red-400 mt-0.5">✕</span>
                 <span>Utilizar a Plataforma para fins ilegais ou não autorizados</span>
@@ -147,7 +147,7 @@ export default function TermsPage() {
 
           {/* 4. Dados de Saúde */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
               4. Dados de Saúde e Responsabilidade
             </h2>
@@ -158,7 +158,7 @@ export default function TermsPage() {
                 A plataforma não substitui aconselhamento médico profissional.
               </p>
             </div>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>4.1.</strong> Os dados de saúde (peso, medidas, condições médicas, restrições
                 alimentares) são tratados como <strong>dados sensíveis</strong> ao abrigo do Art. 9.º
@@ -178,10 +178,10 @@ export default function TermsPage() {
 
           {/* 5. Propriedade Intelectual */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               5. Propriedade Intelectual
             </h2>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>5.1.</strong> Todos os direitos de propriedade intelectual da Plataforma
                 (design, código, marca, logótipos) pertencem à SIGA180.
@@ -199,11 +199,11 @@ export default function TermsPage() {
 
           {/* 6. Pagamentos */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-emerald-500" />
               6. Pagamentos e Subscrição
             </h2>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>6.1.</strong> A utilização da Plataforma pode estar sujeita ao pagamento
                 de uma subscrição, cujos valores e planos são publicados no website.
@@ -225,10 +225,10 @@ export default function TermsPage() {
 
           {/* 7. Disponibilidade */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               7. Disponibilidade do Serviço
             </h2>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>7.1.</strong> Envidamos esforços para manter a Plataforma disponível 24/7,
                 mas não garantimos disponibilidade ininterrupta.
@@ -246,11 +246,11 @@ export default function TermsPage() {
 
           {/* 8. Limitação de Responsabilidade */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
               <Scale className="w-5 h-5 text-emerald-500" />
               8. Limitação de Responsabilidade
             </h2>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>8.1.</strong> A SIGA180 não é responsável por danos diretos, indiretos,
                 incidentais ou consequentes resultantes da utilização ou impossibilidade de
@@ -269,10 +269,10 @@ export default function TermsPage() {
 
           {/* 9. Suspensão e Cancelamento */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               9. Suspensão e Cancelamento
             </h2>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>9.1.</strong> Reservamo-nos o direito de suspender ou cancelar contas que
                 violem estes Termos, com ou sem aviso prévio.
@@ -294,10 +294,10 @@ export default function TermsPage() {
 
           {/* 10. Direitos RGPD */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               10. Proteção de Dados
             </h2>
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
               O tratamento de dados pessoais é regido pela nossa{" "}
               <Link href="/privacy" className="text-emerald-600 underline hover:text-emerald-700">
                 Política de Privacidade
@@ -312,10 +312,10 @@ export default function TermsPage() {
 
           {/* 11. Alterações */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               11. Alterações aos Termos
             </h2>
-            <div className="space-y-3 text-gray-700 leading-relaxed">
+            <div className="space-y-3 text-gray-700 dark:text-gray-300 leading-relaxed">
               <p>
                 <strong>11.1.</strong> Reservamo-nos o direito de modificar estes Termos a
                 qualquer momento, publicando a versão revista nesta página.
@@ -333,10 +333,10 @@ export default function TermsPage() {
 
           {/* 12. Lei Aplicável */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               12. Lei Aplicável e Foro
             </h2>
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
               Estes Termos são regidos pela lei portuguesa. Qualquer litígio será submetido
               à jurisdição dos tribunais portugueses, sem prejuízo dos direitos do consumidor
               previstos na legislação aplicável, incluindo o recurso a mecanismos de resolução
@@ -346,10 +346,10 @@ export default function TermsPage() {
 
           {/* 13. Contacto */}
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               13. Contacto
             </h2>
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
               Para questões sobre estes Termos de Serviço:{" "}
               <a
                 href="mailto:suporte@siga180.pt"
@@ -361,8 +361,8 @@ export default function TermsPage() {
           </section>
 
           {/* Footer */}
-          <div className="pt-6 border-t border-gray-200">
-            <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+          <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
               <Link href="/privacy" className="hover:text-emerald-600 transition">
                 Política de Privacidade
               </Link>

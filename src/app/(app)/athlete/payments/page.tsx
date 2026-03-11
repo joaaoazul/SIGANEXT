@@ -24,19 +24,19 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
   paid: {
     label: "Ativo",
     color: "text-emerald-600",
-    bg: "bg-emerald-50 border-emerald-200",
+    bg: "bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800",
     icon: <CheckCircle2 className="w-6 h-6 text-emerald-500" />,
   },
   pending: {
     label: "Pendente",
     color: "text-amber-600",
-    bg: "bg-amber-50 border-amber-200",
+    bg: "bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800",
     icon: <Clock className="w-6 h-6 text-amber-500" />,
   },
   overdue: {
     label: "Em Atraso",
     color: "text-red-600",
-    bg: "bg-red-50 border-red-200",
+    bg: "bg-red-50 dark:bg-red-950/50 border-red-200 dark:border-red-800",
     icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
   },
 };
@@ -66,7 +66,7 @@ export default function AthletePaymentsPage() {
 
   if (!data?.client) {
     return (
-      <div className="text-center py-20 text-gray-500">Erro ao carregar dados.</div>
+      <div className="text-center py-20 text-gray-500 dark:text-gray-400">Erro ao carregar dados.</div>
     );
   }
 
@@ -79,8 +79,8 @@ export default function AthletePaymentsPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Pagamentos</h1>
-        <p className="text-gray-500 mt-1">O teu plano atual com o Personal Trainer</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Pagamentos</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">O teu plano atual com o Personal Trainer</p>
       </div>
 
       {/* Plan Card */}
@@ -94,8 +94,8 @@ export default function AthletePaymentsPage() {
 
             {plan ? (
               <>
-                <h2 className="text-2xl font-bold text-gray-900">{plan}</h2>
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{plan}</h2>
+                <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
                   {planStartDate && (
                     <span className="flex items-center gap-1.5">
                       <Calendar className="w-4 h-4 text-gray-400" />
@@ -112,25 +112,25 @@ export default function AthletePaymentsPage() {
               </>
             ) : (
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Sem plano ativo</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Sem plano ativo</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   O teu Personal Trainer ainda não atribuiu um plano. Entra em contacto para mais informações.
                 </p>
               </div>
             )}
           </div>
-          <CreditCard className="w-10 h-10 text-gray-300" />
+          <CreditCard className="w-10 h-10 text-gray-300 dark:text-gray-600" />
         </div>
 
         {/* Expiry warnings */}
         {daysUntilEnd !== null && daysUntilEnd > 0 && daysUntilEnd <= 15 && (
-          <div className="mt-4 bg-white/60 rounded-xl p-3 flex items-center gap-2 text-sm text-amber-700">
+          <div className="mt-4 bg-white/60 dark:bg-gray-800/60 rounded-xl p-3 flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>O teu plano expira em <strong>{daysUntilEnd} dias</strong>. Contacta o teu PT para renovar.</span>
           </div>
         )}
         {daysUntilEnd !== null && daysUntilEnd <= 0 && (
-          <div className="mt-4 bg-white/60 rounded-xl p-3 flex items-center gap-2 text-sm text-red-700">
+          <div className="mt-4 bg-white/60 dark:bg-gray-800/60 rounded-xl p-3 flex items-center gap-2 text-sm text-red-700 dark:text-red-400">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>O teu plano expirou! Contacta o teu PT para renovar.</span>
           </div>
@@ -138,14 +138,14 @@ export default function AthletePaymentsPage() {
       </div>
 
       {/* Future Stripe integration note */}
-      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200 p-4 sm:p-6">
+      <div className="bg-gradient-to-br from-gray-50 dark:from-gray-800/50 to-gray-100 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-900/50 flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-5 h-5 text-violet-500" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">Pagamentos Online — Em Breve</h3>
-            <p className="text-sm text-gray-500 mt-1">
+            <h3 className="font-semibold text-gray-900 dark:text-white">Pagamentos Online — Em Breve</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Estamos a trabalhar na integração de pagamentos online para que possas gerir as tuas subscrições diretamente por aqui. Até lá, os pagamentos são geridos pelo teu Personal Trainer.
             </p>
           </div>

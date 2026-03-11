@@ -190,7 +190,7 @@ export default function ExercisesPage() {
       <div className="flex flex-wrap gap-2 mb-4">
         <button
           onClick={() => setMuscleFilter("")}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${!muscleFilter ? "bg-gray-900 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${!muscleFilter ? "bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"}`}
         >
           Todos
         </button>
@@ -198,7 +198,7 @@ export default function ExercisesPage() {
           <button
             key={mg.value}
             onClick={() => setMuscleFilter(muscleFilter === mg.value ? "" : mg.value)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${muscleFilter === mg.value ? "bg-gray-900 text-white shadow-sm" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${muscleFilter === mg.value ? "bg-gray-900 text-white shadow-sm dark:bg-white dark:text-gray-900" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"}`}
           >
             {mg.emoji} {mg.label} {groupCounts[mg.value] ? `(${groupCounts[mg.value]})` : ""}
           </button>
@@ -219,11 +219,11 @@ export default function ExercisesPage() {
               {difficulties.map((d) => (<option key={d.value} value={d.value}>{d.label}</option>))}
             </select>
           </div>
-          <div className="flex rounded-lg border border-gray-200 overflow-hidden">
-            <button onClick={() => setViewMode("grid")} className={`p-2.5 ${viewMode === "grid" ? "bg-gray-900 text-white" : "text-gray-400 hover:bg-gray-50"}`}>
+          <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <button onClick={() => setViewMode("grid")} className={`p-2.5 ${viewMode === "grid" ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
               <LayoutGrid className="w-4 h-4" />
             </button>
-            <button onClick={() => setViewMode("list")} className={`p-2.5 ${viewMode === "list" ? "bg-gray-900 text-white" : "text-gray-400 hover:bg-gray-50"}`}>
+            <button onClick={() => setViewMode("list")} className={`p-2.5 ${viewMode === "list" ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900" : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"}`}>
               <List className="w-4 h-4" />
             </button>
           </div>
@@ -250,7 +250,7 @@ export default function ExercisesPage() {
             <div key={ex.id} className="card hover:shadow-md transition-all group cursor-pointer" onClick={() => setDetailExercise(ex)}>
               {/* Thumbnail / Color Header */}
               {ex.thumbnailUrl ? (
-                <div className="relative -mx-5 -mt-5 mb-4 h-36 rounded-t-2xl overflow-hidden bg-gray-100">
+                <div className="relative -mx-5 -mt-5 mb-4 h-36 rounded-t-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
                   <img src={ex.thumbnailUrl} alt={ex.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   <div className="absolute bottom-3 left-4 right-4">
@@ -266,16 +266,16 @@ export default function ExercisesPage() {
                 </div>
               )}
 
-              {ex.description && <p className="text-xs text-gray-500 mb-3 line-clamp-2">{ex.description}</p>}
+              {ex.description && <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 line-clamp-2">{ex.description}</p>}
 
               <div className="flex flex-wrap gap-1.5 mb-3">
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${muscleColors[ex.muscleGroup] || "bg-gray-100 text-gray-500 border-gray-200"}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${muscleColors[ex.muscleGroup] || "bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"}`}>
                   {getMuscleLabel(ex.muscleGroup)}
                 </span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${difficultyColor[ex.difficulty] || "bg-gray-100 text-gray-500 border-gray-200"}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${difficultyColor[ex.difficulty] || "bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"}`}>
                   {getDifficultyLabel(ex.difficulty)}
                 </span>
-                {ex.equipment && <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-50 text-gray-500 border border-gray-200">{ex.equipment}</span>}
+                {ex.equipment && <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700">{ex.equipment}</span>}
               </div>
 
               <div className="flex items-center justify-between">
@@ -284,10 +284,10 @@ export default function ExercisesPage() {
                   {ex.instructions && <span className="flex items-center gap-1 text-[10px] text-blue-600"><Info className="w-3 h-3" /> Instruções</span>}
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => openEdit(ex)} className="p-1.5 hover:bg-white rounded-lg shadow-sm bg-gray-50">
-                    <Edit className="w-3.5 h-3.5 text-gray-500" />
+                  <button onClick={() => openEdit(ex)} className="p-1.5 hover:bg-white dark:hover:bg-gray-800 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                    <Edit className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                   </button>
-                  <button onClick={() => handleDelete(ex.id)} className="p-1.5 hover:bg-red-50 rounded-lg shadow-sm bg-gray-50">
+                  <button onClick={() => handleDelete(ex.id)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg shadow-sm bg-gray-50 dark:bg-gray-800/50">
                     <Trash2 className="w-3.5 h-3.5 text-red-500" />
                   </button>
                 </div>
@@ -305,7 +305,7 @@ export default function ExercisesPage() {
             <div key={ex.id} className="card !py-3 hover:shadow-md transition-all group cursor-pointer" onClick={() => setDetailExercise(ex)}>
               <div className="flex items-center gap-4">
                 {ex.thumbnailUrl ? (
-                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
                     <img src={ex.thumbnailUrl} alt={ex.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   </div>
                 ) : (
@@ -314,25 +314,25 @@ export default function ExercisesPage() {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-gray-900">{ex.name}</h3>
-                  {ex.description && <p className="text-xs text-gray-500 truncate mt-0.5 hidden sm:block">{ex.description}</p>}
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{ex.name}</h3>
+                  {ex.description && <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5 hidden sm:block">{ex.description}</p>}
                   <p className="text-[10px] text-gray-400 mt-0.5 sm:hidden">{getMuscleLabel(ex.muscleGroup)} · {getDifficultyLabel(ex.difficulty)}</p>
                 </div>
                 <div className="hidden sm:flex flex-wrap gap-1.5 flex-shrink-0">
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${muscleColors[ex.muscleGroup] || "bg-gray-100 text-gray-500 border-gray-200"}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${muscleColors[ex.muscleGroup] || "bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"}`}>
                     {getMuscleLabel(ex.muscleGroup)}
                   </span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${difficultyColor[ex.difficulty] || "bg-gray-100 text-gray-500 border-gray-200"}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${difficultyColor[ex.difficulty] || "bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"}`}>
                     {getDifficultyLabel(ex.difficulty)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {ex.videoUrl && <Play className="w-3.5 h-3.5 text-emerald-500" />}
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => openEdit(ex)} className="p-1.5 hover:bg-white rounded-lg">
-                      <Edit className="w-3.5 h-3.5 text-gray-500" />
+                    <button onClick={() => openEdit(ex)} className="p-1.5 hover:bg-white dark:hover:bg-gray-800 rounded-lg">
+                      <Edit className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                     </button>
-                    <button onClick={() => handleDelete(ex.id)} className="p-1.5 hover:bg-red-50 rounded-lg">
+                    <button onClick={() => handleDelete(ex.id)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                       <Trash2 className="w-3.5 h-3.5 text-red-500" />
                     </button>
                   </div>
@@ -366,7 +366,7 @@ export default function ExercisesPage() {
                 />
               </div>
             ) : detailExercise.thumbnailUrl ? (
-              <div className="relative rounded-xl overflow-hidden bg-gray-100 h-48">
+              <div className="relative rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 h-48">
                 <img src={detailExercise.thumbnailUrl} alt={detailExercise.name} className="w-full h-full object-cover" />
                 {detailExercise.videoUrl && (
                   <a href={detailExercise.videoUrl} target="_blank" rel="noopener noreferrer"
@@ -388,14 +388,14 @@ export default function ExercisesPage() {
 
             {/* Tags */}
             <div className="flex flex-wrap gap-2">
-              <span className={`text-xs px-3 py-1 rounded-full font-medium border ${muscleColors[detailExercise.muscleGroup] || "bg-gray-100 text-gray-500 border-gray-200"}`}>
+              <span className={`text-xs px-3 py-1 rounded-full font-medium border ${muscleColors[detailExercise.muscleGroup] || "bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"}`}>
                 {getMuscleEmoji(detailExercise.muscleGroup)} {getMuscleLabel(detailExercise.muscleGroup)}
               </span>
-              <span className={`text-xs px-3 py-1 rounded-full font-medium border ${difficultyColor[detailExercise.difficulty] || "bg-gray-100 text-gray-500 border-gray-200"}`}>
+              <span className={`text-xs px-3 py-1 rounded-full font-medium border ${difficultyColor[detailExercise.difficulty] || "bg-gray-100 text-gray-500 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700"}`}>
                 {getDifficultyLabel(detailExercise.difficulty)}
               </span>
               {detailExercise.equipment && (
-                <span className="text-xs px-3 py-1 rounded-full font-medium bg-gray-50 text-gray-600 border border-gray-200">
+                <span className="text-xs px-3 py-1 rounded-full font-medium bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
                   🏋️ {detailExercise.equipment}
                 </span>
               )}
@@ -404,16 +404,16 @@ export default function ExercisesPage() {
             {/* Description */}
             {detailExercise.description && (
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-1.5">Descrição</h4>
-                <p className="text-sm text-gray-600 leading-relaxed">{detailExercise.description}</p>
+                <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Descrição</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{detailExercise.description}</p>
               </div>
             )}
 
             {/* Instructions */}
             {detailExercise.instructions && (
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Instruções de Execução</h4>
-                <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+                <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Instruções de Execução</h4>
+                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 space-y-2">
                   {detailExercise.instructions.split("\n").map((line, i) => (
                     <div key={i} className="flex items-start gap-2">
                       {line.match(/^\d+\./) ? (
@@ -421,10 +421,10 @@ export default function ExercisesPage() {
                           <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                             {line.match(/^(\d+)\./)?.[1]}
                           </span>
-                          <p className="text-sm text-gray-700">{line.replace(/^\d+\.\s*/, "")}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{line.replace(/^\d+\.\s*/, "")}</p>
                         </>
                       ) : (
-                        <p className="text-sm text-gray-700">{line}</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-300">{line}</p>
                       )}
                     </div>
                   ))}
@@ -433,7 +433,7 @@ export default function ExercisesPage() {
             )}
 
             {/* Actions */}
-            <div className="flex justify-between pt-2 border-t border-gray-100">
+            <div className="flex justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
               <button onClick={() => { const ex = detailExercise; setDetailExercise(null); openEdit(ex); }} className="btn-secondary text-xs">
                 <Edit className="w-3.5 h-3.5" /> Editar
               </button>
@@ -455,11 +455,11 @@ export default function ExercisesPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Nome *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Nome *</label>
               <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="input-field" placeholder="Ex: Supino Plano com Barra" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Grupo Muscular *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Grupo Muscular *</label>
               <select value={form.muscleGroup} onChange={(e) => setForm({ ...form, muscleGroup: e.target.value })} className="input-field" required>
                 {muscleGroups.map((mg) => (
                   <option key={mg.value} value={mg.value}>{mg.label}</option>
@@ -467,7 +467,7 @@ export default function ExercisesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Dificuldade</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Dificuldade</label>
               <select value={form.difficulty} onChange={(e) => setForm({ ...form, difficulty: e.target.value })} className="input-field">
                 {difficulties.map((d) => (
                   <option key={d.value} value={d.value}>{d.label}</option>
@@ -475,20 +475,20 @@ export default function ExercisesPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Equipamento</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Equipamento</label>
               <input type="text" value={form.equipment} onChange={(e) => setForm({ ...form, equipment: e.target.value })} className="input-field" placeholder="Ex: Barra, Halteres" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">URL do Vídeo</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">URL do Vídeo</label>
               <input type="url" value={form.videoUrl} onChange={(e) => setForm({ ...form, videoUrl: e.target.value })} className="input-field" placeholder="https://youtube.com/..." />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Descrição</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Descrição</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="input-field min-h-[60px]" placeholder="Breve descrição do exercício..." />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Instruções</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Instruções</label>
             <textarea value={form.instructions} onChange={(e) => setForm({ ...form, instructions: e.target.value })} className="input-field min-h-[80px]" placeholder="Passo 1: ...\nPasso 2: ..." />
           </div>
           <div className="flex justify-end gap-3">

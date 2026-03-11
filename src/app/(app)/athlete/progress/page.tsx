@@ -164,8 +164,8 @@ export default function AthleteProgressPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Progresso</h1>
-        <p className="text-gray-500 mt-1">Acompanha a tua evolução diária</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Progresso</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">Acompanha a tua evolução diária</p>
       </div>
 
       {/* Weight Overview */}
@@ -179,7 +179,7 @@ export default function AthleteProgressPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-2 bg-gray-100 rounded-xl p-1">
+      <div className="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
         {[
           { key: "checkin", label: "Check-in Diário" },
           { key: "history", label: "Histórico" },
@@ -190,8 +190,8 @@ export default function AthleteProgressPage() {
             onClick={() => setTab(t.key as typeof tab)}
             className={`flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition ${
               tab === t.key
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             {t.label}
@@ -201,11 +201,11 @@ export default function AthleteProgressPage() {
 
       {/* Check-in Form */}
       {tab === "checkin" && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 space-y-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6 space-y-6">
           {submitted && (
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
+            <div className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 flex items-center gap-3">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              <p className="text-sm text-emerald-700">
+              <p className="text-sm text-emerald-700 dark:text-emerald-400">
                 Check-in de hoje registado! Podes atualizar os valores abaixo.
               </p>
             </div>
@@ -213,7 +213,7 @@ export default function AthleteProgressPage() {
 
           {/* Wellness Metrics */}
           <div className="space-y-4">
-            <h3 className="font-semibold text-gray-900">Como te sentes hoje?</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white">Como te sentes hoje?</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <ScaleSelector
                 label="Humor"
@@ -253,14 +253,14 @@ export default function AthleteProgressPage() {
 
           {/* Compliance */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-gray-900">Atividades</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white">Atividades</h3>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setForm({ ...form, trainedToday: !form.trainedToday })}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition text-sm font-medium ${
                   form.trainedToday
-                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300"
+                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
+                    : "border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 {form.trainedToday ? "✅" : "🏋️"} Treinei hoje
@@ -269,8 +269,8 @@ export default function AthleteProgressPage() {
                 onClick={() => setForm({ ...form, followedDiet: !form.followedDiet })}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition text-sm font-medium ${
                   form.followedDiet
-                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                    : "border-gray-200 text-gray-500 hover:border-gray-300"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                    : "border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600"
                 }`}
               >
                 {form.followedDiet ? "✅" : "🥗"} Cumpri a dieta
@@ -281,7 +281,7 @@ export default function AthleteProgressPage() {
           {/* Numbers */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 <Droplets className="w-4 h-4 inline mr-1" />
                 Água (litros)
               </label>
@@ -290,12 +290,12 @@ export default function AthleteProgressPage() {
                 step="0.1"
                 value={form.waterLiters}
                 onChange={(e) => setForm({ ...form, waterLiters: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="Ex: 2.5"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 <Scale className="w-4 h-4 inline mr-1" />
                 Peso (kg)
               </label>
@@ -304,19 +304,19 @@ export default function AthleteProgressPage() {
                 step="0.1"
                 value={form.weight}
                 onChange={(e) => setForm({ ...form, weight: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="Ex: 75.5"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 📝 Notas
               </label>
               <input
                 type="text"
                 value={form.notes}
                 onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="Como correu o dia..."
               />
             </div>
@@ -340,10 +340,10 @@ export default function AthleteProgressPage() {
             data.checkIns.map((ci) => (
               <div
                 key={ci.id}
-                className="bg-white rounded-2xl border border-gray-100 p-5"
+                className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-gray-900 dark:text-white">
                     {new Date(ci.date).toLocaleDateString("pt-PT", {
                       weekday: "long",
                       day: "numeric",
@@ -351,50 +351,50 @@ export default function AthleteProgressPage() {
                     })}
                   </p>
                   {ci.weight && (
-                    <span className="text-sm text-gray-500">{ci.weight} kg</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{ci.weight} kg</span>
                   )}
                 </div>
                 <div className="flex flex-wrap gap-3">
                   {ci.mood && (
-                    <span className="text-sm bg-pink-50 text-pink-600 px-3 py-1 rounded-full">
+                    <span className="text-sm bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 px-3 py-1 rounded-full">
                       {moodEmojis[ci.mood]} Humor: {ci.mood}/5
                     </span>
                   )}
                   {ci.energy && (
-                    <span className="text-sm bg-amber-50 text-amber-600 px-3 py-1 rounded-full">
+                    <span className="text-sm bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full">
                       {energyEmojis[ci.energy]} Energia: {ci.energy}/5
                     </span>
                   )}
                   {ci.sleep && (
-                    <span className="text-sm bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">
+                    <span className="text-sm bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full">
                       🌙 Sono: {ci.sleep}/5
                     </span>
                   )}
                   {ci.trainedToday && (
-                    <span className="text-sm bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full">
+                    <span className="text-sm bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full">
                       ✅ Treinou
                     </span>
                   )}
                   {ci.followedDiet && (
-                    <span className="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-full">
+                    <span className="text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full">
                       ✅ Dieta
                     </span>
                   )}
                   {ci.waterLiters && (
-                    <span className="text-sm bg-cyan-50 text-cyan-600 px-3 py-1 rounded-full">
+                    <span className="text-sm bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 px-3 py-1 rounded-full">
                       💧 {ci.waterLiters}L
                     </span>
                   )}
                 </div>
                 {ci.notes && (
-                  <p className="text-sm text-gray-500 mt-2 italic">{ci.notes}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 italic">{ci.notes}</p>
                 )}
               </div>
             ))
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-              <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Ainda não tens check-ins registados.</p>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-12 text-center">
+              <TrendingUp className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400">Ainda não tens check-ins registados.</p>
             </div>
           )}
         </div>
@@ -404,8 +404,8 @@ export default function AthleteProgressPage() {
       {tab === "body" && (
         <div className="space-y-6">
           {/* Body Part Photo Placeholders */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <Camera className="w-5 h-5 text-emerald-500" />
               Fotos de Progresso
             </h3>
@@ -441,7 +441,7 @@ export default function AthleteProgressPage() {
                 return (
                   <div
                     key={part.key}
-                    className="aspect-square rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center gap-2 hover:border-emerald-300 hover:bg-emerald-50/30 transition-colors relative overflow-hidden"
+                    className="aspect-square rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex flex-col items-center justify-center gap-2 hover:border-emerald-300 dark:hover:border-emerald-600 hover:bg-emerald-50/30 dark:hover:bg-emerald-900/20 transition-colors relative overflow-hidden"
                   >
                     {photoUrl ? (
                       <>
@@ -454,7 +454,7 @@ export default function AthleteProgressPage() {
                       <>
                         <span className="text-2xl">{part.emoji}</span>
                         <p className="text-xs font-medium text-gray-400">{part.label}</p>
-                        <Camera className="w-3.5 h-3.5 text-gray-300" />
+                        <Camera className="w-3.5 h-3.5 text-gray-300 dark:text-gray-600" />
                       </>
                     )}
                   </div>
@@ -468,9 +468,9 @@ export default function AthleteProgressPage() {
             data.bodyAssessments.map((ba) => (
               <div
                 key={ba.id}
-                className="bg-white rounded-2xl border border-gray-100 p-5"
+                className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5"
               >
-                <p className="font-semibold text-gray-900 mb-3">
+                <p className="font-semibold text-gray-900 dark:text-white mb-3">
                   {new Date(ba.date).toLocaleDateString("pt-PT", {
                     day: "numeric",
                     month: "long",
@@ -515,14 +515,14 @@ export default function AthleteProgressPage() {
                   {ba.abdomen && <MeasureBadge label="Abdómen" value={`${ba.abdomen} cm`} />}
                 </div>
                 {ba.notes && (
-                  <p className="text-sm text-gray-500 mt-3 italic">{ba.notes}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-3 italic">{ba.notes}</p>
                 )}
               </div>
             ))
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-              <Ruler className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Sem avaliações corporais registadas.</p>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-12 text-center">
+              <Ruler className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-500 dark:text-gray-400">Sem avaliações corporais registadas.</p>
               <p className="text-sm text-gray-400 mt-1">O teu PT irá registar as tuas avaliações.</p>
             </div>
           )}
@@ -544,19 +544,19 @@ function StatCard({
   color: string;
 }) {
   const colors: Record<string, string> = {
-    emerald: "bg-emerald-50 text-emerald-600",
-    blue: "bg-blue-50 text-blue-600",
-    purple: "bg-purple-50 text-purple-600",
-    amber: "bg-amber-50 text-amber-600",
+    emerald: "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400",
+    blue: "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+    purple: "bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
+    amber: "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400",
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4">
       <div className={`w-10 h-10 rounded-xl ${colors[color]} flex items-center justify-center mb-2`}>
         {icon}
       </div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-lg font-bold text-gray-900 mt-0.5">{value}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="text-lg font-bold text-gray-900 dark:text-white mt-0.5">{value}</p>
     </div>
   );
 }
@@ -578,7 +578,7 @@ function ScaleSelector({
 }) {
   return (
     <div className="space-y-2">
-      <p className="text-sm font-medium text-gray-600 flex items-center gap-1">
+      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center gap-1">
         {icon} {label}
       </p>
       <div className="flex gap-1">
@@ -589,7 +589,7 @@ function ScaleSelector({
             className={`flex-1 h-10 rounded-lg text-sm font-medium transition ${
               value === n
                 ? "bg-emerald-500 text-white"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
             title={labels?.[n]}
           >
@@ -603,9 +603,9 @@ function ScaleSelector({
 
 function MeasureBadge({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-gray-50 rounded-xl p-3 text-center">
+    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3 text-center">
       <p className="text-xs text-gray-400">{label}</p>
-      <p className="font-semibold text-gray-900 mt-1">{value}</p>
+      <p className="font-semibold text-gray-900 dark:text-white mt-1">{value}</p>
     </div>
   );
 }

@@ -116,7 +116,7 @@ export default function AthleteDashboard() {
 
   if (!data?.client) {
     return (
-      <div className="text-center py-20 text-gray-500">
+      <div className="text-center py-20 text-gray-500 dark:text-gray-400">
         Erro ao carregar dados. Tenta novamente.
       </div>
     );
@@ -195,29 +195,29 @@ export default function AthleteDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Today's Workout */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Dumbbell className="w-5 h-5 text-emerald-500" />
               Treino de Hoje
             </h2>
             <Link
               href="/athlete/training"
-              className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+              className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 flex items-center gap-1"
             >
               Ver plano <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           {todayWorkout ? (
             <div className="space-y-3">
-              <p className="font-medium text-gray-900">{todayWorkout.name}</p>
+              <p className="font-medium text-gray-900 dark:text-white">{todayWorkout.name}</p>
               <div className="space-y-2">
                 {todayWorkout.exercises.slice(0, 5).map((ex, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm">
-                    <span className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-medium">
+                    <span className="w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-medium">
                       {i + 1}
                     </span>
-                    <span className="text-gray-700">{ex.exercise.name}</span>
+                    <span className="text-gray-700 dark:text-gray-300">{ex.exercise.name}</span>
                     <span className="text-gray-400 text-xs ml-auto">{ex.exercise.muscleGroup}</span>
                   </div>
                 ))}
@@ -242,9 +242,9 @@ export default function AthleteDashboard() {
         </div>
 
         {/* Today's Check-in */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-blue-500" />
               Check-in de Hoje
             </h2>
@@ -260,12 +260,12 @@ export default function AthleteDashboard() {
               </div>
               <div className="flex gap-3">
                 {data.todayCheckIn.trainedToday && (
-                  <span className="text-xs bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full">
+                  <span className="text-xs bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full">
                     ✅ Treinou
                   </span>
                 )}
                 {data.todayCheckIn.followedDiet && (
-                  <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full">
+                  <span className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full">
                     ✅ Dieta cumprida
                   </span>
                 )}
@@ -286,15 +286,15 @@ export default function AthleteDashboard() {
         </div>
 
         {/* Upcoming Bookings */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <CalendarDays className="w-5 h-5 text-purple-500" />
               Próximas Sessões
             </h2>
             <Link
               href="/athlete/bookings"
-              className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+              className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 flex items-center gap-1"
             >
               Ver agenda <ArrowRight className="w-4 h-4" />
             </Link>
@@ -304,21 +304,21 @@ export default function AthleteDashboard() {
               {data.upcomingBookings.map((booking) => (
                 <div
                   key={booking.id}
-                  className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl"
+                  className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-purple-50 flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/20 flex flex-col items-center justify-center">
                     <span className="text-xs text-purple-400">
                       {dayNames[new Date(booking.date).getDay()]}
                     </span>
-                    <span className="text-sm font-bold text-purple-600">
+                    <span className="text-sm font-bold text-purple-600 dark:text-purple-400">
                       {new Date(booking.date).getDate()}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                       {booking.bookingSlot.title}
                     </p>
-                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {booking.bookingSlot.startTime} - {booking.bookingSlot.endTime}
                       {booking.bookingSlot.location && ` • ${booking.bookingSlot.location}`}
@@ -336,22 +336,22 @@ export default function AthleteDashboard() {
         </div>
 
         {/* Nutrition Summary */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <UtensilsCrossed className="w-5 h-5 text-orange-500" />
               Nutrição
             </h2>
             <Link
               href="/athlete/nutrition"
-              className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+              className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 flex items-center gap-1"
             >
               Ver plano <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           {data.activeNutritionPlan ? (
             <div className="space-y-4">
-              <p className="font-medium text-gray-900">
+              <p className="font-medium text-gray-900 dark:text-white">
                 {data.activeNutritionPlan.nutritionPlan.name}
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -394,15 +394,15 @@ export default function AthleteDashboard() {
 
       {/* Recent Content */}
       {data.recentContent.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-yellow-500" />
               Conteúdo Recente
             </h2>
             <Link
               href="/athlete/content"
-              className="text-sm text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+              className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 flex items-center gap-1"
             >
               Ver todo <ArrowRight className="w-4 h-4" />
             </Link>
@@ -411,12 +411,12 @@ export default function AthleteDashboard() {
             {data.recentContent.map((content) => (
               <div
                 key={content.id}
-                className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition cursor-pointer"
+                className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer"
               >
                 <span className="text-xs text-gray-400 uppercase">{content.type}</span>
-                <p className="text-sm font-medium text-gray-900 mt-1">{content.title}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">{content.title}</p>
                 {content.category && (
-                  <span className="text-xs text-emerald-600 mt-1 inline-block">
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 inline-block">
                     {content.category}
                   </span>
                 )}
@@ -443,23 +443,23 @@ function QuickStat({
   href: string;
 }) {
   const colorClasses: Record<string, string> = {
-    emerald: "bg-emerald-50 text-emerald-600",
-    blue: "bg-blue-50 text-blue-600",
-    purple: "bg-purple-50 text-purple-600",
-    amber: "bg-amber-50 text-amber-600",
-    gray: "bg-gray-50 text-gray-400",
+    emerald: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400",
+    blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400",
+    purple: "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
+    amber: "bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400",
+    gray: "bg-gray-50 dark:bg-gray-800/50 text-gray-400",
   };
 
   return (
     <Link
       href={href}
-      className="bg-white rounded-2xl border border-gray-100 p-4 hover:shadow-md transition group"
+      className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 hover:shadow-md transition group"
     >
       <div className={`w-10 h-10 rounded-xl ${colorClasses[color]} flex items-center justify-center mb-3`}>
         {icon}
       </div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-semibold text-gray-900 mt-0.5">{value}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="text-sm font-semibold text-gray-900 dark:text-white mt-0.5">{value}</p>
     </Link>
   );
 }
@@ -477,7 +477,7 @@ function MetricBadge({
 }) {
   return (
     <div className="text-center">
-      <div className="w-full aspect-square rounded-xl bg-gray-50 flex items-center justify-center text-lg">
+      <div className="w-full aspect-square rounded-xl bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center text-lg">
         {value && emoji ? emoji[value] : value ? `${value}/5` : "—"}
       </div>
       <p className="text-[10px] text-gray-400 mt-1">{label}</p>
@@ -497,16 +497,16 @@ function MacroBadge({
   color: string;
 }) {
   const bgColors: Record<string, string> = {
-    amber: "bg-amber-50",
-    red: "bg-red-50",
-    blue: "bg-blue-50",
-    yellow: "bg-yellow-50",
+    amber: "bg-amber-50 dark:bg-amber-900/20",
+    red: "bg-red-50 dark:bg-red-900/20",
+    blue: "bg-blue-50 dark:bg-blue-900/20",
+    yellow: "bg-yellow-50 dark:bg-yellow-900/20",
   };
 
   return (
     <div className={`${bgColors[color]} rounded-xl p-3 text-center`}>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="text-sm font-bold text-gray-900 mt-1">
+      <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="text-sm font-bold text-gray-900 dark:text-white mt-1">
         {value ? Math.round(value) : "—"}
         {value && unit && <span className="text-xs font-normal text-gray-400">{unit}</span>}
       </p>

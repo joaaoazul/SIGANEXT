@@ -59,11 +59,11 @@ interface Client {
 }
 
 const goals = [
-  { value: "muscle_gain", label: "Ganho Muscular", icon: Dumbbell, color: "text-blue-600 bg-blue-50 border-blue-200" },
-  { value: "fat_loss", label: "Perda de Gordura", icon: Flame, color: "text-orange-600 bg-orange-50 border-orange-200" },
-  { value: "strength", label: "Força", icon: Shield, color: "text-purple-600 bg-purple-50 border-purple-200" },
-  { value: "endurance", label: "Resistência", icon: Wind, color: "text-cyan-600 bg-cyan-50 border-cyan-200" },
-  { value: "flexibility", label: "Flexibilidade", icon: Sparkles, color: "text-pink-600 bg-pink-50 border-pink-200" },
+  { value: "muscle_gain", label: "Ganho Muscular", icon: Dumbbell, color: "text-blue-600 bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" },
+  { value: "fat_loss", label: "Perda de Gordura", icon: Flame, color: "text-orange-600 bg-orange-50 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400" },
+  { value: "strength", label: "Força", icon: Shield, color: "text-purple-600 bg-purple-50 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400" },
+  { value: "endurance", label: "Resistência", icon: Wind, color: "text-cyan-600 bg-cyan-50 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-400" },
+  { value: "flexibility", label: "Flexibilidade", icon: Sparkles, color: "text-pink-600 bg-pink-50 border-pink-200 dark:bg-pink-900/30 dark:text-pink-400" },
 ];
 
 const muscleGroupFilters = [
@@ -89,9 +89,9 @@ const muscleGradients: Record<string, string> = {
 };
 
 const difficultyConfig: Record<string, { label: string; color: string }> = {
-  beginner: { label: "Iniciante", color: "text-emerald-700 bg-emerald-50 border-emerald-200" },
-  intermediate: { label: "Intermédio", color: "text-amber-700 bg-amber-50 border-amber-200" },
-  advanced: { label: "Avançado", color: "text-red-700 bg-red-50 border-red-200" },
+  beginner: { label: "Iniciante", color: "text-emerald-700 bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400" },
+  intermediate: { label: "Intermédio", color: "text-amber-700 bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400" },
+  advanced: { label: "Avançado", color: "text-red-700 bg-red-50 border-red-200 dark:bg-red-900/30 dark:text-red-400" },
 };
 
 const workoutLetters = ["A", "B", "C", "D", "E", "F", "G", "H"];
@@ -407,32 +407,32 @@ export default function TrainingPage() {
                     className="flex items-center gap-3 cursor-pointer flex-1 group"
                     onClick={() => setExpandedPlan(isExpanded ? null : plan.id)}
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${isExpanded ? "bg-emerald-500 text-white shadow-md" : "bg-gray-100 text-gray-400 group-hover:bg-emerald-50 group-hover:text-emerald-500"}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${isExpanded ? "bg-emerald-500 text-white shadow-md" : "bg-gray-100 dark:bg-gray-800 text-gray-400 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 group-hover:text-emerald-500"}`}>
                       {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-gray-900">{plan.name}</h3>
-                      {plan.description && <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">{plan.description}</p>}
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+                      {plan.description && <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{plan.description}</p>}
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0 ml-3">
                     <button
                       onClick={() => { setAssignPlanId(plan.id); setShowAssign(true); }}
-                      className="p-2 hover:bg-emerald-50 rounded-xl text-gray-400 hover:text-emerald-600 transition-colors"
+                      className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl text-gray-400 hover:text-emerald-600 transition-colors"
                       title="Atribuir a cliente"
                     >
                       <UserPlus className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDuplicatePlan(plan)}
-                      className="p-2 hover:bg-blue-50 rounded-xl text-gray-400 hover:text-blue-600 transition-colors"
+                      className="p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl text-gray-400 hover:text-blue-600 transition-colors"
                       title="Duplicar plano"
                     >
                       <Copy className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(plan.id)}
-                      className="p-2 hover:bg-red-50 rounded-xl text-gray-400 hover:text-red-600 transition-colors"
+                      className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-gray-400 hover:text-red-600 transition-colors"
                       title="Eliminar plano"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -443,25 +443,25 @@ export default function TrainingPage() {
                 {/* Plan Meta Tags */}
                 <div className="flex flex-wrap gap-2 mt-3">
                   {plan.goal && (
-                    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${goalConfig?.color || "bg-gray-50 text-gray-500 border-gray-200"}`}>
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${goalConfig?.color || "bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700"}`}>
                       <GoalIcon className="w-3 h-3" /> {getGoalLabel(plan.goal)}
                     </span>
                   )}
                   {plan.difficulty && (
-                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border ${difficultyConfig[plan.difficulty]?.color || "bg-gray-50 text-gray-500 border-gray-200"}`}>
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border ${difficultyConfig[plan.difficulty]?.color || "bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700"}`}>
                       {difficultyConfig[plan.difficulty]?.label || plan.difficulty}
                     </span>
                   )}
                   {plan.duration && (
-                    <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-200">
+                    <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-2.5 py-1 rounded-full border border-gray-200 dark:border-gray-700">
                       <Calendar className="w-3 h-3" /> {plan.duration} semanas
                     </span>
                   )}
-                  <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full border border-gray-200">
+                  <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-2.5 py-1 rounded-full border border-gray-200 dark:border-gray-700">
                     <Dumbbell className="w-3 h-3" /> {plan.workouts.length} treino(s) • {getPlanExerciseCount(plan)} exerc.
                   </span>
                   {plan._count.assignments > 0 && (
-                    <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-1 rounded-full border border-emerald-200">
                       <Users className="w-3 h-3" /> {plan._count.assignments} cliente(s)
                     </span>
                   )}
@@ -469,10 +469,10 @@ export default function TrainingPage() {
 
                 {/* Expanded Workouts */}
                 {isExpanded && (
-                  <div className="mt-5 pt-5 border-t border-gray-100 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="mt-5 pt-5 border-t border-gray-100 dark:border-gray-800 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
                     {/* Workout Header */}
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                      <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                         <Zap className="w-4 h-4 text-emerald-500" /> Treinos do Plano
                       </h4>
                       <button
@@ -484,7 +484,7 @@ export default function TrainingPage() {
                     </div>
 
                     {plan.workouts.length === 0 ? (
-                      <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl">
+                      <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">
                         <Dumbbell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
                         <p className="text-sm text-gray-400">Nenhum treino adicionado.</p>
                         <button
@@ -501,7 +501,7 @@ export default function TrainingPage() {
                         const letter = workoutLetters[wIdx % workoutLetters.length];
 
                         return (
-                          <div key={w.id} className={`rounded-xl border transition-all duration-200 ${isWorkoutExpanded ? "border-gray-200 shadow-sm" : "border-gray-100 hover:border-gray-200"}`}>
+                          <div key={w.id} className={`rounded-xl border transition-all duration-200 ${isWorkoutExpanded ? "border-gray-200 dark:border-gray-700 shadow-sm" : "border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700"}`}>
                             {/* Workout Header */}
                             <div
                               className="flex items-center gap-3 p-4 cursor-pointer"
@@ -511,20 +511,20 @@ export default function TrainingPage() {
                                 <span className="text-sm font-bold text-white">{letter}</span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h5 className="text-sm font-semibold text-gray-900">{w.name}</h5>
+                                <h5 className="text-sm font-semibold text-gray-900 dark:text-white">{w.name}</h5>
                                 <p className="text-xs text-gray-400 mt-0.5">{w.exercises.length} exercício(s)</p>
                               </div>
                               <div className="flex items-center gap-1.5">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); setActiveWorkoutId(w.id); setShowExercisePicker(true); }}
-                                  className="p-1.5 hover:bg-emerald-50 rounded-lg text-gray-400 hover:text-emerald-600 transition-colors"
+                                  className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg text-gray-400 hover:text-emerald-600 transition-colors"
                                   title="Adicionar exercício"
                                 >
                                   <Plus className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); handleDeleteWorkout(w.id); }}
-                                  className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
+                                  className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-gray-400 hover:text-red-500 transition-colors"
                                   title="Eliminar treino"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -556,7 +556,7 @@ export default function TrainingPage() {
                                 )}
 
                                 {w.exercises.length === 0 ? (
-                                  <div className="text-center py-6 border-2 border-dashed border-gray-100 rounded-lg">
+                                  <div className="text-center py-6 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-lg">
                                     <p className="text-xs text-gray-400 mb-1">Sem exercícios neste treino</p>
                                     <button
                                       onClick={() => { setActiveWorkoutId(w.id); setShowExercisePicker(true); }}
@@ -573,7 +573,7 @@ export default function TrainingPage() {
                                         {/* Exercise main row */}
                                         <div
                                           className={`group rounded-lg px-3 py-2.5 transition-all duration-150 cursor-pointer
-                                            ${isExExpanded ? "bg-emerald-50 border border-emerald-200 shadow-sm rounded-b-none" : "bg-white border border-gray-100 hover:border-gray-200 hover:shadow-sm"}`}
+                                            ${isExExpanded ? "bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 shadow-sm rounded-b-none" : "bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 hover:shadow-sm"}`}
                                           onClick={() => setExpandedExercise(isExExpanded ? null : ex.id)}
                                         >
                                           <div className="flex items-center gap-2">
@@ -592,17 +592,17 @@ export default function TrainingPage() {
                                             </div>
 
                                             {/* Summary when collapsed */}
-                                            <div className="hidden sm:flex items-center gap-1.5 flex-shrink-0 text-xs text-gray-500">
-                                              <span className="bg-gray-100 px-2 py-0.5 rounded font-medium">{ex.sets}×{ex.reps}</span>
-                                              {ex.weight && <span className="bg-gray-100 px-2 py-0.5 rounded">{ex.weight}kg</span>}
-                                              {ex.rpe && <span className="bg-amber-50 text-amber-600 px-2 py-0.5 rounded font-medium">RPE {ex.rpe}</span>}
+                                            <div className="hidden sm:flex items-center gap-1.5 flex-shrink-0 text-xs text-gray-500 dark:text-gray-400">
+                                              <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-medium">{ex.sets}×{ex.reps}</span>
+                                              {ex.weight && <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">{ex.weight}kg</span>}
+                                              {ex.rpe && <span className="bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded font-medium">RPE {ex.rpe}</span>}
                                               <span className="text-gray-300">{ex.restSeconds}s</span>
                                             </div>
 
                                             <div className="flex items-center gap-1 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                                               <button
                                                 onClick={() => handleRemoveExercise(ex.id)}
-                                                className="p-1.5 hover:bg-red-50 rounded-lg text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                                className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                                                 title="Remover exercício"
                                               >
                                                 <X className="w-3.5 h-3.5" />
@@ -612,17 +612,17 @@ export default function TrainingPage() {
                                           </div>
 
                                           {/* Mobile summary */}
-                                          <div className="flex sm:hidden items-center gap-2 mt-1.5 ml-12 text-xs text-gray-500">
-                                            <span className="bg-gray-100 px-2 py-0.5 rounded font-medium">{ex.sets}×{ex.reps}</span>
-                                            {ex.weight && <span className="bg-gray-100 px-2 py-0.5 rounded">{ex.weight}kg</span>}
-                                            {ex.rpe && <span className="bg-amber-50 text-amber-600 px-2 py-0.5 rounded font-medium">RPE {ex.rpe}</span>}
+                                          <div className="flex sm:hidden items-center gap-2 mt-1.5 ml-12 text-xs text-gray-500 dark:text-gray-400">
+                                            <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded font-medium">{ex.sets}×{ex.reps}</span>
+                                            {ex.weight && <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">{ex.weight}kg</span>}
+                                            {ex.rpe && <span className="bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded font-medium">RPE {ex.rpe}</span>}
                                             <span className="text-gray-300">{ex.restSeconds}s desc.</span>
                                           </div>
                                         </div>
 
                                         {/* Expanded: individual sets */}
                                         {isExExpanded && (
-                                          <div className="bg-gray-50 border border-t-0 border-emerald-200 rounded-b-lg px-4 py-3 space-y-3 animate-in fade-in slide-in-from-top-1 duration-150">
+                                          <div className="bg-gray-50 dark:bg-gray-800/50 border border-t-0 border-emerald-200 rounded-b-lg px-4 py-3 space-y-3 animate-in fade-in slide-in-from-top-1 duration-150">
                                             {/* Global exercise settings */}
                                             <div className="flex flex-wrap items-center gap-3" onClick={(e) => e.stopPropagation()}>
                                               <div className="flex items-center gap-1.5">
@@ -633,7 +633,7 @@ export default function TrainingPage() {
                                                     min={0}
                                                     value={ex.restSeconds}
                                                     onChange={(e) => handleUpdateExercise(ex.id, "restSeconds", parseInt(e.target.value) || 0)}
-                                                    className="w-16 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white pr-5"
+                                                    className="w-16 text-center text-xs font-medium border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white dark:bg-gray-900 pr-5"
                                                   />
                                                   <Timer className="w-3 h-3 text-gray-300 absolute right-1.5" />
                                                   {savingFields.has(`${ex.id}-restSeconds`) && <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />}
@@ -646,7 +646,7 @@ export default function TrainingPage() {
                                                   type="text"
                                                   value={ex.notes || ""}
                                                   onChange={(e) => handleUpdateExercise(ex.id, "notes", e.target.value)}
-                                                  className="w-36 text-xs border border-gray-200 rounded-lg py-1.5 px-2 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  className="w-36 text-xs border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 px-2 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white dark:bg-gray-900"
                                                   placeholder="Notas do exercício..."
                                                 />
                                               </div>
@@ -672,14 +672,14 @@ export default function TrainingPage() {
                                                   type="text"
                                                   value={ex.reps}
                                                   onChange={(e) => handleUpdateExercise(ex.id, "reps", e.target.value)}
-                                                  className="w-16 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  className="w-16 text-center text-xs font-medium border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white dark:bg-gray-900"
                                                   placeholder="12"
                                                 />
                                                 <input
                                                   type="text"
                                                   value={ex.weight || ""}
                                                   onChange={(e) => handleUpdateExercise(ex.id, "weight", e.target.value)}
-                                                  className="w-20 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  className="w-20 text-center text-xs font-medium border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white dark:bg-gray-900"
                                                   placeholder="—"
                                                 />
                                                 <input
@@ -689,7 +689,7 @@ export default function TrainingPage() {
                                                   step={0.5}
                                                   value={ex.rpe || ""}
                                                   onChange={(e) => handleUpdateExercise(ex.id, "rpe", parseFloat(e.target.value) || 0)}
-                                                  className="w-14 text-center text-xs font-medium border border-gray-200 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white"
+                                                  className="w-14 text-center text-xs font-medium border border-gray-200 dark:border-gray-700 rounded-lg py-1.5 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200 focus:outline-none bg-white dark:bg-gray-900"
                                                   placeholder="—"
                                                 />
                                               </div>
@@ -699,14 +699,14 @@ export default function TrainingPage() {
                                             <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
                                               <button
                                                 onClick={() => handleUpdateExercise(ex.id, "sets", ex.sets + 1)}
-                                                className="text-[10px] font-medium text-emerald-600 hover:text-emerald-700 px-2 py-1 rounded-lg hover:bg-emerald-50 transition-colors flex items-center gap-1"
+                                                className="text-[10px] font-medium text-emerald-600 hover:text-emerald-700 px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors flex items-center gap-1"
                                               >
                                                 <Plus className="w-3 h-3" /> Série
                                               </button>
                                               {ex.sets > 1 && (
                                                 <button
                                                   onClick={() => handleUpdateExercise(ex.id, "sets", ex.sets - 1)}
-                                                  className="text-[10px] font-medium text-red-500 hover:text-red-600 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1"
+                                                  className="text-[10px] font-medium text-red-500 hover:text-red-600 px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center gap-1"
                                                 >
                                                   <Trash2 className="w-3 h-3" /> Remover
                                                 </button>
@@ -723,7 +723,7 @@ export default function TrainingPage() {
                                 {w.exercises.length > 0 && (
                                   <button
                                     onClick={() => { setActiveWorkoutId(w.id); setShowExercisePicker(true); }}
-                                    className="w-full py-2 border-2 border-dashed border-gray-200 rounded-lg text-xs text-gray-400 hover:text-emerald-600 hover:border-emerald-300 transition-colors flex items-center justify-center gap-1"
+                                    className="w-full py-2 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg text-xs text-gray-400 hover:text-emerald-600 hover:border-emerald-300 transition-colors flex items-center justify-center gap-1"
                                   >
                                     <Plus className="w-3.5 h-3.5" /> Adicionar mais exercícios
                                   </button>
@@ -737,13 +737,13 @@ export default function TrainingPage() {
 
                     {/* Assigned clients */}
                     {plan.assignments.length > 0 && (
-                      <div className="pt-3 border-t border-gray-100">
+                      <div className="pt-3 border-t border-gray-100 dark:border-gray-800">
                         <p className="text-xs font-semibold text-gray-400 mb-2 flex items-center gap-1.5">
                           <Users className="w-3 h-3" /> Clientes atribuídos
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {plan.assignments.map((a) => (
-                            <span key={a.client.id} className="inline-flex items-center gap-1.5 text-xs font-medium bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">
+                            <span key={a.client.id} className="inline-flex items-center gap-1.5 text-xs font-medium bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-200">
                               <div className="w-4 h-4 rounded-full bg-emerald-200 flex items-center justify-center">
                                 <span className="text-[8px] font-bold text-emerald-700">{a.client.name[0]}</span>
                               </div>
@@ -767,7 +767,7 @@ export default function TrainingPage() {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Novo Plano de Treino" size="lg">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Nome do Plano *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Nome do Plano *</label>
             <input
               type="text"
               value={form.name}
@@ -780,7 +780,7 @@ export default function TrainingPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Descrição</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Descrição</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -791,7 +791,7 @@ export default function TrainingPage() {
 
           {/* Goal selector as cards */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Objetivo</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Objetivo</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {goals.map((g) => {
                 const Icon = g.icon;
@@ -803,12 +803,12 @@ export default function TrainingPage() {
                     onClick={() => setForm({ ...form, goal: isSelected ? "" : g.value })}
                     className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
                       isSelected
-                        ? "border-emerald-500 bg-emerald-50 shadow-sm"
-                        : "border-gray-100 hover:border-gray-200 bg-white"
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 shadow-sm"
+                        : "border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 bg-white dark:bg-gray-900"
                     }`}
                   >
                     <Icon className={`w-4 h-4 flex-shrink-0 ${isSelected ? "text-emerald-600" : "text-gray-400"}`} />
-                    <span className={`text-xs font-medium ${isSelected ? "text-emerald-700" : "text-gray-600"}`}>{g.label}</span>
+                    <span className={`text-xs font-medium ${isSelected ? "text-emerald-700" : "text-gray-600 dark:text-gray-400"}`}>{g.label}</span>
                   </button>
                 );
               })}
@@ -817,7 +817,7 @@ export default function TrainingPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Duração (semanas)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Duração (semanas)</label>
               <input
                 type="number"
                 min={1}
@@ -828,7 +828,7 @@ export default function TrainingPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Dificuldade</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Dificuldade</label>
               <div className="flex gap-2">
                 {Object.entries(difficultyConfig).map(([key, cfg]) => (
                   <button
@@ -837,8 +837,8 @@ export default function TrainingPage() {
                     onClick={() => setForm({ ...form, difficulty: key })}
                     className={`flex-1 py-2 text-xs font-medium rounded-lg border-2 transition-all ${
                       form.difficulty === key
-                        ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                        : "border-gray-100 text-gray-500 hover:border-gray-200"
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700"
+                        : "border-gray-100 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:border-gray-200 dark:hover:border-gray-700"
                     }`}
                   >
                     {cfg.label}
@@ -861,7 +861,7 @@ export default function TrainingPage() {
       <Modal isOpen={showAssign} onClose={() => setShowAssign(false)} title="Atribuir Plano a Cliente">
         <form onSubmit={handleAssign} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Selecionar Cliente *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Selecionar Cliente *</label>
             {clients.length === 0 ? (
               <p className="text-sm text-gray-400 py-4 text-center">Nenhum cliente registado.</p>
             ) : (
@@ -873,12 +873,12 @@ export default function TrainingPage() {
                     onClick={() => setAssignClientId(c.id)}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${
                       assignClientId === c.id
-                        ? "border-emerald-500 bg-emerald-50"
-                        : "border-gray-100 hover:border-gray-200"
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
+                        : "border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      assignClientId === c.id ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-500"
+                      assignClientId === c.id ? "bg-emerald-500 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
                     }`}>
                       <span className="text-xs font-bold">{c.name[0]}</span>
                     </div>
@@ -905,7 +905,7 @@ export default function TrainingPage() {
       <Modal isOpen={showWorkoutModal} onClose={() => setShowWorkoutModal(false)} title="Adicionar Treino">
         <form onSubmit={handleAddWorkout} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Nome do Treino *</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Nome do Treino *</label>
             <input
               type="text"
               value={workoutForm.name}
@@ -933,7 +933,7 @@ export default function TrainingPage() {
                   key={suggestion}
                   type="button"
                   onClick={() => setWorkoutForm({ ...workoutForm, name: suggestion })}
-                  className="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                  className="text-[10px] px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 transition-colors"
                 >
                   {suggestion}
                 </button>
@@ -941,7 +941,7 @@ export default function TrainingPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Notas</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Notas</label>
             <textarea
               value={workoutForm.notes}
               onChange={(e) => setWorkoutForm({ ...workoutForm, notes: e.target.value })}
@@ -984,7 +984,7 @@ export default function TrainingPage() {
             <button
               onClick={() => setExerciseGroup("")}
               className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                !exerciseGroup ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                !exerciseGroup ? "bg-gray-900 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
               Todos
@@ -994,7 +994,7 @@ export default function TrainingPage() {
                 key={mg.value}
                 onClick={() => setExerciseGroup(exerciseGroup === mg.value ? "" : mg.value)}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                  exerciseGroup === mg.value ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  exerciseGroup === mg.value ? "bg-gray-900 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
               >
                 {mg.emoji} {mg.label}
@@ -1003,7 +1003,7 @@ export default function TrainingPage() {
           </div>
 
           {/* Exercise list */}
-          <div className="max-h-[400px] overflow-y-auto space-y-1 rounded-xl border border-gray-100 p-2">
+          <div className="max-h-[400px] overflow-y-auto space-y-1 rounded-xl border border-gray-100 dark:border-gray-800 p-2">
             {exercises.length === 0 ? (
               <div className="text-center py-12">
                 <Dumbbell className="w-8 h-8 text-gray-200 mx-auto mb-2" />
@@ -1022,10 +1022,10 @@ export default function TrainingPage() {
                     disabled={justAdded}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-left group ${
                       justAdded
-                        ? "bg-emerald-50 border border-emerald-200"
+                        ? "bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200"
                         : alreadyInWorkout
-                        ? "bg-gray-50 border border-gray-100"
-                        : "hover:bg-gray-50 border border-transparent hover:border-gray-100"
+                        ? "bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent hover:border-gray-100 dark:hover:border-gray-800"
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${muscleGradients[ex.muscleGroup] || "from-gray-400 to-gray-500"} flex items-center justify-center flex-shrink-0 shadow-sm`}>
@@ -1051,7 +1051,7 @@ export default function TrainingPage() {
                           <Plus className="w-3.5 h-3.5 ml-1 opacity-0 group-hover:opacity-100 text-emerald-500 transition-opacity" />
                         </div>
                       ) : (
-                        <div className="w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-emerald-100 flex items-center justify-center transition-colors">
+                        <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/30 flex items-center justify-center transition-colors">
                           <Plus className="w-4 h-4 text-gray-400 group-hover:text-emerald-600 transition-colors" />
                         </div>
                       )}
@@ -1063,7 +1063,7 @@ export default function TrainingPage() {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
             <p className="text-xs text-gray-400">
               {exercises.length} exercício(s) disponíveis • Clica para adicionar ao treino
             </p>

@@ -170,13 +170,13 @@ export default function MessagesPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] lg:h-[calc(100vh-8rem)] max-h-[calc(100dvh-10rem)] lg:max-h-none bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="flex h-[calc(100vh-8rem)] lg:h-[calc(100vh-8rem)] max-h-[calc(100dvh-10rem)] lg:max-h-none bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
       {/* Conversations sidebar */}
-      <div className={`w-full sm:w-80 border-r border-gray-100 flex flex-col ${mobileView === "chat" ? "hidden sm:flex" : "flex"}`}>
-        <div className="p-4 border-b border-gray-100">
+      <div className={`w-full sm:w-80 border-r border-gray-100 dark:border-gray-800 flex flex-col ${mobileView === "chat" ? "hidden sm:flex" : "flex"}`}>
+        <div className="p-4 border-b border-gray-100 dark:border-gray-800">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold text-gray-900">Mensagens</h2>
-            <button onClick={() => setShowNewConv(!showNewConv)} className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 hover:bg-emerald-100 transition-colors">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Mensagens</h2>
+            <button onClick={() => setShowNewConv(!showNewConv)} className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-800 transition-colors">
               <Plus className="w-4 h-4" />
             </button>
           </div>
@@ -188,9 +188,9 @@ export default function MessagesPage() {
               </div>
               <div className="max-h-40 overflow-y-auto space-y-1">
                 {filteredClients.map((c) => (
-                  <button key={c.id} onClick={() => startConversation(c.id)} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 text-left transition-colors">
-                    <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-semibold">{getInitials(c.name)}</div>
-                    <span className="text-sm text-gray-700">{c.name}</span>
+                  <button key={c.id} onClick={() => startConversation(c.id)} className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left transition-colors">
+                    <div className="w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xs font-semibold">{getInitials(c.name)}</div>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{c.name}</span>
                   </button>
                 ))}
               </div>
@@ -202,7 +202,7 @@ export default function MessagesPage() {
             <div className="p-4 text-center text-gray-400 text-sm">A carregar...</div>
           ) : conversations.length === 0 ? (
             <div className="p-8 text-center">
-              <MessageCircle className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+              <MessageCircle className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
               <p className="text-sm text-gray-400">Sem conversas</p>
               <p className="text-xs text-gray-400 mt-1">Inicie uma nova conversa</p>
             </div>
@@ -211,10 +211,10 @@ export default function MessagesPage() {
               <button
                 key={conv.id}
                 onClick={() => { setSelectedConv(conv.id); setMobileView("chat"); setLoadingMessages(true); }}
-                className={`w-full flex items-center gap-3 p-3 text-left transition-colors border-b border-gray-50 ${selectedConv === conv.id ? "bg-emerald-50" : "hover:bg-gray-50"}`}
+                className={`w-full flex items-center gap-3 p-3 text-left transition-colors border-b border-gray-50 dark:border-gray-800 ${selectedConv === conv.id ? "bg-emerald-50 dark:bg-emerald-900/20" : "hover:bg-gray-50 dark:hover:bg-gray-800"}`}
               >
                 <div className="relative flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-sm font-semibold">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-sm font-semibold">
                     {conv.participants[0]?.name ? getInitials(conv.participants[0].name) : <User className="w-4 h-4" />}
                   </div>
                   {conv.unreadCount > 0 && (
@@ -223,7 +223,7 @@ export default function MessagesPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-900 truncate">{conv.participants.map((p) => p.name).join(", ")}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{conv.participants.map((p) => p.name).join(", ")}</p>
                     {conv.lastMessage && <span className="text-[11px] text-gray-400">{timeAgo(conv.lastMessage.createdAt)}</span>}
                   </div>
                   {conv.lastMessage && (
@@ -248,15 +248,15 @@ export default function MessagesPage() {
         ) : (
           <>
             {/* Chat header */}
-            <div className="p-4 border-b border-gray-100 flex items-center gap-3">
-              <button onClick={() => setMobileView("list")} className="sm:hidden w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100">
-                <ArrowLeft className="w-4 h-4 text-gray-600" />
+            <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
+              <button onClick={() => setMobileView("list")} className="sm:hidden w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700">
+                <ArrowLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               </button>
-              <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-sm font-semibold">
+              <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-sm font-semibold">
                 {selectedConversation?.participants[0]?.name ? getInitials(selectedConversation.participants[0].name) : <User className="w-4 h-4" />}
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{selectedConversation?.participants.map((p) => p.name).join(", ")}</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{selectedConversation?.participants.map((p) => p.name).join(", ")}</p>
                 <p className="text-xs text-gray-400">Online</p>
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function MessagesPage() {
               ) : (
                 messages.map((msg) => (
                   <div key={msg.id} className={`flex ${msg.senderType === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${msg.senderType === "user" ? "bg-emerald-500 text-white" : "bg-gray-100 text-gray-900"}`}>
+                    <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${msg.senderType === "user" ? "bg-emerald-500 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"}`}>
                       {msg.type === "image" && msg.fileUrl && (
                         <img src={msg.fileUrl} alt="Imagem" className="rounded-lg max-w-full max-h-60 mb-1" loading="lazy" />
                       )}
@@ -298,7 +298,7 @@ export default function MessagesPage() {
             </div>
 
             {/* Message input */}
-            <div className="p-3 border-t border-gray-100">
+            <div className="p-3 border-t border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
                 <input
                   ref={fileInputRef}
@@ -334,7 +334,7 @@ export default function MessagesPage() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingFile}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                   aria-label="Enviar ficheiro"
                 >
                   {uploadingFile ? (
@@ -349,7 +349,7 @@ export default function MessagesPage() {
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
                   placeholder="Escrever mensagem..."
-                  className="flex-1 px-4 py-2.5 rounded-full bg-gray-100 border-0 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+                  className="flex-1 px-4 py-2.5 rounded-full bg-gray-100 dark:bg-gray-800 border-0 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-gray-900 transition-all"
                   aria-label="Escrever mensagem"
                 />
                 <button onClick={sendMessage} disabled={!newMessage.trim()} className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-white hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" aria-label="Enviar mensagem">

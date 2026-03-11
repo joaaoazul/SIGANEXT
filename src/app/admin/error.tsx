@@ -18,11 +18,11 @@ export default function AdminError({
   return (
     <div className="flex items-center justify-center min-h-[60vh] px-4">
       <div className="text-center max-w-md">
-        <div className="w-14 h-14 bg-red-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle className="w-7 h-7 text-red-400" />
+        <div className="w-14 h-14 bg-red-100 dark:bg-red-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <AlertTriangle className="w-7 h-7 text-red-500 dark:text-red-400" />
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">Erro no painel</h2>
-        <p className="text-gray-400 text-sm mb-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Erro no painel</h2>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
           Ocorreu um erro no painel de administração.
         </p>
         <div className="flex gap-3 justify-center">
@@ -30,7 +30,7 @@ export default function AdminError({
             <RotateCcw className="w-4 h-4" />
             Tentar novamente
           </button>
-          <Link href="/admin" className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-700 transition">
+          <Link href="/admin" className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition">
             Dashboard
           </Link>
         </div>

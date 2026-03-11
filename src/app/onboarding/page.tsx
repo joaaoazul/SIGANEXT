@@ -20,7 +20,7 @@ function InputField({ label, icon: Icon, type = "text", field, placeholder, read
   const { form, set } = useContext(OnboardingFormContext);
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">{label}</label>
       <div className="relative">
         {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
         <input
@@ -29,7 +29,7 @@ function InputField({ label, icon: Icon, type = "text", field, placeholder, read
           onChange={(e) => set(field, e.target.value)}
           placeholder={placeholder}
           readOnly={readOnly}
-          className={`input-field ${Icon ? "pl-10" : ""} ${readOnly ? "bg-gray-50 text-gray-500" : ""}`}
+          className={`input-field ${Icon ? "pl-10" : ""} ${readOnly ? "bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400" : ""}`}
           {...rest}
         />
       </div>
@@ -44,7 +44,7 @@ function SelectField({ label, icon: Icon, field, options }: {
   const { form, set } = useContext(OnboardingFormContext);
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">{label}</label>
       <div className="relative">
         {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
         <select
@@ -66,7 +66,7 @@ function TextArea({ label, field, placeholder, rows = 3 }: {
   const { form, set } = useContext(OnboardingFormContext);
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">{label}</label>
       <textarea
         value={form[field] || ""}
         onChange={(e) => set(field, e.target.value)}
@@ -250,13 +250,13 @@ function OnboardingForm() {
   // ---------- Success screen ----------
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
         <div className="w-full max-w-md text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-100 mb-6">
-            <CheckCircle className="w-8 h-8 text-emerald-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 mb-6">
+            <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Registo Completo!</h1>
-          <p className="text-gray-500 mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Registo Completo!</h1>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
             A tua conta e perfil foram criados com sucesso. Já podes fazer login.
           </p>
           <button onClick={() => router.push("/login")} className="btn-primary">
@@ -291,15 +291,15 @@ function OnboardingForm() {
   // ---------- Render ----------
   return (
     <OnboardingFormContext.Provider value={{ form: form as unknown as Record<string, string>, set }}>
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         {/* Logo */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-emerald-500 shadow-lg shadow-emerald-500/20 mb-3">
             <Dumbbell className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Bem-vindo ao SIGA180</h1>
-          <p className="text-gray-500 mt-1">Completa o teu perfil de atleta</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Bem-vindo ao SIGA180</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Completa o teu perfil de atleta</p>
         </div>
 
         {/* Progress */}
@@ -311,26 +311,26 @@ function OnboardingForm() {
             <div
               key={s}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                s === step ? "w-8 bg-emerald-500" : s < step ? "w-4 bg-emerald-300" : "w-4 bg-gray-200"
+                s === step ? "w-8 bg-emerald-500" : s < step ? "w-4 bg-emerald-300" : "w-4 bg-gray-200 dark:bg-gray-700"
               }`}
             />
           ))}
         </div>
 
-        <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4">
+              <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
             </div>
           )}
 
           {/* ── Step 1: Código ── */}
           {step === 1 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900">Código de Convite</h2>
-              <p className="text-sm text-gray-500">Introduz o código que recebeste do teu treinador.</p>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Código de Convite</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Introduz o código que recebeste do teu treinador.</p>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1.5">Código</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1.5">Código</label>
                 <input
                   type="text"
                   value={form.code}
@@ -353,10 +353,10 @@ function OnboardingForm() {
           {/* ── Step 2: Palavra-passe ── */}
           {step === 2 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Lock className="w-5 h-5 text-emerald-500" /> Criar Palavra-passe
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Cria uma palavra-passe para acederes à tua conta. Mínimo 6 caracteres.
               </p>
               <InputField label="Palavra-passe" icon={Lock} type="password" field="password" placeholder="••••••••" />
@@ -368,7 +368,7 @@ function OnboardingForm() {
           {/* ── Step 3: Dados Pessoais ── */}
           {step === 3 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <User className="w-5 h-5 text-emerald-500" /> Dados Pessoais
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -395,7 +395,7 @@ function OnboardingForm() {
           {/* ── Step 4: Dados Físicos ── */}
           {step === 4 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Ruler className="w-5 h-5 text-emerald-500" /> Dados Físicos
               </h2>
               <SectionHint text="Estes dados ajudam o treinador a criar um plano personalizado." />
@@ -411,7 +411,7 @@ function OnboardingForm() {
           {/* ── Step 5: Fotografias Corporais ── */}
           {step === 5 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Camera className="w-5 h-5 text-emerald-500" /> Fotografias Corporais
               </h2>
               <SectionHint text="Opcional — As fotos ajudam a acompanhar a tua evolução física ao longo do tempo." />
@@ -432,9 +432,9 @@ function OnboardingForm() {
                           <span className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs text-center py-0.5">{lbl}</span>
                         </div>
                       ) : (
-                        <label className="flex flex-col items-center justify-center aspect-[3/4] rounded-lg border-2 border-dashed border-gray-300 hover:border-emerald-400 cursor-pointer transition-colors bg-gray-50">
-                          <Upload className="w-5 h-5 text-gray-400 mb-1" />
-                          <span className="text-xs text-gray-500">{lbl}</span>
+                        <label className="flex flex-col items-center justify-center aspect-[3/4] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-emerald-400 cursor-pointer transition-colors bg-gray-50 dark:bg-gray-800/50">
+                          <Upload className="w-5 h-5 text-gray-400 dark:text-gray-500 mb-1" />
+                          <span className="text-xs text-gray-500 dark:text-gray-400">{lbl}</span>
                           <input
                             type="file"
                             accept="image/*"
@@ -463,7 +463,7 @@ function OnboardingForm() {
           {/* ── Step 6: Historial Médico ── */}
           {step === 6 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Heart className="w-5 h-5 text-rose-500" /> Historial Médico
               </h2>
               <SectionHint text="Informação confidencial — apenas visível para o teu treinador." />
@@ -486,7 +486,7 @@ function OnboardingForm() {
           {/* ── Step 7: Estilo de Vida ── */}
           {step === 7 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Activity className="w-5 h-5 text-blue-500" /> Estilo de Vida
               </h2>
               <InputField label="Profissão" field="occupation" placeholder="Ex: Programador, Enfermeiro..." />
@@ -527,7 +527,7 @@ function OnboardingForm() {
           {/* ── Step 8: Historial Desportivo ── */}
           {step === 8 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Dumbbell className="w-5 h-5 text-amber-500" /> Historial Desportivo
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -548,7 +548,7 @@ function OnboardingForm() {
           {/* ── Step 9: Objetivos ── */}
           {step === 9 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Target className="w-5 h-5 text-purple-500" /> Objetivos
               </h2>
               <SelectField label="Objetivo Principal" icon={Target} field="primaryGoal" options={[
@@ -569,7 +569,7 @@ function OnboardingForm() {
           {/* ── Step 10: Nutrição ── */}
           {step === 10 && (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <Utensils className="w-5 h-5 text-orange-500" /> Nutrição
               </h2>
               <SectionHint text="Estes dados são opcionais mas muito úteis para um plano nutricional personalizado." />
@@ -583,16 +583,16 @@ function OnboardingForm() {
               <TextArea label="Notas Adicionais" field="notes" placeholder="Alguma informação extra que queiras partilhar..." />
 
               {/* RGPD Consent */}
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+              <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl p-4 space-y-3">
                 <div className="flex items-start gap-3">
                   <input
                     type="checkbox"
                     id="consent"
                     checked={consentGiven}
                     onChange={(e) => setConsentGiven(e.target.checked)}
-                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                    className="mt-1 w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-emerald-500 focus:ring-emerald-500 dark:bg-gray-800"
                   />
-                  <label htmlFor="consent" className="text-sm text-gray-700 leading-relaxed">
+                  <label htmlFor="consent" className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                     Li e aceito a{" "}
                     <a href="/privacy" target="_blank" className="text-emerald-600 underline hover:text-emerald-700">
                       Política de Privacidade
@@ -608,9 +608,9 @@ function OnboardingForm() {
                     id="healthConsent"
                     checked={healthConsentGiven}
                     onChange={(e) => setHealthConsentGiven(e.target.checked)}
-                    className="mt-1 w-4 h-4 rounded border-gray-300 text-emerald-500 focus:ring-emerald-500"
+                    className="mt-1 w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-emerald-500 focus:ring-emerald-500 dark:bg-gray-800"
                   />
-                  <label htmlFor="healthConsent" className="text-sm text-gray-700 leading-relaxed">
+                  <label htmlFor="healthConsent" className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                     Autorizo o tratamento dos meus <strong>dados de saúde</strong> (Art. 9.º RGPD) — incluindo
                     informações médicas, avaliações corporais e dados nutricionais — para acompanhamento
                     desportivo personalizado.
@@ -636,7 +636,7 @@ export default function OnboardingPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
           <p className="text-gray-400">A carregar...</p>
         </div>
       }

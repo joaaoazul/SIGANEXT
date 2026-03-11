@@ -12,14 +12,14 @@ export default function BreachProcedurePage() {
           <Link href="/login" className="text-emerald-600 hover:text-emerald-700 text-sm">&larr; Voltar</Link>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Procedimento de Notificação de Violação de Dados</h1>
-        <p className="text-sm text-gray-500 mb-8">Breach Notification Procedure — Art. 33.º e 34.º do RGPD — Versão 1.0, Março 2026</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Procedimento de Notificação de Violação de Dados</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Breach Notification Procedure — Art. 33.º e 34.º do RGPD — Versão 1.0, Março 2026</p>
 
-        <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 space-y-8 text-gray-700 text-sm leading-relaxed">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-xl border border-gray-100 space-y-8 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
 
           {/* 1. Objetivo */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">1. Objetivo</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">1. Objetivo</h2>
             <p>
               O presente documento define o procedimento interno para deteção, avaliação, contenção e notificação
               de violações de dados pessoais (&quot;data breaches&quot;) no âmbito da plataforma SIGA180, em
@@ -29,7 +29,7 @@ export default function BreachProcedurePage() {
 
           {/* 2. Definição */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">2. Definição de Violação de Dados</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">2. Definição de Violação de Dados</h2>
             <p>
               Uma violação de dados pessoais é uma falha de segurança que provoca, de modo acidental ou ilícito,
               a destruição, perda, alteração, divulgação ou acesso não autorizados a dados pessoais (Art. 4.º(12) RGPD).
@@ -52,9 +52,9 @@ export default function BreachProcedurePage() {
 
           {/* 3. Equipa de Resposta */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">3. Equipa de Resposta a Incidentes</h2>
-            <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
-              <thead><tr className="bg-gray-50"><th className="py-2 px-3 text-left">Papel</th><th className="py-2 px-3 text-left">Responsável</th><th className="py-2 px-3 text-left">Contacto</th></tr></thead>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">3. Equipa de Resposta a Incidentes</h2>
+            <table className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <thead><tr className="bg-gray-50 dark:bg-gray-950"><th className="py-2 px-3 text-left">Papel</th><th className="py-2 px-3 text-left">Responsável</th><th className="py-2 px-3 text-left">Contacto</th></tr></thead>
               <tbody>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Responsável pelo tratamento</td><td className="py-2 px-3">João Azul (joaoazuldev)</td><td className="py-2 px-3">rgpd@siga180.pt</td></tr>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Responsável técnico</td><td className="py-2 px-3">João Azul</td><td className="py-2 px-3">admin@siga180.pt</td></tr>
@@ -65,12 +65,12 @@ export default function BreachProcedurePage() {
 
           {/* 4. Workflow */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Workflow de Resposta</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">4. Workflow de Resposta</h2>
             
             <div className="space-y-4">
               {/* Fase 1 */}
               <div className="border-l-4 border-red-500 pl-4">
-                <h3 className="font-semibold text-gray-900">Fase 1 — Deteção e Contenção (0–4 horas)</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Fase 1 — Deteção e Contenção (0–4 horas)</h3>
                 <ul className="list-disc ml-4 mt-2 space-y-1">
                   <li>Identificar a natureza e âmbito da violação</li>
                   <li>Conter a violação (revogar acessos, corrigir vulnerabilidade, isolar sistemas)</li>
@@ -82,7 +82,7 @@ export default function BreachProcedurePage() {
 
               {/* Fase 2 */}
               <div className="border-l-4 border-amber-500 pl-4">
-                <h3 className="font-semibold text-gray-900">Fase 2 — Avaliação de Risco (4–24 horas)</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Fase 2 — Avaliação de Risco (4–24 horas)</h3>
                 <ul className="list-disc ml-4 mt-2 space-y-1">
                   <li>Determinar categorias de dados afetados</li>
                   <li>Estimar número de titulares afetados</li>
@@ -97,7 +97,7 @@ export default function BreachProcedurePage() {
 
               {/* Fase 3 */}
               <div className="border-l-4 border-blue-500 pl-4">
-                <h3 className="font-semibold text-gray-900">Fase 3 — Notificação à CNPD (até 72 horas)</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Fase 3 — Notificação à CNPD (até 72 horas)</h3>
                 <p className="mt-2">Se a avaliação determinar que existe risco, notificar a CNPD no prazo máximo de <strong>72 horas</strong> após tomar conhecimento da violação, incluindo:</p>
                 <ol className="list-decimal ml-4 mt-2 space-y-1">
                   <li>Natureza da violação (tipo, categorias de dados)</li>
@@ -113,7 +113,7 @@ export default function BreachProcedurePage() {
 
               {/* Fase 4 */}
               <div className="border-l-4 border-purple-500 pl-4">
-                <h3 className="font-semibold text-gray-900">Fase 4 — Notificação aos Titulares (se risco elevado)</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Fase 4 — Notificação aos Titulares (se risco elevado)</h3>
                 <p className="mt-2">Se a violação for suscetível de implicar um <strong>elevado risco</strong> para os direitos e liberdades (Art. 34.º), notificar os titulares afetados:</p>
                 <ul className="list-disc ml-4 mt-2 space-y-1">
                   <li>Em linguagem clara e simples</li>
@@ -129,7 +129,7 @@ export default function BreachProcedurePage() {
 
               {/* Fase 5 */}
               <div className="border-l-4 border-emerald-500 pl-4">
-                <h3 className="font-semibold text-gray-900">Fase 5 — Remediação e Registo (contínuo)</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Fase 5 — Remediação e Registo (contínuo)</h3>
                 <ul className="list-disc ml-4 mt-2 space-y-1">
                   <li>Implementar correções técnicas</li>
                   <li>Atualizar medidas de segurança</li>
@@ -143,7 +143,7 @@ export default function BreachProcedurePage() {
 
           {/* 5. Registo de Violações */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">5. Registo Interno de Violações (Art. 33.º(5))</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">5. Registo Interno de Violações (Art. 33.º(5))</h2>
             <p>Todas as violações de dados, incluindo as que não exigem notificação à CNPD, são documentadas no registo interno com:</p>
             <ul className="list-disc ml-6 mt-2 space-y-1">
               <li>Data e hora da deteção</li>
@@ -158,9 +158,9 @@ export default function BreachProcedurePage() {
 
           {/* 6. Prazos */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">6. Resumo de Prazos</h2>
-            <table className="w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
-              <thead><tr className="bg-gray-50"><th className="py-2 px-3 text-left">Ação</th><th className="py-2 px-3 text-left">Prazo</th><th className="py-2 px-3 text-left">Base Legal</th></tr></thead>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">6. Resumo de Prazos</h2>
+            <table className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <thead><tr className="bg-gray-50 dark:bg-gray-950"><th className="py-2 px-3 text-left">Ação</th><th className="py-2 px-3 text-left">Prazo</th><th className="py-2 px-3 text-left">Base Legal</th></tr></thead>
               <tbody>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Contenção inicial</td><td className="py-2 px-3 font-medium">0–4 horas</td><td className="py-2 px-3">Boas práticas</td></tr>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Avaliação de risco</td><td className="py-2 px-3 font-medium">até 24 horas</td><td className="py-2 px-3">Boas práticas</td></tr>
@@ -173,7 +173,7 @@ export default function BreachProcedurePage() {
 
           {/* 7. Contactos de Emergência */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">7. Contactos de Emergência</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">7. Contactos de Emergência</h2>
             <div className="bg-red-50 rounded-xl p-4 border border-red-200 space-y-2">
               <p className="text-sm"><strong>Responsável pelo tratamento:</strong> rgpd@siga180.pt</p>
               <p className="text-sm"><strong>Suporte técnico:</strong> admin@siga180.pt</p>

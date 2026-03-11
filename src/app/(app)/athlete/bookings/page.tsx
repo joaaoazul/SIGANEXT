@@ -45,10 +45,10 @@ interface AvailableSlot {
 
 const dayNames = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 const statusColors: Record<string, string> = {
-  confirmed: "bg-emerald-50 text-emerald-600",
-  pending: "bg-amber-50 text-amber-600",
-  cancelled: "bg-red-50 text-red-600",
-  completed: "bg-blue-50 text-blue-600",
+  confirmed: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
+  pending: "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+  cancelled: "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+  completed: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
 };
 const statusLabels: Record<string, string> = {
   confirmed: "Confirmada",
@@ -124,8 +124,8 @@ export default function AthleteBookingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Agenda</h1>
-          <p className="text-gray-500 mt-1">As tuas sessões e marcações</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Agenda</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">As tuas sessões e marcações</p>
         </div>
         <button
           onClick={() => setShowBookModal(true)}
@@ -137,7 +137,7 @@ export default function AthleteBookingsPage() {
       </div>
 
       {/* Filter */}
-      <div className="flex gap-2 bg-gray-100 rounded-xl p-1 w-fit">
+      <div className="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 w-fit">
         {[
           { key: "upcoming", label: "Próximas" },
           { key: "past", label: "Passadas" },
@@ -148,8 +148,8 @@ export default function AthleteBookingsPage() {
             onClick={() => setFilter(f.key as typeof filter)}
             className={`py-2 px-4 rounded-lg text-sm font-medium transition ${
               filter === f.key
-                ? "bg-white text-gray-900 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
           >
             {f.label}
@@ -163,9 +163,9 @@ export default function AthleteBookingsPage() {
           {bookings.map((booking) => (
             <div
               key={booking.id}
-              className="bg-white rounded-2xl border border-gray-100 p-3 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
+              className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-3 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
             >
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-purple-50 flex flex-col items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex flex-col items-center justify-center flex-shrink-0">
                 <span className="text-xs text-purple-400">
                   {dayNames[new Date(booking.date).getDay()].substring(0, 3)}
                 </span>
@@ -174,8 +174,8 @@ export default function AthleteBookingsPage() {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 truncate">{booking.bookingSlot.title}</h3>
-                <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-500">
+                <h3 className="font-semibold text-gray-900 dark:text-white truncate">{booking.bookingSlot.title}</h3>
+                <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-500 dark:text-gray-400">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
                     {booking.bookingSlot.startTime} - {booking.bookingSlot.endTime}
@@ -198,7 +198,7 @@ export default function AthleteBookingsPage() {
                 )}
               </div>
               <div className="flex items-center gap-3">
-                <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColors[booking.status] || "bg-gray-50 text-gray-600"}`}>
+                <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusColors[booking.status] || "bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400"}`}>
                   {statusLabels[booking.status] || booking.status}
                 </span>
               </div>
@@ -206,12 +206,12 @@ export default function AthleteBookingsPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-12 text-center">
           <CalendarDays className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             {filter === "upcoming" ? "Sem sessões marcadas" : "Sem sessões registadas"}
           </h3>
-          <p className="text-gray-500 mt-2">
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
             {filter === "upcoming"
               ? "Marca uma sessão com o teu PT!"
               : "Nenhuma sessão encontrada para este filtro."}
@@ -222,20 +222,20 @@ export default function AthleteBookingsPage() {
       {/* New Booking Modal */}
       {showBookModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900">Nova Marcação</h2>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Nova Marcação</h2>
               <button
                 onClick={() => setShowBookModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               </button>
             </div>
             <div className="p-6 space-y-4">
               {/* Slot selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-2">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
                   Escolher sessão
                 </label>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -245,12 +245,12 @@ export default function AthleteBookingsPage() {
                       onClick={() => setSelectedSlot(slot)}
                       className={`w-full text-left p-3 rounded-xl border-2 transition ${
                         selectedSlot?.id === slot.id
-                          ? "border-emerald-500 bg-emerald-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
+                          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
                       }`}
                     >
-                      <p className="font-medium text-gray-900 text-sm">{slot.title}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{slot.title}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                         {slot.startTime} - {slot.endTime}
                         {slot.dayOfWeek !== null && ` • ${dayNames[slot.dayOfWeek]}`}
                         {slot.price && ` • ${slot.price}€`}
@@ -263,25 +263,25 @@ export default function AthleteBookingsPage() {
 
               {/* Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Data</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Data</label>
                 <input
                   type="date"
                   value={bookingDate}
                   onChange={(e) => setBookingDate(e.target.value)}
                   min={new Date().toISOString().split("T")[0]}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                   Notas (opcional)
                 </label>
                 <textarea
                   value={bookingNotes}
                   onChange={(e) => setBookingNotes(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
                   rows={2}
                   placeholder="Alguma observação..."
                 />
@@ -290,7 +290,7 @@ export default function AthleteBookingsPage() {
               <button
                 onClick={handleBook}
                 disabled={!selectedSlot || !bookingDate || submitting}
-                className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-200 disabled:text-gray-400 text-white py-3 rounded-xl font-medium transition"
+                className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500 text-white py-3 rounded-xl font-medium transition"
               >
                 {submitting ? "A marcar..." : "Confirmar Marcação"}
               </button>

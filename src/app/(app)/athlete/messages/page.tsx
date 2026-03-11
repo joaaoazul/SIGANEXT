@@ -199,8 +199,8 @@ export default function AthleteMessagesPage() {
     <div className="h-[calc(100vh-8rem)] flex flex-col">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Mensagens</h1>
-          <p className="text-gray-500 mt-1">Conversas com o teu PT e atletas</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Mensagens</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Conversas com o teu PT e atletas</p>
         </div>
         <button
           onClick={openNewConvModal}
@@ -211,20 +211,20 @@ export default function AthleteMessagesPage() {
         </button>
       </div>
 
-      <div className="flex-1 flex bg-white rounded-2xl border border-gray-100 overflow-hidden min-h-0 max-h-[calc(100dvh-14rem)] lg:max-h-none">
+      <div className="flex-1 flex bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden min-h-0 max-h-[calc(100dvh-14rem)] lg:max-h-none">
         {/* Conversations List */}
         <div
-          className={`w-full md:w-80 border-r border-gray-100 flex flex-col ${
+          className={`w-full md:w-80 border-r border-gray-100 dark:border-gray-800 flex flex-col ${
             mobileView === "chat" ? "hidden md:flex" : "flex"
           }`}
         >
-          <div className="p-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-900">Conversas</h2>
+          <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+            <h2 className="font-semibold text-gray-900 dark:text-white">Conversas</h2>
           </div>
           <div className="flex-1 overflow-y-auto">
             {conversations.length === 0 ? (
               <div className="p-6 text-center text-gray-400">
-                <MessageCircle className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                <MessageCircle className="w-10 h-10 mx-auto mb-2 text-gray-300 dark:text-gray-600" />
                 <p className="text-sm">Sem conversas</p>
                 <button
                   onClick={openNewConvModal}
@@ -241,12 +241,12 @@ export default function AthleteMessagesPage() {
                     setSelectedConv(conv.id);
                     setMobileView("chat");
                   }}
-                  className={`w-full text-left p-4 border-b border-gray-50 hover:bg-gray-50 transition ${
-                    selectedConv === conv.id ? "bg-emerald-50" : ""
+                  className={`w-full text-left p-4 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition ${
+                    selectedConv === conv.id ? "bg-emerald-50 dark:bg-emerald-900/20" : ""
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
                       {conv.participants[0]?.avatar ? (
                         <img
                           src={conv.participants[0].avatar}
@@ -254,12 +254,12 @@ export default function AthleteMessagesPage() {
                           alt=""
                         />
                       ) : (
-                        <User className="w-5 h-5 text-emerald-600" />
+                        <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <p className="font-medium text-gray-900 truncate text-sm">
+                        <p className="font-medium text-gray-900 dark:text-white truncate text-sm">
                           {conv.participants[0]?.name || "PT"}
                         </p>
                         {conv.unreadCount > 0 && (
@@ -269,7 +269,7 @@ export default function AthleteMessagesPage() {
                         )}
                       </div>
                       {conv.lastMessage && (
-                        <p className="text-xs text-gray-500 truncate mt-0.5">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
                           {conv.lastMessage.content}
                         </p>
                       )}
@@ -290,17 +290,17 @@ export default function AthleteMessagesPage() {
           {selectedConv ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-gray-100 flex items-center gap-3">
+              <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
                 <button
                   onClick={() => setMobileView("list")}
-                  className="md:hidden p-1 hover:bg-gray-100 rounded-lg"
+                  className="md:hidden p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
-                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                  <User className="w-4 h-4 text-emerald-600" />
+                <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                  <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <p className="font-semibold text-gray-900">{otherName}</p>
+                <p className="font-semibold text-gray-900 dark:text-white">{otherName}</p>
               </div>
 
               {/* Messages */}
@@ -325,7 +325,7 @@ export default function AthleteMessagesPage() {
                           className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
                             isMine
                               ? "bg-emerald-500 text-white"
-                              : "bg-gray-100 text-gray-900"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                           }`}
                         >
                           {msg.type === "image" && msg.fileUrl && (
@@ -356,14 +356,14 @@ export default function AthleteMessagesPage() {
               </div>
 
               {/* Input */}
-              <div className="p-4 border-t border-gray-100">
+              <div className="p-4 border-t border-gray-100 dark:border-gray-800">
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage()}
-                    className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="Escreve uma mensagem..."
                   />
                   <button
@@ -379,7 +379,7 @@ export default function AthleteMessagesPage() {
           ) : (
             <div className="flex-1 flex items-center justify-center text-gray-400">
               <div className="text-center">
-                <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
                 <p className="font-medium">Seleciona uma conversa</p>
               </div>
             </div>
@@ -390,18 +390,18 @@ export default function AthleteMessagesPage() {
       {/* New Conversation Modal */}
       {showNewConvModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col">
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Nova Conversa</h2>
+          <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Nova Conversa</h2>
               <button
                 onClick={() => setShowNewConvModal(false)}
-                className="p-1 hover:bg-gray-100 rounded-lg transition"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               </button>
             </div>
 
-            <div className="p-4 border-b border-gray-100">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-800">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
@@ -409,7 +409,7 @@ export default function AthleteMessagesPage() {
                   value={contactSearch}
                   onChange={(e) => setContactSearch(e.target.value)}
                   placeholder="Pesquisar contactos..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
             </div>
@@ -438,17 +438,17 @@ export default function AthleteMessagesPage() {
                             key={contact.id}
                             onClick={() => startConversation(contact)}
                             disabled={creatingConv}
-                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition disabled:opacity-50"
+                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-50"
                           >
-                            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
                               {contact.avatar ? (
                                 <img src={contact.avatar} className="w-10 h-10 rounded-full object-cover" alt="" />
                               ) : (
-                                <User className="w-5 h-5 text-emerald-600" />
+                                <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                               )}
                             </div>
                             <div className="text-left">
-                              <p className="font-medium text-gray-900 text-sm">{contact.name}</p>
+                              <p className="font-medium text-gray-900 dark:text-white text-sm">{contact.name}</p>
                               <p className="text-xs text-emerald-600">{contact.role}</p>
                             </div>
                           </button>
@@ -469,7 +469,7 @@ export default function AthleteMessagesPage() {
                             key={contact.id}
                             onClick={() => startConversation(contact)}
                             disabled={creatingConv}
-                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition disabled:opacity-50"
+                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-50"
                           >
                             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                               {contact.avatar ? (
@@ -479,8 +479,8 @@ export default function AthleteMessagesPage() {
                               )}
                             </div>
                             <div className="text-left">
-                              <p className="font-medium text-gray-900 text-sm">{contact.name}</p>
-                              <p className="text-xs text-gray-500">{contact.role}</p>
+                              <p className="font-medium text-gray-900 dark:text-white text-sm">{contact.name}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">{contact.role}</p>
                             </div>
                           </button>
                         ))}

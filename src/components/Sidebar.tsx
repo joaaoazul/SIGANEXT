@@ -235,7 +235,7 @@ export default function Sidebar() {
         <>
           <div className="lg:hidden fixed inset-0 bg-black/20 z-40" onClick={() => setMoreOpen(false)} />
           <div className="lg:hidden fixed bottom-16 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-2xl border-t border-gray-200 dark:border-gray-800 shadow-2xl safe-area-bottom animate-slide-up">
-            <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-2 mb-1" />
+            <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mt-2 mb-1" />
             <div className="px-2 py-2 max-h-[60vh] overflow-y-auto">
               <div className="grid grid-cols-3 gap-1">
                 {moreItems.map((item) => {
@@ -247,8 +247,8 @@ export default function Sidebar() {
                       onClick={() => setMoreOpen(false)}
                       className={`flex flex-col items-center gap-1.5 p-3 rounded-xl transition-colors ${
                         active
-                          ? "bg-emerald-50 text-emerald-700"
-                          : "text-gray-500 hover:bg-gray-50"
+                          ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400"
+                          : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                       }`}
                     >
                       <item.icon className={`w-5 h-5 ${active ? "text-emerald-600" : "text-gray-400"}`} />
@@ -258,7 +258,7 @@ export default function Sidebar() {
                 })}
                 <button
                   onClick={() => { setMoreOpen(false); handleLogout(); }}
-                  className="flex flex-col items-center gap-1.5 p-3 rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  className="flex flex-col items-center gap-1.5 p-3 rounded-xl text-gray-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 transition-colors"
                 >
                   <LogOut className="w-5 h-5 text-gray-400" />
                   <span className="text-[11px] font-medium">Sair</span>

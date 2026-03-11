@@ -145,7 +145,7 @@ function FoodLogTab({ clientId }: { clientId: string }) {
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <input type="date" value={date} onChange={e => setDate(e.target.value)} className="input-field max-w-[180px]" />
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           {new Date(date).toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}
         </span>
       </div>
@@ -180,7 +180,7 @@ function FoodLogTab({ clientId }: { clientId: string }) {
           {data.waterLogs?.length > 0 && (
             <div className="card flex items-center gap-3">
               <Droplets className="w-5 h-5 text-blue-500" />
-              <span className="text-sm font-medium text-gray-700">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Água: {data.waterLogs.reduce((a: number, w: any) => a + (w.amount || 0), 0)} ml
               </span>
             </div>
@@ -189,7 +189,7 @@ function FoodLogTab({ clientId }: { clientId: string }) {
           {/* Meals */}
           {data.foodLogs.map((log: any) => (
             <div key={log.id} className="card">
-              <h4 className="text-sm font-semibold text-gray-900 mb-3">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                 {mealTypeLabels[log.mealType] || log.mealType}
                 <span className="text-xs font-normal text-gray-400 ml-2">
                   {new Date(log.date).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
@@ -200,7 +200,7 @@ function FoodLogTab({ clientId }: { clientId: string }) {
                   {log.entries.map((entry: any) => (
                     <div key={entry.id} className="flex items-center justify-between text-sm">
                       <div className="flex-1">
-                        <span className="text-gray-700">{entry.food?.name || "Alimento"}</span>
+                        <span className="text-gray-700 dark:text-gray-300">{entry.food?.name || "Alimento"}</span>
                         <span className="text-gray-400 ml-2">({entry.quantity}g)</span>
                       </div>
                       <span className="text-gray-500 text-xs">{Math.round((entry.food?.calories || 0) * entry.quantity / 100)} kcal</span>
@@ -406,8 +406,8 @@ export default function ClientDetailPage() {
   // ─── Helpers ───
   const Field = ({ label, value, suffix }: { label: string; value: any; suffix?: string }) => (
     <div>
-      <p className="text-xs text-gray-400 uppercase tracking-wider mb-0.5">{label}</p>
-      <p className="text-sm text-gray-800">{value != null && value !== "" ? `${value}${suffix || ""}` : "—"}</p>
+      <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-0.5">{label}</p>
+      <p className="text-sm text-gray-800 dark:text-gray-200">{value != null && value !== "" ? `${value}${suffix || ""}` : "—"}</p>
     </div>
   );
 
@@ -417,7 +417,7 @@ export default function ClientDetailPage() {
     if (options) {
       return (
         <div>
-          <label className="block text-xs text-gray-500 mb-1">{label}</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</label>
           <select value={editData[field] || ""} onChange={(e) => setEditData({ ...editData, [field]: e.target.value })} className="input-field text-sm">
             <option value="">—</option>
             {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -428,22 +428,22 @@ export default function ClientDetailPage() {
     if (type === "textarea") {
       return (
         <div>
-          <label className="block text-xs text-gray-500 mb-1">{label}</label>
+          <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</label>
           <textarea value={editData[field] || ""} onChange={(e) => setEditData({ ...editData, [field]: e.target.value })} rows={2} className="input-field text-sm resize-none" />
         </div>
       );
     }
     return (
       <div>
-        <label className="block text-xs text-gray-500 mb-1">{label}</label>
+        <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</label>
         <input type={type} value={editData[field] ?? ""} onChange={(e) => setEditData({ ...editData, [field]: e.target.value })} className="input-field text-sm" />
       </div>
     );
   };
 
   const SectionCard = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{title}</h3>
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-5 shadow-sm">
+      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{title}</h3>
       {children}
     </div>
   );
@@ -470,12 +470,12 @@ export default function ClientDetailPage() {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600">{client.email}</span></div>
-                    {client.phone && <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600">{client.phone}</span></div>}
-                    {client.dateOfBirth && <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600">{new Date(client.dateOfBirth).toLocaleDateString("pt-PT")}</span></div>}
-                    <div className="flex items-center gap-2"><User className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600">{client.gender === "male" ? "Masculino" : client.gender === "female" ? "Feminino" : client.gender || "—"}</span></div>
+                    <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600 dark:text-gray-300">{client.email}</span></div>
+                    {client.phone && <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600 dark:text-gray-300">{client.phone}</span></div>}
+                    {client.dateOfBirth && <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600 dark:text-gray-300">{new Date(client.dateOfBirth).toLocaleDateString("pt-PT")}</span></div>}
+                    <div className="flex items-center gap-2"><User className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-600 dark:text-gray-300">{client.gender === "male" ? "Masculino" : client.gender === "female" ? "Feminino" : client.gender || "—"}</span></div>
                     <div className="pt-2 flex gap-2">
-                      <span className={`badge ${client.status === "active" ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
+                      <span className={`badge ${client.status === "active" ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"}`}>
                         {client.status === "active" ? "Ativo" : "Inativo"}
                       </span>
                     </div>
@@ -494,17 +494,17 @@ export default function ClientDetailPage() {
                   <div className="grid grid-cols-3 gap-4 text-center">
                     <div>
                       <Ruler className="w-5 h-5 text-blue-500 mx-auto mb-1" />
-                      <p className="text-lg font-semibold text-gray-900">{client.height || "—"}</p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-white">{client.height || "—"}</p>
                       <p className="text-xs text-gray-400">cm</p>
                     </div>
                     <div>
                       <Weight className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
-                      <p className="text-lg font-semibold text-gray-900">{client.weight || "—"}</p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-white">{client.weight || "—"}</p>
                       <p className="text-xs text-gray-400">kg</p>
                     </div>
                     <div>
                       <Activity className="w-5 h-5 text-orange-500 mx-auto mb-1" />
-                      <p className="text-lg font-semibold text-gray-900">{client.bodyFat || "—"}</p>
+                      <p className="text-lg font-semibold text-gray-900 dark:text-white">{client.bodyFat || "—"}</p>
                       <p className="text-xs text-gray-400">% gordura</p>
                     </div>
                   </div>
@@ -516,13 +516,13 @@ export default function ClientDetailPage() {
                   {client.trainingPlans.filter(tp => tp.isActive).map((tp) => (
                     <div key={tp.id} className="flex items-center gap-2">
                       <Dumbbell className="w-4 h-4 text-purple-600" />
-                      <span className="text-sm text-gray-600">{tp.trainingPlan.name}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">{tp.trainingPlan.name}</span>
                     </div>
                   ))}
                   {client.nutritionPlans.filter(np => np.isActive).map((np) => (
                     <div key={np.id} className="flex items-center gap-2">
                       <UtensilsCrossed className="w-4 h-4 text-cyan-600" />
-                      <span className="text-sm text-gray-600">{np.nutritionPlan.name}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-300">{np.nutritionPlan.name}</span>
                     </div>
                   ))}
                   {client.trainingPlans.filter(tp => tp.isActive).length === 0 &&
@@ -535,32 +535,32 @@ export default function ClientDetailPage() {
 
             {/* Quick Anamnesis Overview */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-rose-50 rounded-xl p-4 border border-rose-100">
-                <div className="flex items-center gap-2 mb-2"><Heart className="w-4 h-4 text-rose-500" /><span className="text-xs font-semibold text-rose-700 uppercase">Médico</span></div>
-                <p className="text-sm text-gray-600 line-clamp-2">{client.medicalConditions || "Sem condições registadas"}</p>
-                {client.injuries && <p className="text-xs text-rose-600 mt-1">Lesões: {client.injuries}</p>}
+              <div className="bg-rose-50 dark:bg-rose-900/20 rounded-xl p-4 border border-rose-100 dark:border-rose-800/30">
+                <div className="flex items-center gap-2 mb-2"><Heart className="w-4 h-4 text-rose-500" /><span className="text-xs font-semibold text-rose-700 dark:text-rose-400 uppercase">Médico</span></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{client.medicalConditions || "Sem condições registadas"}</p>
+                {client.injuries && <p className="text-xs text-rose-600 dark:text-rose-400 mt-1">Lesões: {client.injuries}</p>}
               </div>
-              <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                <div className="flex items-center gap-2 mb-2"><Briefcase className="w-4 h-4 text-blue-500" /><span className="text-xs font-semibold text-blue-700 uppercase">Estilo de Vida</span></div>
-                <p className="text-sm text-gray-600">{client.occupation || "—"}</p>
-                <p className="text-xs text-blue-600 mt-1">{activityLabels[client.activityLevel || ""] || "Nível de atividade não definido"}</p>
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-800/30">
+                <div className="flex items-center gap-2 mb-2"><Briefcase className="w-4 h-4 text-blue-500" /><span className="text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase">Estilo de Vida</span></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{client.occupation || "—"}</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">{activityLabels[client.activityLevel || ""] || "Nível de atividade não definido"}</p>
               </div>
-              <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
-                <div className="flex items-center gap-2 mb-2"><Target className="w-4 h-4 text-purple-500" /><span className="text-xs font-semibold text-purple-700 uppercase">Objetivo</span></div>
-                <p className="text-sm text-gray-600">{goalLabels[client.primaryGoal || ""] || "Não definido"}</p>
-                {client.targetWeight && <p className="text-xs text-purple-600 mt-1">Peso alvo: {client.targetWeight}kg</p>}
+              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-100 dark:border-purple-800/30">
+                <div className="flex items-center gap-2 mb-2"><Target className="w-4 h-4 text-purple-500" /><span className="text-xs font-semibold text-purple-700 dark:text-purple-400 uppercase">Objetivo</span></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{goalLabels[client.primaryGoal || ""] || "Não definido"}</p>
+                {client.targetWeight && <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Peso alvo: {client.targetWeight}kg</p>}
               </div>
-              <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                <div className="flex items-center gap-2 mb-2"><Dumbbell className="w-4 h-4 text-amber-500" /><span className="text-xs font-semibold text-amber-700 uppercase">Desporto</span></div>
-                <p className="text-sm text-gray-600">{expLabels[client.trainingExperience || ""] || "Não definido"}</p>
-                {client.trainingFrequency && <p className="text-xs text-amber-600 mt-1">{client.trainingFrequency}x/semana</p>}
+              <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-100 dark:border-amber-800/30">
+                <div className="flex items-center gap-2 mb-2"><Dumbbell className="w-4 h-4 text-amber-500" /><span className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase">Desporto</span></div>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{expLabels[client.trainingExperience || ""] || "Não definido"}</p>
+                {client.trainingFrequency && <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{client.trainingFrequency}x/semana</p>}
               </div>
             </div>
 
             {/* Notes */}
             {client.notes && (
               <SectionCard title="Notas">
-                <p className="text-sm text-gray-600 whitespace-pre-wrap">{client.notes}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{client.notes}</p>
               </SectionCard>
             )}
           </div>
@@ -722,10 +722,10 @@ export default function ClientDetailPage() {
                     const photos: {url: string; label: string}[] = a.photos ? JSON.parse(a.photos) : [];
                     const isExpanded = expandedAssessment === a.id;
                     return (
-                      <div key={a.id} className="rounded-xl border border-gray-100 bg-gray-50 overflow-hidden">
-                        <button onClick={() => setExpandedAssessment(isExpanded ? null : a.id)} className="w-full flex items-center justify-between p-4 hover:bg-gray-100 transition">
+                      <div key={a.id} className="rounded-xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 overflow-hidden">
+                        <button onClick={() => setExpandedAssessment(isExpanded ? null : a.id)} className="w-full flex items-center justify-between p-4 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
                           <div className="flex items-center gap-4">
-                            <p className="text-sm font-semibold text-gray-900">{new Date(a.date).toLocaleDateString("pt-PT")}</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white">{new Date(a.date).toLocaleDateString("pt-PT")}</p>
                             <div className="flex items-center gap-3 text-xs text-gray-500">
                               {a.weight && <span>{a.weight}kg</span>}
                               {a.bodyFat && <span>{a.bodyFat}%</span>}
@@ -758,9 +758,9 @@ export default function ClientDetailPage() {
                                 { label: "Gémeos", value: a.calves, unit: "cm" },
                                 { label: "Pescoço", value: a.neck, unit: "cm" },
                               ].filter(m => m.value != null).map(m => (
-                                <div key={m.label} className="bg-white rounded-lg p-2.5 border border-gray-100 text-center">
-                                  <p className="text-xs text-gray-400">{m.label}</p>
-                                  <p className="text-sm font-semibold text-gray-900">{m.value}{m.unit}</p>
+                                <div key={m.label} className="bg-white dark:bg-gray-800 rounded-lg p-2.5 border border-gray-100 dark:border-gray-700 text-center">
+                                  <p className="text-xs text-gray-400 dark:text-gray-500">{m.label}</p>
+                                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{m.value}{m.unit}</p>
                                 </div>
                               ))}
                             </div>
@@ -770,7 +770,7 @@ export default function ClientDetailPage() {
                                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                                   {photos.map((p, i) => (
                                     <div key={i} className="relative group cursor-pointer" onClick={() => setSelectedGalleryAssessment(p.url)}>
-                                      <img src={p.url} alt={photoLabelMap[p.label] || p.label} className="w-full h-24 object-cover rounded-lg border border-gray-200" />
+                                      <img src={p.url} alt={photoLabelMap[p.label] || p.label} className="w-full h-24 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
                                       <p className="text-[10px] text-gray-500 mt-0.5 text-center">{photoLabelMap[p.label] || p.label}</p>
                                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-lg transition flex items-center justify-center">
                                         <Eye className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition" />
@@ -780,7 +780,7 @@ export default function ClientDetailPage() {
                                 </div>
                               </div>
                             )}
-                            {a.notes && <p className="text-sm text-gray-600 italic">{a.notes}</p>}
+                            {a.notes && <p className="text-sm text-gray-600 dark:text-gray-400 italic">{a.notes}</p>}
                           </div>
                         )}
                       </div>
@@ -806,7 +806,7 @@ export default function ClientDetailPage() {
                         <div className="flex gap-3 overflow-x-auto pb-2">
                           {timeline.map((t, i) => (
                             <div key={i} className="flex-shrink-0 cursor-pointer" onClick={() => setSelectedGalleryAssessment(t.url)}>
-                              <img src={t.url} alt={label} className="w-24 h-32 object-cover rounded-lg border border-gray-200" />
+                              <img src={t.url} alt={label} className="w-24 h-32 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
                               <p className="text-[10px] text-gray-400 text-center mt-1">{new Date(t.date).toLocaleDateString("pt-PT")}</p>
                             </div>
                           ))}
@@ -841,14 +841,14 @@ export default function ClientDetailPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* IMC */}
-              <div className={`rounded-2xl p-5 border ${imcCat ? imcCat.bg : "bg-gray-50"} border-gray-200`}>
+              <div className={`rounded-2xl p-5 border ${imcCat ? imcCat.bg : "bg-gray-50 dark:bg-gray-800"} border-gray-200 dark:border-gray-700`}>
                 <div className="flex items-center gap-2 mb-3">
                   <Calculator className="w-5 h-5 text-gray-500" />
-                  <span className="text-xs font-semibold text-gray-500 uppercase">IMC</span>
+                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">IMC</span>
                 </div>
                 {imc ? (
                   <>
-                    <p className="text-3xl font-bold text-gray-900">{imc}</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{imc}</p>
                     <p className={`text-sm font-medium ${imcCat?.color}`}>{imcCat?.label}</p>
                     <p className="text-xs text-gray-400 mt-1">{client.weight}kg / {client.height}cm</p>
                   </>
@@ -858,15 +858,15 @@ export default function ClientDetailPage() {
               </div>
 
               {/* TMB */}
-              <div className="rounded-2xl p-5 border bg-orange-50 border-gray-200">
+              <div className="rounded-2xl p-5 border bg-orange-50 dark:bg-orange-900/20 border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-3">
                   <Flame className="w-5 h-5 text-orange-500" />
-                  <span className="text-xs font-semibold text-gray-500 uppercase">TMB</span>
+                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">TMB</span>
                 </div>
                 {tmb ? (
                   <>
-                    <p className="text-3xl font-bold text-gray-900">{tmb}</p>
-                    <p className="text-sm text-gray-500">kcal/dia (repouso)</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{tmb}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">kcal/dia (repouso)</p>
                     <p className="text-xs text-gray-400 mt-1">Mifflin-St Jeor</p>
                   </>
                 ) : (
@@ -875,15 +875,15 @@ export default function ClientDetailPage() {
               </div>
 
               {/* TDEE */}
-              <div className="rounded-2xl p-5 border bg-purple-50 border-gray-200">
+              <div className="rounded-2xl p-5 border bg-purple-50 dark:bg-purple-900/20 border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-3">
                   <Activity className="w-5 h-5 text-purple-500" />
-                  <span className="text-xs font-semibold text-gray-500 uppercase">TDEE</span>
+                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">TDEE</span>
                 </div>
                 {tdee ? (
                   <>
-                    <p className="text-3xl font-bold text-gray-900">{tdee}</p>
-                    <p className="text-sm text-gray-500">kcal/dia (atividade)</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{tdee}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">kcal/dia (atividade)</p>
                     <p className="text-xs text-gray-400 mt-1">{activityMultipliers[client.activityLevel || ""]?.label || ""}</p>
                   </>
                 ) : (
@@ -892,15 +892,15 @@ export default function ClientDetailPage() {
               </div>
 
               {/* Água */}
-              <div className="rounded-2xl p-5 border bg-cyan-50 border-gray-200">
+              <div className="rounded-2xl p-5 border bg-cyan-50 dark:bg-cyan-900/20 border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2 mb-3">
                   <Droplets className="w-5 h-5 text-cyan-500" />
-                  <span className="text-xs font-semibold text-gray-500 uppercase">Água Diária</span>
+                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Água Diária</span>
                 </div>
                 {water ? (
                   <>
-                    <p className="text-3xl font-bold text-gray-900">{water}L</p>
-                    <p className="text-sm text-gray-500">recomendado/dia</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{water}L</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">recomendado/dia</p>
                     <p className="text-xs text-gray-400 mt-1">~35ml × {client.weight}kg</p>
                     {client.waterIntake && (
                       <p className={`text-xs mt-1 font-medium ${client.waterIntake >= water ? "text-emerald-600" : "text-amber-600"}`}>
@@ -921,20 +921,20 @@ export default function ClientDetailPage() {
                   <p className="text-sm text-gray-500">
                     Baseado no TDEE ({tdee} kcal) e objetivo: <strong>{goalLabels[client.primaryGoal || ""] || client.primaryGoal}</strong>
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-1">{macros.calories} kcal/dia</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{macros.calories} kcal/dia</p>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 rounded-xl bg-red-50 border border-red-100">
+                  <div className="text-center p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/30">
                     <p className="text-2xl font-bold text-red-600">{macros.protein}g</p>
                     <p className="text-xs text-gray-500 mt-1">Proteína</p>
                     <p className="text-xs text-gray-400">{macros.protein * 4} kcal ({Math.round(macros.protein * 4 / macros.calories * 100)}%)</p>
                   </div>
-                  <div className="text-center p-4 rounded-xl bg-amber-50 border border-amber-100">
+                  <div className="text-center p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/30">
                     <p className="text-2xl font-bold text-amber-600">{macros.carbs}g</p>
                     <p className="text-xs text-gray-500 mt-1">Hidratos</p>
                     <p className="text-xs text-gray-400">{macros.carbs * 4} kcal ({Math.round(macros.carbs * 4 / macros.calories * 100)}%)</p>
                   </div>
-                  <div className="text-center p-4 rounded-xl bg-blue-50 border border-blue-100">
+                  <div className="text-center p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/30">
                     <p className="text-2xl font-bold text-blue-600">{macros.fat}g</p>
                     <p className="text-xs text-gray-500 mt-1">Gordura</p>
                     <p className="text-xs text-gray-400">{macros.fat * 9} kcal ({Math.round(macros.fat * 9 / macros.calories * 100)}%)</p>
@@ -960,7 +960,7 @@ export default function ClientDetailPage() {
                 ))}
               </div>
               {client.bodyFat && (
-                <p className="text-sm text-gray-600 mt-3 text-center">Atual: <strong>{client.bodyFat}%</strong> gordura corporal</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-3 text-center">Atual: <strong>{client.bodyFat}%</strong> gordura corporal</p>
               )}
             </SectionCard>
           </div>
@@ -978,46 +978,46 @@ export default function ClientDetailPage() {
                   const moodEmoji = ci.mood ? ["", "😞", "😕", "😐", "🙂", "😄"][ci.mood] : "";
                   const energyEmoji = ci.energy ? ["", "🔋", "🔋🔋", "⚡", "⚡⚡", "🚀"][ci.energy] : "";
                   return (
-                    <div key={ci.id} className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                    <div key={ci.id} className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
                       <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm font-semibold text-gray-900">
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
                           {new Date(ci.date).toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long" })}
                         </p>
                         <div className="flex gap-2">
                           {ci.trainedToday && (
-                            <span className="badge bg-emerald-50 text-emerald-600 text-xs">Treinou</span>
+                            <span className="badge bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 text-xs">Treinou</span>
                           )}
                           {ci.followedDiet && (
-                            <span className="badge bg-blue-50 text-blue-600 text-xs">Dieta OK</span>
+                            <span className="badge bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs">Dieta OK</span>
                           )}
                         </div>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
                         <div>
                           <p className="text-xs text-gray-400 mb-0.5">Humor</p>
-                          <p className="text-sm text-gray-700">{moodEmoji} {ci.mood ? `${ci.mood}/5` : "—"}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{moodEmoji} {ci.mood ? `${ci.mood}/5` : "—"}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-400 mb-0.5">Energia</p>
-                          <p className="text-sm text-gray-700">{energyEmoji} {ci.energy ? `${ci.energy}/5` : "—"}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{energyEmoji} {ci.energy ? `${ci.energy}/5` : "—"}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-400 mb-0.5">Sono</p>
-                          <p className="text-sm text-gray-700">{ci.sleep ? `${ci.sleep}/5` : "—"}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{ci.sleep ? `${ci.sleep}/5` : "—"}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-400 mb-0.5">Dor Muscular</p>
-                          <p className="text-sm text-gray-700">{ci.soreness ? `${ci.soreness}/5` : "—"}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{ci.soreness ? `${ci.soreness}/5` : "—"}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-400 mb-0.5">Stress</p>
-                          <p className="text-sm text-gray-700">{ci.stress ? `${ci.stress}/5` : "—"}</p>
+                          <p className="text-sm text-gray-700 dark:text-gray-300">{ci.stress ? `${ci.stress}/5` : "—"}</p>
                         </div>
                       </div>
                       {(ci.weight || ci.waterLiters) && (
-                        <div className="flex gap-4 mt-3 pt-3 border-t border-gray-200">
-                          {ci.weight && <p className="text-xs text-gray-500">Peso: <span className="font-medium text-gray-700">{ci.weight}kg</span></p>}
-                          {ci.waterLiters && <p className="text-xs text-gray-500">Água: <span className="font-medium text-gray-700">{ci.waterLiters}L</span></p>}
+                        <div className="flex gap-4 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                          {ci.weight && <p className="text-xs text-gray-500 dark:text-gray-400">Peso: <span className="font-medium text-gray-700 dark:text-gray-300">{ci.weight}kg</span></p>}
+                          {ci.waterLiters && <p className="text-xs text-gray-500 dark:text-gray-400">Água: <span className="font-medium text-gray-700 dark:text-gray-300">{ci.waterLiters}L</span></p>}
                         </div>
                       )}
                       {ci.notes && (
@@ -1040,12 +1040,12 @@ export default function ClientDetailPage() {
               ) : (
                 <div className="space-y-2">
                   {client.trainingPlans.map((tp) => (
-                    <div key={tp.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50">
+                    <div key={tp.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                       <div className="flex items-center gap-2">
                         <Dumbbell className="w-4 h-4 text-purple-600" />
-                        <span className="text-sm text-gray-700">{tp.trainingPlan.name}</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{tp.trainingPlan.name}</span>
                       </div>
-                      <span className={`badge ${tp.isActive ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
+                      <span className={`badge ${tp.isActive ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"}`}>
                         {tp.isActive ? "Ativo" : "Inativo"}
                       </span>
                     </div>
@@ -1059,12 +1059,12 @@ export default function ClientDetailPage() {
               ) : (
                 <div className="space-y-2">
                   {client.nutritionPlans.map((np) => (
-                    <div key={np.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50">
+                    <div key={np.id} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                       <div className="flex items-center gap-2">
                         <UtensilsCrossed className="w-4 h-4 text-cyan-600" />
-                        <span className="text-sm text-gray-700">{np.nutritionPlan.name}</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{np.nutritionPlan.name}</span>
                       </div>
-                      <span className={`badge ${np.isActive ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
+                      <span className={`badge ${np.isActive ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"}`}>
                         {np.isActive ? "Ativo" : "Inativo"}
                       </span>
                     </div>
@@ -1078,10 +1078,10 @@ export default function ClientDetailPage() {
               ) : (
                 <div className="space-y-3">
                   {client.feedbacks.map((fb) => (
-                    <div key={fb.id} className="p-3 rounded-xl bg-gray-50">
+                    <div key={fb.id} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
                       <div className="flex items-center justify-between mb-1">
-                        <p className="text-sm font-medium text-gray-900">{fb.subject}</p>
-                        <span className={`badge ${fb.status === "pending" ? "bg-yellow-50 text-yellow-600" : "bg-emerald-50 text-emerald-600"}`}>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{fb.subject}</p>
+                        <span className={`badge ${fb.status === "pending" ? "bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400" : "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"}`}>
                           {fb.status === "pending" ? "Pendente" : "Resolvido"}
                         </span>
                       </div>
@@ -1104,17 +1104,17 @@ export default function ClientDetailPage() {
     <div>
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => router.push("/clients")} className="p-2 hover:bg-white rounded-xl transition">
-          <ArrowLeft className="w-5 h-5 text-gray-500" />
+        <button onClick={() => router.push("/clients")} className="p-2 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition">
+          <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </button>
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-lg font-semibold">
+            <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-lg font-semibold">
               {client.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{client.name}</h1>
-              <p className="text-gray-500 text-sm">Anamnese — Cliente desde {new Date(client.createdAt).toLocaleDateString("pt-PT")}</p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{client.name}</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">Anamnese — Cliente desde {new Date(client.createdAt).toLocaleDateString("pt-PT")}</p>
             </div>
           </div>
         </div>
@@ -1136,13 +1136,13 @@ export default function ClientDetailPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 overflow-x-auto mb-6 bg-gray-100 p-1 rounded-xl">
+      <div className="flex gap-1 overflow-x-auto mb-6 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
-              tab === key ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+              tab === key ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             }`}
           >
             <Icon className="w-4 h-4" /> {label}
@@ -1158,7 +1158,7 @@ export default function ClientDetailPage() {
         <form onSubmit={handleAddAssessment} className="space-y-5">
           {/* Composição Corporal */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Composição Corporal</p>
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Composição Corporal</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: "Peso (kg)", field: "weight" },
@@ -1170,7 +1170,7 @@ export default function ClientDetailPage() {
                 { label: "Idade Metabólica", field: "metabolicAge" },
               ].map(({ label, field }) => (
                 <div key={field}>
-                  <label className="block text-sm text-gray-500 mb-1">{label}</label>
+                  <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">{label}</label>
                   <input type="number" step="0.1" value={(assessmentForm as Record<string, string>)[field]} onChange={(e) => setAssessmentForm({ ...assessmentForm, [field]: e.target.value })} className="input-field" />
                 </div>
               ))}
@@ -1179,7 +1179,7 @@ export default function ClientDetailPage() {
 
           {/* Medidas */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Medidas Corporais (cm)</p>
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Medidas Corporais (cm)</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: "Peito", field: "chest" },
@@ -1193,7 +1193,7 @@ export default function ClientDetailPage() {
                 { label: "Pescoço", field: "neck" },
               ].map(({ label, field }) => (
                 <div key={field}>
-                  <label className="block text-sm text-gray-500 mb-1">{label}</label>
+                  <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">{label}</label>
                   <input type="number" step="0.1" value={(assessmentForm as Record<string, string>)[field]} onChange={(e) => setAssessmentForm({ ...assessmentForm, [field]: e.target.value })} className="input-field" />
                 </div>
               ))}
@@ -1202,7 +1202,7 @@ export default function ClientDetailPage() {
 
           {/* Fotografias */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
               <Camera className="w-3.5 h-3.5 inline mr-1" />Fotografias do Corpo
             </p>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
@@ -1216,7 +1216,7 @@ export default function ClientDetailPage() {
                         <button type="button" onClick={() => setAssessmentPhotos(prev => prev.filter(p => p.label !== value))} className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">×</button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center h-20 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/50 transition">
+                      <label className="flex flex-col items-center justify-center h-20 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/20 transition">
                         {uploadingPhoto ? (
                           <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
                         ) : (
@@ -1236,7 +1236,7 @@ export default function ClientDetailPage() {
           </div>
 
           <div>
-            <label className="block text-sm text-gray-500 mb-1">Notas</label>
+            <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Notas</label>
             <textarea value={assessmentForm.notes} onChange={(e) => setAssessmentForm({ ...assessmentForm, notes: e.target.value })} className="input-field min-h-[60px]" />
           </div>
           <div className="flex justify-end gap-3">
@@ -1249,9 +1249,9 @@ export default function ClientDetailPage() {
       {/* ─── Delete Confirmation Modal ───────────────────── */}
       <Modal isOpen={showDeleteModal} onClose={() => { setShowDeleteModal(false); setDeleteConfirmText(""); }} title="Eliminar Cliente" size="sm">
         <div className="space-y-4">
-          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-xl">
             <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-red-800">
+            <div className="text-sm text-red-800 dark:text-red-300">
               <p className="font-semibold mb-1">Esta ação é irreversível!</p>
               <p>Ao eliminar <strong>{client?.name}</strong>, todos os dados serão permanentemente apagados:</p>
               <ul className="mt-2 ml-4 list-disc space-y-0.5 text-red-700">
@@ -1265,7 +1265,7 @@ export default function ClientDetailPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Escreve <span className="font-bold text-red-600">APAGAR</span> para confirmar:
             </label>
             <input

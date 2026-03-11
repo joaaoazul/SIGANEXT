@@ -31,10 +31,10 @@ const typeIcons: Record<string, React.ReactNode> = {
 };
 
 const typeColors: Record<string, string> = {
-  article: "bg-blue-50 text-blue-600",
-  video: "bg-red-50 text-red-600",
-  image: "bg-purple-50 text-purple-600",
-  link: "bg-emerald-50 text-emerald-600",
+  article: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+  video: "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400",
+  image: "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
+  link: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
 };
 
 export default function AthleteContentPage() {
@@ -80,8 +80,8 @@ export default function AthleteContentPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Conteúdo</h1>
-        <p className="text-gray-500 mt-1">Artigos, vídeos e recursos do teu PT</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Conteúdo</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-1">Artigos, vídeos e recursos do teu PT</p>
       </div>
 
       {/* Search & Filters */}
@@ -92,7 +92,7 @@ export default function AthleteContentPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             placeholder="Pesquisar conteúdo..."
           />
         </div>
@@ -100,7 +100,7 @@ export default function AthleteContentPage() {
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">Todas as categorias</option>
             {categories.map((c) => (
@@ -112,7 +112,7 @@ export default function AthleteContentPage() {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="">Todos os tipos</option>
             {types.map((t) => (
@@ -128,10 +128,10 @@ export default function AthleteContentPage() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition group"
+              className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden hover:shadow-md transition group"
             >
               {item.thumbnailUrl && (
-                <div className="aspect-video bg-gray-100 overflow-hidden">
+                <div className="aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden">
                   <img
                     src={item.thumbnailUrl}
                     alt={item.title}
@@ -141,19 +141,19 @@ export default function AthleteContentPage() {
               )}
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${typeColors[item.type] || "bg-gray-50 text-gray-600"}`}>
+                  <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${typeColors[item.type] || "bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-400"}`}>
                     {typeIcons[item.type] || <FileText className="w-4 h-4" />}
                   </span>
                   <span className="text-xs text-gray-400 uppercase">{item.type}</span>
                   {item.category && (
-                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full ml-auto">
+                    <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full ml-auto">
                       {item.category}
                     </span>
                   )}
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{item.title}</h3>
                 {item.description && (
-                  <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{item.description}</p>
                 )}
                 <div className="flex items-center justify-between mt-4">
                   <span className="text-xs text-gray-400">
@@ -175,10 +175,10 @@ export default function AthleteContentPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-12 text-center">
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">Sem conteúdo disponível</h3>
-          <p className="text-gray-500 mt-2">O teu PT ainda não publicou conteúdo.</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Sem conteúdo disponível</h3>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">O teu PT ainda não publicou conteúdo.</p>
         </div>
       )}
     </div>

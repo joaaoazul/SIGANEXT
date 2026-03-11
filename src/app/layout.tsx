@@ -23,6 +23,24 @@ export const metadata: Metadata = {
   title: "SIGA180 - Gestão para Personal Trainers",
   description: "Plataforma SaaS de gestão completa para Personal Trainers. Gerir clientes, treinos, nutrição e muito mais.",
   manifest: "/manifest.json",
+  metadataBase: new URL("https://siga180.pt"),
+  openGraph: {
+    title: "SIGA180 - Gestão para Personal Trainers",
+    description: "Plataforma SaaS de gestão completa para Personal Trainers. Gerir clientes, treinos, nutrição e muito mais.",
+    url: "https://siga180.pt",
+    siteName: "SIGA180",
+    locale: "pt_PT",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "SIGA180 - Gestão para Personal Trainers",
+    description: "Plataforma SaaS de gestão completa para Personal Trainers.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -45,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt">
+    <html lang="pt" suppressHydrationWarning>
       <body className={`${outfit.variable} font-sans antialiased bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100`} suppressHydrationWarning>
         <ThemeProvider>
           <ToastProvider>

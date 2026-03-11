@@ -88,11 +88,11 @@ export default function ContentPage() {
   };
 
   const typeLabels: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-    video: { label: "Vídeo", icon: <Video className="w-4 h-4" />, color: "bg-red-50 text-red-600" },
-    ebook: { label: "eBook", icon: <BookOpen className="w-4 h-4" />, color: "bg-blue-50 text-blue-600" },
-    article: { label: "Artigo", icon: <FileText className="w-4 h-4" />, color: "bg-emerald-50 text-emerald-600" },
-    tutorial: { label: "Tutorial", icon: <BookOpen className="w-4 h-4" />, color: "bg-purple-50 text-purple-600" },
-    link: { label: "Link", icon: <Link2 className="w-4 h-4" />, color: "bg-yellow-50 text-yellow-600" },
+    video: { label: "Vídeo", icon: <Video className="w-4 h-4" />, color: "bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400" },
+    ebook: { label: "eBook", icon: <BookOpen className="w-4 h-4" />, color: "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400" },
+    article: { label: "Artigo", icon: <FileText className="w-4 h-4" />, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400" },
+    tutorial: { label: "Tutorial", icon: <BookOpen className="w-4 h-4" />, color: "bg-purple-50 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400" },
+    link: { label: "Link", icon: <Link2 className="w-4 h-4" />, color: "bg-yellow-50 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400" },
   };
 
   return (
@@ -142,36 +142,36 @@ export default function ContentPage() {
           {contents.slice((page - 1) * 20, page * 20).map((c) => {
             const t = typeLabels[c.type] || typeLabels.link;
             return (
-              <div key={c.id} className="card hover:bg-gray-50 transition-colors group">
+              <div key={c.id} className="card hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors group">
                 {c.thumbnailUrl && (
-                  <div className="w-full h-36 rounded-lg bg-gray-50 mb-3 overflow-hidden">
+                  <div className="w-full h-36 rounded-lg bg-gray-50 dark:bg-gray-800/50 mb-3 overflow-hidden">
                     <img src={c.thumbnailUrl} alt={c.title} className="w-full h-full object-cover" />
                   </div>
                 )}
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="text-sm font-semibold text-gray-900 line-clamp-2">{c.title}</h3>
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-2">{c.title}</h3>
                   <div className="flex gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => openEdit(c)} className="p-1.5 hover:bg-white rounded-lg">
-                      <Pencil className="w-3.5 h-3.5 text-gray-500" />
+                    <button onClick={() => openEdit(c)} className="p-1.5 hover:bg-white dark:hover:bg-gray-800 rounded-lg">
+                      <Pencil className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                     </button>
-                    <button onClick={() => handleDelete(c.id)} className="p-1.5 hover:bg-red-50 rounded-lg">
+                    <button onClick={() => handleDelete(c.id)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                       <Trash2 className="w-3.5 h-3.5 text-red-600" />
                     </button>
                   </div>
                 </div>
-                {c.description && <p className="text-xs text-gray-500 line-clamp-2 mb-3">{c.description}</p>}
+                {c.description && <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">{c.description}</p>}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className={`badge flex items-center gap-1 ${t.color}`}>
                       {t.icon} {t.label}
                     </span>
-                    {c.category && <span className="badge bg-gray-100 text-gray-500">{c.category}</span>}
+                    {c.category && <span className="badge bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">{c.category}</span>}
                   </div>
                   <div className="flex items-center gap-1.5">
-                    {c.isPublished ? <Eye className="w-3.5 h-3.5 text-emerald-600" /> : <EyeOff className="w-3.5 h-3.5 text-gray-500" />}
+                    {c.isPublished ? <Eye className="w-3.5 h-3.5 text-emerald-600" /> : <EyeOff className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />}
                     {c.url && (
-                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="p-1 hover:bg-white rounded">
-                        <ExternalLink className="w-3.5 h-3.5 text-gray-500" />
+                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="p-1 hover:bg-white dark:hover:bg-gray-800 rounded">
+                        <ExternalLink className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                       </a>
                     )}
                   </div>
@@ -187,12 +187,12 @@ export default function ContentPage() {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editing ? "Editar Conteúdo" : "Novo Conteúdo"} size="lg">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Título *</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Título *</label>
             <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="input-field" required />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Tipo *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Tipo *</label>
               <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="input-field">
                 <option value="video">Vídeo</option>
                 <option value="ebook">eBook</option>
@@ -202,25 +202,25 @@ export default function ContentPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Categoria</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Categoria</label>
               <input type="text" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="input-field" placeholder="Ex: Nutrição, Treino..." />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Descrição</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Descrição</label>
             <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="input-field min-h-[80px]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">URL</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">URL</label>
             <input type="url" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} className="input-field" placeholder="https://..." />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Thumbnail URL</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Thumbnail URL</label>
             <input type="url" value={form.thumbnailUrl} onChange={(e) => setForm({ ...form, thumbnailUrl: e.target.value })} className="input-field" placeholder="https://..." />
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="isPublished" checked={form.isPublished} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} className="w-4 h-4 rounded" />
-            <label htmlFor="isPublished" className="text-sm text-gray-600">Visível para clientes</label>
+            <label htmlFor="isPublished" className="text-sm text-gray-600 dark:text-gray-400">Visível para clientes</label>
           </div>
           <div className="flex justify-end gap-3">
             <button type="button" onClick={() => setShowModal(false)} className="btn-secondary">Cancelar</button>

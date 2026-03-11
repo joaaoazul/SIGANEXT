@@ -120,14 +120,14 @@ export default function FoodsPage() {
   const getCatLabel = (v: string) => categories.find(c => c.value === v)?.label || v;
 
   const catColors: Record<string, string> = {
-    protein: "bg-red-50 text-red-600",
-    carbs: "bg-yellow-50 text-yellow-600",
-    fats: "bg-orange-50 text-orange-600",
-    vegetables: "bg-emerald-50 text-emerald-600",
-    fruits: "bg-pink-50 text-pink-600",
-    dairy: "bg-blue-50 text-blue-600",
-    supplements: "bg-purple-50 text-purple-600",
-    other: "bg-gray-100 text-gray-500",
+    protein: "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400",
+    carbs: "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400",
+    fats: "bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400",
+    vegetables: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400",
+    fruits: "bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400",
+    dairy: "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400",
+    supplements: "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400",
+    other: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
   };
 
   return (
@@ -172,7 +172,7 @@ export default function FoodsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 text-xs text-gray-400 uppercase tracking-wider">
+              <tr className="border-b border-gray-200 dark:border-gray-700 text-xs text-gray-400 uppercase tracking-wider">
                 <th className="text-left py-3 px-4">Alimento</th>
                 <th className="text-left py-3 px-4">Categoria</th>
                 <th className="text-right py-3 px-4">Calorias</th>
@@ -185,12 +185,12 @@ export default function FoodsPage() {
             </thead>
             <tbody>
               {foods.slice((page - 1) * 20, page * 20).map((food) => (
-                <tr key={food.id} className="border-b border-gray-200/30 hover:bg-gray-50 transition">
+                <tr key={food.id} className="border-b border-gray-200/30 dark:border-gray-700/30 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
                       {food.isSupplement && <Pill className="w-3.5 h-3.5 text-purple-600" />}
                       <div>
-                        <p className="font-medium text-gray-900">{food.name}</p>
+                        <p className="font-medium text-gray-900 dark:text-white">{food.name}</p>
                         {food.brand && <p className="text-xs text-gray-400">{food.brand}</p>}
                       </div>
                     </div>
@@ -200,17 +200,17 @@ export default function FoodsPage() {
                       {getCatLabel(food.category)}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right text-gray-600">{food.calories} kcal</td>
+                  <td className="py-3 px-4 text-right text-gray-600 dark:text-gray-400">{food.calories} kcal</td>
                   <td className="py-3 px-4 text-right text-red-600">{food.protein}g</td>
                   <td className="py-3 px-4 text-right text-yellow-600">{food.carbs}g</td>
                   <td className="py-3 px-4 text-right text-orange-600">{food.fat}g</td>
-                  <td className="py-3 px-4 text-right text-gray-500">{food.fiber ?? "—"}g</td>
+                  <td className="py-3 px-4 text-right text-gray-500 dark:text-gray-400">{food.fiber ?? "—"}g</td>
                   <td className="py-3 px-4 text-right">
                     <div className="flex items-center gap-1 justify-end">
-                      <button onClick={() => openEdit(food)} className="p-1.5 hover:bg-white rounded-lg">
-                        <Edit className="w-3.5 h-3.5 text-gray-500" />
+                      <button onClick={() => openEdit(food)} className="p-1.5 hover:bg-white dark:hover:bg-gray-800 rounded-lg">
+                        <Edit className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
                       </button>
-                      <button onClick={() => handleDelete(food.id)} className="p-1.5 hover:bg-red-50 rounded-lg">
+                      <button onClick={() => handleDelete(food.id)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                         <Trash2 className="w-3.5 h-3.5 text-red-600" />
                       </button>
                     </div>
@@ -233,17 +233,17 @@ export default function FoodsPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Nome *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Nome *</label>
               <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="input-field" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Categoria *</label>
+              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Categoria *</label>
               <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="input-field">
                 {categories.map((c) => (<option key={c.value} value={c.value}>{c.label}</option>))}
               </select>
             </div>
             <div className="flex items-center gap-4">
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
                 <input type="checkbox" checked={form.isSupplement} onChange={(e) => setForm({ ...form, isSupplement: e.target.checked })} className="rounded border-gray-300" />
                 Suplemento
               </label>
@@ -253,45 +253,45 @@ export default function FoodsPage() {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-4">
-            <h3 className="text-sm font-medium text-gray-600 mb-3">Macronutrientes (por 100g)</h3>
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Macronutrientes (por 100g)</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Calorias (kcal) *</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Calorias (kcal) *</label>
                 <input type="number" step="0.1" value={form.calories} onChange={(e) => setForm({ ...form, calories: e.target.value })} className="input-field" required />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Proteína (g) *</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Proteína (g) *</label>
                 <input type="number" step="0.1" value={form.protein} onChange={(e) => setForm({ ...form, protein: e.target.value })} className="input-field" required />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">HC (g) *</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">HC (g) *</label>
                 <input type="number" step="0.1" value={form.carbs} onChange={(e) => setForm({ ...form, carbs: e.target.value })} className="input-field" required />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Gordura (g) *</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Gordura (g) *</label>
                 <input type="number" step="0.1" value={form.fat} onChange={(e) => setForm({ ...form, fat: e.target.value })} className="input-field" required />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Fibra (g)</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Fibra (g)</label>
                 <input type="number" step="0.1" value={form.fiber} onChange={(e) => setForm({ ...form, fiber: e.target.value })} className="input-field" />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Açúcar (g)</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Açúcar (g)</label>
                 <input type="number" step="0.1" value={form.sugar} onChange={(e) => setForm({ ...form, sugar: e.target.value })} className="input-field" />
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-4">
-            <h3 className="text-sm font-medium text-gray-600 mb-3">Porção</h3>
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Porção</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Tamanho da porção</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Tamanho da porção</label>
                 <input type="number" value={form.servingSize} onChange={(e) => setForm({ ...form, servingSize: e.target.value })} className="input-field" />
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Unidade</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Unidade</label>
                 <select value={form.servingUnit} onChange={(e) => setForm({ ...form, servingUnit: e.target.value })} className="input-field">
                   <option value="g">Gramas (g)</option>
                   <option value="ml">Mililitros (ml)</option>

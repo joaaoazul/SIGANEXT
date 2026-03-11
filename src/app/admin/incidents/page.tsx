@@ -66,7 +66,7 @@ const statusColors: Record<string, string> = {
   open: "bg-red-500/10 text-red-400",
   investigating: "bg-yellow-500/10 text-yellow-400",
   resolved: "bg-emerald-500/10 text-emerald-400",
-  closed: "bg-gray-500/10 text-gray-500",
+  closed: "bg-gray-500/10 text-gray-500 dark:text-gray-400",
 };
 
 const statusIcons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -210,14 +210,14 @@ export default function AdminIncidentsPage() {
     const StatusIcon = statusIcons[selected.status] || AlertTriangle;
     return (
       <div className="space-y-6 max-w-3xl">
-        <button onClick={() => setSelected(null)} className="flex items-center gap-1 text-gray-500 hover:text-white text-sm">
+        <button onClick={() => setSelected(null)} className="flex items-center gap-1 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-sm">
           <ArrowLeft className="w-4 h-4" /> Voltar
         </button>
 
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 space-y-5">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-white">{selected.title}</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">{selected.title}</h2>
               <div className="flex items-center gap-2 mt-2">
                 <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${severityColors[selected.severity]}`}>
                   {selected.severity}
@@ -234,23 +234,23 @@ export default function AdminIncidentsPage() {
             </button>
           </div>
 
-          <p className="text-sm text-gray-300 whitespace-pre-wrap">{selected.description}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{selected.description}</p>
 
-          <div className="grid grid-cols-2 gap-4 text-xs text-gray-500">
-            <div>Reportado por: <span className="text-gray-300">{selected.reportedBy || "—"}</span></div>
-            <div>Criado: <span className="text-gray-300">{new Date(selected.createdAt).toLocaleString("pt-PT")}</span></div>
+          <div className="grid grid-cols-2 gap-4 text-xs text-gray-500 dark:text-gray-400">
+            <div>Reportado por: <span className="text-gray-600 dark:text-gray-300">{selected.reportedBy || "—"}</span></div>
+            <div>Criado: <span className="text-gray-600 dark:text-gray-300">{new Date(selected.createdAt).toLocaleString("pt-PT")}</span></div>
             {selected.resolvedAt && (
               <div>Resolvido: <span className="text-emerald-400">{new Date(selected.resolvedAt).toLocaleString("pt-PT")}</span></div>
             )}
             {selected.resolution && (
-              <div className="col-span-2">Resolução: <span className="text-gray-300">{selected.resolution}</span></div>
+              <div className="col-span-2">Resolução: <span className="text-gray-600 dark:text-gray-300">{selected.resolution}</span></div>
             )}
           </div>
 
           {selected.metadata && (
             <details className="text-xs">
-              <summary className="text-gray-500 cursor-pointer hover:text-gray-300">Metadata</summary>
-              <pre className="mt-2 p-3 bg-gray-800 rounded-lg text-gray-400 overflow-x-auto">
+              <summary className="text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-300">Metadata</summary>
+              <pre className="mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-500 dark:text-gray-400 overflow-x-auto">
                 {JSON.stringify(JSON.parse(selected.metadata), null, 2)}
               </pre>
             </details>
@@ -258,42 +258,42 @@ export default function AdminIncidentsPage() {
         </div>
 
         {/* Update status */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Edit2 className="w-4 h-4 text-yellow-400" />
             Atualizar Estado
           </h3>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Estado</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Estado</label>
               <select
                 value={updateStatus}
                 onChange={(e) => setUpdateStatus(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500/50"
               >
                 {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Resolução</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Resolução</label>
               <input
                 type="text"
                 value={updateResolution}
                 onChange={(e) => setUpdateResolution(e.target.value)}
                 placeholder="Como foi resolvido..."
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500/50"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Adicionar nota</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Adicionar nota</label>
             <textarea
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
               rows={3}
               placeholder="Detalhes da investigação, passos tomados..."
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-red-500/50"
+              className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-red-500/50"
             />
           </div>
 
@@ -308,8 +308,8 @@ export default function AdminIncidentsPage() {
         </div>
 
         {/* Notes timeline */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-cyan-400" />
             Notas ({selected.notes.length})
           </h3>
@@ -318,14 +318,14 @@ export default function AdminIncidentsPage() {
           ) : (
             <div className="space-y-3">
               {selected.notes.map((note) => (
-                <div key={note.id} className="border-l-2 border-gray-700 pl-4 py-1">
+                <div key={note.id} className="border-l-2 border-gray-200 dark:border-gray-700 pl-4 py-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-gray-300">{note.authorName}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300">{note.authorName}</span>
                     <span className="text-[10px] text-gray-600">
                       {new Date(note.createdAt).toLocaleString("pt-PT")}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-400">{note.content}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{note.content}</p>
                 </div>
               ))}
             </div>
@@ -339,11 +339,11 @@ export default function AdminIncidentsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <AlertTriangle className="w-6 h-6 text-yellow-400" />
             Gestão de Incidentes
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             {pagination ? `${pagination.total} incidente(s)` : "A carregar..."}
           </p>
         </div>
@@ -360,7 +360,7 @@ export default function AdminIncidentsPage() {
         <select
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          className="bg-gray-900 border border-gray-800 rounded-lg text-xs text-white px-3 py-2 focus:outline-none"
+          className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-xs text-gray-900 dark:text-white px-3 py-2 focus:outline-none"
         >
           <option value="">Todos os estados</option>
           {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -368,7 +368,7 @@ export default function AdminIncidentsPage() {
         <select
           value={severityFilter}
           onChange={(e) => { setSeverityFilter(e.target.value); setPage(1); }}
-          className="bg-gray-900 border border-gray-800 rounded-lg text-xs text-white px-3 py-2 focus:outline-none"
+          className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-xs text-gray-900 dark:text-white px-3 py-2 focus:outline-none"
         >
           <option value="">Todas as severidades</option>
           {SEVERITIES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -376,7 +376,7 @@ export default function AdminIncidentsPage() {
         <select
           value={categoryFilter}
           onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
-          className="bg-gray-900 border border-gray-800 rounded-lg text-xs text-white px-3 py-2 focus:outline-none"
+          className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-xs text-gray-900 dark:text-white px-3 py-2 focus:outline-none"
         >
           <option value="">Todas as categorias</option>
           {CATEGORIES.map((c) => <option key={c} value={c}>{categoryLabels[c]}</option>)}
@@ -390,9 +390,9 @@ export default function AdminIncidentsPage() {
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-500" />
           </div>
         ) : incidents.length === 0 ? (
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-12 text-center">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-12 text-center">
             <AlertTriangle className="w-8 h-8 text-gray-700 mx-auto mb-3" />
-            <p className="text-gray-500">Sem incidentes registados</p>
+            <p className="text-gray-500 dark:text-gray-400">Sem incidentes registados</p>
           </div>
         ) : (
           incidents.map((inc) => {
@@ -400,24 +400,24 @@ export default function AdminIncidentsPage() {
             return (
               <div
                 key={inc.id}
-                className="bg-gray-900 rounded-xl border border-gray-800 p-4 hover:border-gray-700 transition cursor-pointer"
+                className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 hover:border-gray-300 dark:hover:border-gray-700 transition cursor-pointer"
                 onClick={() => openDetail(inc.id)}
               >
                 <div className="flex items-start gap-3">
                   <StatusIcon className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
                     inc.status === "open" ? "text-red-400" :
                     inc.status === "investigating" ? "text-yellow-400" :
-                    inc.status === "resolved" ? "text-emerald-400" : "text-gray-500"
+                    inc.status === "resolved" ? "text-emerald-400" : "text-gray-500 dark:text-gray-400"
                   }`} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-sm font-medium text-white">{inc.title}</h3>
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white">{inc.title}</h3>
                       <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${severityColors[inc.severity]}`}>
                         {inc.severity}
                       </span>
                       <span className="text-[10px] text-gray-600">{categoryLabels[inc.category]}</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-1">{inc.description}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">{inc.description}</p>
                     <div className="flex items-center gap-3 mt-2 text-[11px] text-gray-600">
                       <span>{new Date(inc.createdAt).toLocaleDateString("pt-PT")}</span>
                       {inc._count && inc._count.notes > 0 && (
@@ -434,13 +434,13 @@ export default function AdminIncidentsPage() {
                     </span>
                     <button
                       onClick={(e) => { e.stopPropagation(); openDetail(inc.id); }}
-                      className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-800 hover:text-white"
+                      className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                     >
                       <Eye className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(inc.id); }}
-                      className="p-1.5 rounded-lg text-gray-500 hover:bg-red-500/10 hover:text-red-400"
+                      className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-red-500/10 hover:text-red-400"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -459,10 +459,10 @@ export default function AdminIncidentsPage() {
             Página {pagination.page} de {pagination.totalPages}
           </span>
           <div className="flex gap-1">
-            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={pagination.page === 1} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-800 disabled:opacity-30">
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={pagination.page === 1} className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30">
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <button onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))} disabled={pagination.page === pagination.totalPages} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-800 disabled:opacity-30">
+            <button onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))} disabled={pagination.page === pagination.totalPages} className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30">
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -472,53 +472,53 @@ export default function AdminIncidentsPage() {
       {/* Create incident modal */}
       {showCreate && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">Novo Incidente</h3>
-              <button onClick={() => setShowCreate(false)} className="text-gray-500 hover:text-white">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Novo Incidente</h3>
+              <button onClick={() => setShowCreate(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Título *</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Título *</label>
               <input
                 type="text"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500/50"
                 placeholder="Descrição breve do incidente"
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Descrição *</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Descrição *</label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 rows={4}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-red-500/50"
                 placeholder="Detalhes do incidente, passos para reproduzir..."
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Severidade</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Severidade</label>
                 <select
                   value={form.severity}
                   onChange={(e) => setForm({ ...form, severity: e.target.value })}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2.5 focus:outline-none"
+                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none"
                 >
                   {SEVERITIES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Categoria</label>
+                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Categoria</label>
                 <select
                   value={form.category}
                   onChange={(e) => setForm({ ...form, category: e.target.value })}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2.5 focus:outline-none"
+                  className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none"
                 >
                   {CATEGORIES.map((c) => <option key={c} value={c}>{categoryLabels[c]}</option>)}
                 </select>
@@ -526,12 +526,12 @@ export default function AdminIncidentsPage() {
             </div>
 
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Reportado por</label>
+              <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Reportado por</label>
               <input
                 type="text"
                 value={form.reportedBy}
                 onChange={(e) => setForm({ ...form, reportedBy: e.target.value })}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white px-3 py-2.5 focus:outline-none"
+                className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none"
                 placeholder="Email ou nome (opcional)"
               />
             </div>
@@ -545,7 +545,7 @@ export default function AdminIncidentsPage() {
                 <Plus className="w-4 h-4" />
                 {saving ? "A criar..." : "Criar Incidente"}
               </button>
-              <button onClick={() => setShowCreate(false)} className="px-4 py-2.5 text-sm text-gray-400 hover:bg-gray-800 rounded-lg">
+              <button onClick={() => setShowCreate(false)} className="px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                 Cancelar
               </button>
             </div>

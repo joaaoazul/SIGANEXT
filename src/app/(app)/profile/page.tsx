@@ -222,7 +222,7 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-2">
-        <p className="text-gray-500">Erro ao carregar perfil</p>
+        <p className="text-gray-500 dark:text-gray-400">Erro ao carregar perfil</p>
         {errorDetail && (
           <p className="text-xs text-red-400 max-w-md text-center">{errorDetail}</p>
         )}
@@ -273,7 +273,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between mb-4">
         <Link
           href="/dashboard"
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition"
+          className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition"
         >
           <ChevronLeft className="w-4 h-4" />
           Voltar
@@ -290,7 +290,7 @@ export default function ProfilePage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setEditing(false)}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg transition"
+              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
             >
               <X className="w-3.5 h-3.5" />
               Cancelar
@@ -337,7 +337,7 @@ export default function ProfilePage() {
         {/* Avatar */}
         <div className="relative -mt-16 mb-4 flex items-end gap-4">
           <div className="relative group">
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-white bg-white shadow-lg overflow-hidden">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-white bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
               {profile.avatar ? (
                 <img
                   src={profile.avatar}
@@ -373,11 +373,11 @@ export default function ProfilePage() {
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="text-2xl font-bold text-gray-900 bg-transparent border-b-2 border-emerald-300 focus:border-emerald-500 outline-none pb-0.5"
+                className="text-2xl font-bold text-gray-900 dark:text-white bg-transparent border-b-2 border-emerald-300 focus:border-emerald-500 outline-none pb-0.5"
                 placeholder="O seu nome"
               />
             ) : (
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {profile.name}
               </h1>
             )}
@@ -457,14 +457,14 @@ export default function ProfilePage() {
           ).map((stat) => (
             <div
               key={stat.label}
-              className="bg-white rounded-xl border border-gray-100 p-3 text-center hover:shadow-sm transition"
+              className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-3 text-center hover:shadow-sm transition"
             >
               <div
                 className={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${stat.color} mb-1.5`}
               >
                 <stat.icon className="w-4 h-4" />
               </div>
-              <div className="text-xl font-bold text-gray-900">
+              <div className="text-xl font-bold text-gray-900 dark:text-white">
                 {stat.value}
               </div>
               <div className="text-[11px] text-gray-400 font-medium">
@@ -483,8 +483,8 @@ export default function ProfilePage() {
           <div className="lg:col-span-2 space-y-5">
             {/* Bio — PT only */}
             {!isAthlete && (
-              <div className="bg-white rounded-xl border border-gray-100 p-5">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+              <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                   Sobre mim
                 </h3>
                 {editing ? (
@@ -492,11 +492,11 @@ export default function ProfilePage() {
                     value={form.bio}
                     onChange={(e) => setForm({ ...form, bio: e.target.value })}
                     rows={4}
-                    className="w-full px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-lg focus:border-emerald-400 focus:outline-none resize-none"
+                    className="w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg focus:border-emerald-400 focus:outline-none resize-none"
                     placeholder="Escreva algo sobre si, a sua experiência, filosofia de treino..."
                   />
                 ) : (
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                     {profile.bio || (
                       <span className="italic text-gray-300">
                         Ainda não adicionou uma bio. Clique em &quot;Editar
@@ -510,39 +510,39 @@ export default function ProfilePage() {
 
             {/* Athlete info card */}
             {isAthlete && (
-              <div className="bg-white rounded-xl border border-gray-100 p-5">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+              <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                   Os Meus Dados
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   {profile.height && (
                     <div>
                       <p className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">Altura</p>
-                      <p className="text-sm font-semibold text-gray-700">{profile.height} cm</p>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{profile.height} cm</p>
                     </div>
                   )}
                   {profile.weight && (
                     <div>
                       <p className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">Peso</p>
-                      <p className="text-sm font-semibold text-gray-700">{profile.weight} kg</p>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{profile.weight} kg</p>
                     </div>
                   )}
                   {profile.primaryGoal && (
                     <div>
                       <p className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">Objetivo</p>
-                      <p className="text-sm font-semibold text-gray-700 capitalize">{profile.primaryGoal.replace(/_/g, " ")}</p>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 capitalize">{profile.primaryGoal.replace(/_/g, " ")}</p>
                     </div>
                   )}
                   {profile.activityLevel && (
                     <div>
                       <p className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">Nível de Atividade</p>
-                      <p className="text-sm font-semibold text-gray-700 capitalize">{profile.activityLevel.replace(/_/g, " ")}</p>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 capitalize">{profile.activityLevel.replace(/_/g, " ")}</p>
                     </div>
                   )}
                   {profile.trainingExperience && (
                     <div>
                       <p className="text-[11px] text-gray-400 uppercase tracking-wide font-medium">Experiência</p>
-                      <p className="text-sm font-semibold text-gray-700 capitalize">{profile.trainingExperience}</p>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 capitalize">{profile.trainingExperience}</p>
                     </div>
                   )}
                 </div>
@@ -554,8 +554,8 @@ export default function ProfilePage() {
 
             {/* Specialties — PT only */}
             {!isAthlete && (
-              <div className="bg-white rounded-xl border border-gray-100 p-5">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+              <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                   Especialidades
                 </h3>
                 {editing ? (
@@ -566,7 +566,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setForm({ ...form, specialties: e.target.value })
                       }
-                      className="w-full px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-lg focus:border-emerald-400 focus:outline-none"
+                      className="w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg focus:border-emerald-400 focus:outline-none"
                       placeholder="Hipertrofia, Perda de peso, Reabilitação (separado por vírgula)"
                     />
                     <p className="text-[11px] text-gray-400 mt-1">
@@ -596,8 +596,8 @@ export default function ProfilePage() {
           {/* Sidebar */}
           <div className="space-y-5">
             {/* Contact / Location */}
-            <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                 Informações
               </h3>
               {editing ? (
@@ -613,7 +613,7 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setForm({ ...form, location: e.target.value })
                         }
-                        className="w-full mt-1 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-lg focus:border-emerald-400 focus:outline-none"
+                        className="w-full mt-1 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg focus:border-emerald-400 focus:outline-none"
                         placeholder="Lisboa, Portugal"
                       />
                     </div>
@@ -628,31 +628,31 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         setForm({ ...form, phone: e.target.value })
                       }
-                      className="w-full mt-1 px-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-lg focus:border-emerald-400 focus:outline-none"
+                      className="w-full mt-1 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg focus:border-emerald-400 focus:outline-none"
                       placeholder="+351 912 345 678"
                     />
                   </div>
                 </div>
               ) : (
                 <div className="space-y-2.5">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <MapPin className="w-4 h-4 text-gray-400" />
                     {profile.location || (
                       <span className="text-gray-300 italic">Não definido</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <Calendar className="w-4 h-4 text-gray-400" />
                     Membro desde {memberSince}
                   </div>
                   {profile.email && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <span className="text-gray-400 text-xs">@</span>
                       {profile.email}
                     </div>
                   )}
                   {profile.phone && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <span className="text-gray-400 text-xs">📱</span>
                       {profile.phone}
                     </div>
@@ -663,8 +663,8 @@ export default function ProfilePage() {
 
             {/* Social Links — PT only */}
             {!isAthlete && (
-            <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 p-5">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
                 Redes Sociais
               </h3>
               {editing ? (
@@ -699,7 +699,7 @@ export default function ProfilePage() {
                         onChange={(e) =>
                           setForm({ ...form, [social.key]: e.target.value })
                         }
-                        className="flex-1 px-3 py-1.5 text-sm text-gray-700 border border-gray-200 rounded-lg focus:border-emerald-400 focus:outline-none"
+                        className="flex-1 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg focus:border-emerald-400 focus:outline-none"
                         placeholder={social.placeholder}
                       />
                     </div>
@@ -716,7 +716,7 @@ export default function ProfilePage() {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-pink-500 transition"
+                      className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-pink-500 transition"
                     >
                       <Instagram className="w-4 h-4" />
                       {profile.socialLinks.instagram}
@@ -731,7 +731,7 @@ export default function ProfilePage() {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition"
+                      className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 transition"
                     >
                       <Facebook className="w-4 h-4" />
                       {profile.socialLinks.facebook}
@@ -746,7 +746,7 @@ export default function ProfilePage() {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-blue-700 transition"
+                      className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-700 transition"
                     >
                       <Linkedin className="w-4 h-4" />
                       {profile.socialLinks.linkedin}
@@ -761,7 +761,7 @@ export default function ProfilePage() {
                       }
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm text-gray-600 hover:text-emerald-600 transition"
+                      className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 transition"
                     >
                       <Globe className="w-4 h-4" />
                       {profile.socialLinks.website}

@@ -1,0 +1,28 @@
+# SIGA180 - robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /login
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /clients
+Disallow: /bookings
+Disallow: /training
+Disallow: /nutrition
+Disallow: /exercises
+Disallow: /messages
+Disallow: /notifications
+Disallow: /settings
+Disallow: /profile
+Disallow: /checkins
+Disallow: /content
+Disallow: /feedback
+Disallow: /foods
+Disallow: /athlete
+Disallow: /offline
+
+# Public pages (allowed)
+# /privacy, /cookies, /termos, /dpa, /dpia, /violacao-dados
+
+Sitemap: https://siga180.pt/sitemap.xml

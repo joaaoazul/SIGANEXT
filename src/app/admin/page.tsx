@@ -109,7 +109,7 @@ export default function AdminDashboard() {
   if (!stats) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-400">Erro ao carregar dados do sistema.</p>
+        <p className="text-gray-500 dark:text-gray-400">Erro ao carregar dados do sistema.</p>
       </div>
     );
   }
@@ -119,23 +119,23 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Shield className="w-6 h-6 text-red-500" />
             Painel de Administração
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             Monitorização e gestão do sistema SIGA180
           </p>
         </div>
         <div className="flex items-center gap-3">
           {lastUpdated && (
-            <span className="text-xs text-gray-600">
+            <span className="text-xs text-gray-600 dark:text-gray-500">
               Atualizado: {lastUpdated.toLocaleTimeString("pt-PT")}
             </span>
           )}
           <button
             onClick={() => { setLoading(true); fetchStats(); }}
-            className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 rounded-lg text-xs text-gray-300 hover:bg-gray-700 transition"
+            className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
           >
             <RefreshCcw className="w-3.5 h-3.5" />
             Atualizar
@@ -169,10 +169,10 @@ export default function AdminDashboard() {
           { label: "Logins (24h)", value: stats.system.recentLogins, icon: Clock, color: "text-cyan-400" },
           { label: "Ações (24h)", value: stats.system.usersLast24h, icon: Activity, color: "text-orange-400" },
         ].map((m, i) => (
-          <div key={i} className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+          <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
             <m.icon className={`w-5 h-5 ${m.color} mb-2`} />
-            <p className="text-2xl font-bold text-white">{m.value.toLocaleString()}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{m.label}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{m.value.toLocaleString()}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{m.label}</p>
           </div>
         ))}
       </div>
@@ -188,39 +188,39 @@ export default function AdminDashboard() {
           { label: "Mensagens", value: stats.content.totalMessages, icon: MessageSquare },
           { label: "Check-ins", value: stats.content.totalCheckIns, icon: Clock },
         ].map((m, i) => (
-          <div key={i} className="bg-gray-900/50 rounded-xl border border-gray-800/50 p-3">
-            <p className="text-lg font-bold text-white">{m.value.toLocaleString()}</p>
-            <p className="text-[11px] text-gray-500">{m.label}</p>
+          <div key={i} className="bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800/50 p-3">
+            <p className="text-lg font-bold text-gray-900 dark:text-white">{m.value.toLocaleString()}</p>
+            <p className="text-[11px] text-gray-500 dark:text-gray-400">{m.label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Incidents */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-yellow-500" />
               Incidentes Recentes
             </h2>
-            <Link href="/admin/incidents" className="text-xs text-gray-500 hover:text-white flex items-center gap-1">
+            <Link href="/admin/incidents" className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-1">
               Ver todos <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
           {stats.incidents.recent.length === 0 ? (
-            <p className="text-sm text-gray-600 py-6 text-center">Sem incidentes registados</p>
+            <p className="text-sm text-gray-600 dark:text-gray-500 py-6 text-center">Sem incidentes registados</p>
           ) : (
             <div className="space-y-2">
               {stats.incidents.recent.map((inc) => (
                 <Link
                   key={inc.id}
                   href={`/admin/incidents?id=${inc.id}`}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white truncate">{inc.title}</p>
-                    <p className="text-[11px] text-gray-500">
+                    <p className="text-sm text-gray-900 dark:text-white truncate">{inc.title}</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
                       {inc.category} &bull; {new Date(inc.createdAt).toLocaleDateString("pt-PT")}
                     </p>
                   </div>
@@ -237,30 +237,30 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Audit Logs */}
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <Activity className="w-4 h-4 text-cyan-500" />
               Atividade Recente
             </h2>
-            <Link href="/admin/logs" className="text-xs text-gray-500 hover:text-white flex items-center gap-1">
+            <Link href="/admin/logs" className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-1">
               Ver todos <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
           {stats.recentLogs.length === 0 ? (
-            <p className="text-sm text-gray-600 py-6 text-center">Sem atividade registada</p>
+            <p className="text-sm text-gray-600 dark:text-gray-500 py-6 text-center">Sem atividade registada</p>
           ) : (
             <div className="space-y-1">
               {stats.recentLogs.map((log) => (
                 <div key={log.id} className="flex items-center gap-3 p-2 text-xs">
-                  <span className="font-mono text-gray-600 w-14 flex-shrink-0">
+                  <span className="font-mono text-gray-600 dark:text-gray-500 w-14 flex-shrink-0">
                     {new Date(log.createdAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                   <span className="text-yellow-400 font-medium w-24 truncate flex-shrink-0">{log.action}</span>
-                  <span className="text-gray-400 truncate flex-1">{log.userEmail || "sistema"}</span>
+                  <span className="text-gray-500 dark:text-gray-400 truncate flex-1">{log.userEmail || "sistema"}</span>
                   {log.entity && (
-                    <span className="text-gray-600 text-[11px]">{log.entity}</span>
+                    <span className="text-gray-600 dark:text-gray-500 text-[11px]">{log.entity}</span>
                   )}
                 </div>
               ))}
@@ -270,12 +270,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* System info */}
-      <div className="bg-gray-900/50 rounded-xl border border-gray-800/50 p-4">
-        <div className="flex flex-wrap gap-6 text-xs text-gray-500">
-          <span>Registos última semana: <strong className="text-gray-300">{stats.system.recentRegistrations}</strong></span>
-          <span>Clientes eliminados: <strong className="text-gray-300">{stats.system.deletedClients}</strong></span>
-          <span>Superadmins: <strong className="text-gray-300">{stats.system.superadmins}</strong></span>
-          <span>Total clientes: <strong className="text-gray-300">{stats.system.totalClients}</strong></span>
+      <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-800/50 p-4">
+        <div className="flex flex-wrap gap-6 text-xs text-gray-500 dark:text-gray-400">
+          <span>Registos última semana: <strong className="text-gray-600 dark:text-gray-300">{stats.system.recentRegistrations}</strong></span>
+          <span>Clientes eliminados: <strong className="text-gray-600 dark:text-gray-300">{stats.system.deletedClients}</strong></span>
+          <span>Superadmins: <strong className="text-gray-600 dark:text-gray-300">{stats.system.superadmins}</strong></span>
+          <span>Total clientes: <strong className="text-gray-600 dark:text-gray-300">{stats.system.totalClients}</strong></span>
         </div>
       </div>
     </div>

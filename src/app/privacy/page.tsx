@@ -1,15 +1,15 @@
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-gray-100 p-6 sm:p-10 shadow-sm">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Política de Privacidade</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4">
+      <div className="max-w-3xl mx-auto bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 p-6 sm:p-10 shadow-sm">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Política de Privacidade</h1>
         <p className="text-sm text-gray-400 mb-8">Última atualização: 1 de março de 2026</p>
 
-        <div className="prose prose-gray prose-sm max-w-none space-y-6 text-gray-700 leading-relaxed">
+        <div className="prose prose-gray prose-sm max-w-none space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
 
           {/* 1. Responsável */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">1. Responsável pelo Tratamento</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">1. Responsável pelo Tratamento</h2>
             <p>
               A plataforma <strong>SIGA180</strong> é operada como ferramenta de gestão para Personal Trainers (PT) 
               e os seus atletas. O responsável pelo tratamento dos dados pessoais é o PT que utiliza a plataforma 
@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 2. Dados Recolhidos */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">2. Dados Pessoais Recolhidos</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">2. Dados Pessoais Recolhidos</h2>
             <p>A plataforma recolhe e trata as seguintes categorias de dados pessoais:</p>
             
             <h3 className="text-base font-medium text-gray-800 mt-4">2.1 Dados de Identificação</h3>
@@ -63,7 +63,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 3. Finalidade */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">3. Finalidades do Tratamento</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">3. Finalidades do Tratamento</h2>
             <p>Os dados pessoais são tratados para as seguintes finalidades:</p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Prestação do serviço de acompanhamento desportivo personalizado</li>
@@ -77,7 +77,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 4. Base Legal */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">4. Base Legal</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">4. Base Legal</h2>
             <ul className="list-disc pl-5 space-y-2">
               <li>
                 <strong>Consentimento explícito (Art. 6.º, n.º 1, al. a) e Art. 9.º, n.º 2, al. a) do RGPD)</strong> — 
@@ -96,7 +96,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 5. Partilha de Dados */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">5. Partilha de Dados</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">5. Partilha de Dados</h2>
             <p>Os dados pessoais são partilhados exclusivamente com:</p>
             <ul className="list-disc pl-5 space-y-1">
               <li><strong>O seu Personal Trainer</strong> — que tem acesso aos seus dados para fins de acompanhamento desportivo</li>
@@ -110,7 +110,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 6. Retenção */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">6. Período de Conservação</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">6. Período de Conservação</h2>
             <p>
               Os dados pessoais são conservados enquanto a conta estiver ativa e durante um período máximo de 
               <strong> 2 anos</strong> após a desativação da conta, salvo obrigações legais que exijam um prazo 
@@ -123,7 +123,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 7. Direitos */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">7. Os Seus Direitos</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">7. Os Seus Direitos</h2>
             <p>Ao abrigo do RGPD, tem os seguintes direitos:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>
@@ -157,7 +157,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 8. Segurança */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">8. Medidas de Segurança</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">8. Medidas de Segurança</h2>
             <p>Implementamos as seguintes medidas técnicas e organizativas:</p>
             <ul className="list-disc pl-5 space-y-1">
               <li>Passwords encriptadas com hash bcrypt (12 rounds)</li>
@@ -171,7 +171,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 9. Cookies */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">9. Cookies</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">9. Cookies</h2>
             <p>
               A plataforma utiliza exclusivamente um <strong>cookie funcional</strong> (token de autenticação JWT) 
               necessário para o funcionamento da aplicação. Este cookie:
@@ -189,7 +189,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 10. Alterações */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">10. Alterações à Política</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">10. Alterações à Política</h2>
             <p>
               Reservamo-nos o direito de atualizar esta política de privacidade. As alterações serão comunicadas 
               através da plataforma e/ou por email. A continuação da utilização do serviço após a notificação 
@@ -199,7 +199,7 @@ export default function PrivacyPolicyPage() {
 
           {/* 11. Contacto */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900">11. Contacto</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">11. Contacto</h2>
             <p>
               Para exercer os seus direitos ou esclarecer dúvidas sobre proteção de dados, contacte-nos:
             </p>
@@ -210,7 +210,7 @@ export default function PrivacyPolicyPage() {
 
         </div>
 
-        <div className="mt-10 pt-6 border-t border-gray-200">
+        <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700">
           <p className="text-xs text-gray-400 text-center">
             Esta política cumpre o Regulamento (UE) 2016/679 (RGPD) e a Lei n.º 58/2019 de proteção de dados pessoais portuguesa.
           </p>

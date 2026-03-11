@@ -416,21 +416,21 @@ export default function NutritionPage() {
 
     return (
       <div className="min-h-screen pb-20 lg:pb-0">
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-3 sm:px-6 py-3 flex items-center justify-between">
+        <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <button onClick={() => setShowEditor(false)} className="p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
-              <X className="w-5 h-5 text-gray-500" />
+            <button onClick={() => setShowEditor(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg flex-shrink-0">
+              <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
             </button>
-            <h1 className="text-sm sm:text-lg font-semibold text-gray-900 truncate">
+            <h1 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
               {editingPlan ? "Editar Plano" : "Novo Plano"}
             </h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex items-center gap-4 text-xs text-gray-500 bg-gray-50 rounded-xl px-4 py-2">
-              <span className="text-amber-600 font-medium">{macros.cal} kcal</span>
-              <span className="text-red-600">P: {macros.prot}g</span>
-              <span className="text-yellow-600">HC: {macros.carb}g</span>
-              <span className="text-orange-600">G: {macros.fat}g</span>
+            <div className="hidden sm:flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-xl px-4 py-2">
+              <span className="text-amber-600 dark:text-amber-400 font-medium">{macros.cal} kcal</span>
+              <span className="text-red-600 dark:text-red-400">P: {macros.prot}g</span>
+              <span className="text-yellow-600 dark:text-yellow-400">HC: {macros.carb}g</span>
+              <span className="text-orange-600 dark:text-orange-400">G: {macros.fat}g</span>
             </div>
             <button onClick={savePlan} disabled={saving || !planName.trim()} className="btn-primary">
               <Save className="w-4 h-4" />
@@ -444,11 +444,11 @@ export default function NutritionPage() {
           <div className="card mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Nome do plano *</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Nome do plano *</label>
                 <input type="text" value={planName} onChange={(e) => setPlanName(e.target.value)} className="input-field" placeholder="Ex: Plano de Cutting - João" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Objetivo</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Objetivo</label>
                 <select value={planGoal} onChange={(e) => setPlanGoal(e.target.value)} className="input-field">
                   <option value="">Selecionar objetivo</option>
                   {goals.map((g) => (
@@ -457,34 +457,34 @@ export default function NutritionPage() {
                 </select>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-600 mb-1">Descrição / Notas</label>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Descrição / Notas</label>
                 <textarea value={planDescription} onChange={(e) => setPlanDescription(e.target.value)} className="input-field min-h-[60px]" placeholder="Notas para o atleta..." />
               </div>
             </div>
           </div>
 
           <div className="sm:hidden grid grid-cols-4 gap-2 mb-4">
-            <div className="bg-amber-50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500">Calorias</p>
-              <p className="text-lg font-bold text-amber-600">{macros.cal}</p>
+            <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Calorias</p>
+              <p className="text-lg font-bold text-amber-600 dark:text-amber-400">{macros.cal}</p>
             </div>
-            <div className="bg-red-50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500">Prot</p>
-              <p className="text-lg font-bold text-red-600">{macros.prot}g</p>
+            <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Prot</p>
+              <p className="text-lg font-bold text-red-600 dark:text-red-400">{macros.prot}g</p>
             </div>
-            <div className="bg-yellow-50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500">HC</p>
-              <p className="text-lg font-bold text-yellow-600">{macros.carb}g</p>
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">HC</p>
+              <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{macros.carb}g</p>
             </div>
-            <div className="bg-orange-50 rounded-xl p-3 text-center">
-              <p className="text-xs text-gray-500">Gord</p>
-              <p className="text-lg font-bold text-orange-600">{macros.fat}g</p>
+            <div className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Gord</p>
+              <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{macros.fat}g</p>
             </div>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Refeições ({meals.length})</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Refeições ({meals.length})</h2>
             </div>
 
             {meals.map((meal, mealIdx) => {
@@ -511,7 +511,7 @@ export default function NutritionPage() {
                               onClick={(e) => e.stopPropagation()}
                             />
                           ) : (
-                            <h3 className="text-sm font-semibold text-gray-900">{meal.name}</h3>
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{meal.name}</h3>
                           )}
                           {meal.time && !isActive && (
                             <span className="text-xs text-gray-400 flex items-center gap-1">
@@ -525,17 +525,17 @@ export default function NutritionPage() {
                       <span className="text-xs text-gray-400 hidden sm:block">
                         {mealMacros.cal} kcal | P:{mealMacros.prot}g HC:{mealMacros.carb}g G:{mealMacros.fat}g
                       </span>
-                      <button onClick={() => removeMeal(mealIdx)} className="p-1.5 hover:bg-red-50 rounded-lg">
+                      <button onClick={() => removeMeal(mealIdx)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                         <Trash2 className="w-3.5 h-3.5 text-red-500" />
                       </button>
                     </div>
                   </div>
 
                   {isActive && (
-                    <div className="space-y-3 pt-2 border-t border-gray-100">
+                    <div className="space-y-3 pt-2 border-t border-gray-100 dark:border-gray-800">
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">Hora</label>
+                          <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Hora</label>
                           <input
                             type="time"
                             value={meal.time}
@@ -548,7 +548,7 @@ export default function NutritionPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-500 mb-1">Notas</label>
+                          <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Notas</label>
                           <input
                             type="text"
                             value={meal.notes}
@@ -569,9 +569,9 @@ export default function NutritionPage() {
                             const cal = Math.round((mf.food.calories * mf.quantity) / 100);
                             const prot = Math.round((mf.food.protein * mf.quantity) / 100);
                             return (
-                              <div key={foodIdx} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
+                              <div key={foodIdx} className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-3">
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-gray-900 truncate">{mf.food.name}</p>
+                                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{mf.food.name}</p>
                                   <p className="text-xs text-gray-400">
                                     {cal} kcal · {prot}g prot
                                     {mf.food.brand && ` · ${mf.food.brand}`}
@@ -587,7 +587,7 @@ export default function NutritionPage() {
                                     step={5}
                                   />
                                   <span className="text-xs text-gray-400 w-6">{mf.unit}</span>
-                                  <button onClick={() => removeFoodFromMeal(mealIdx, foodIdx)} className="p-1 hover:bg-red-50 rounded-lg">
+                                  <button onClick={() => removeFoodFromMeal(mealIdx, foodIdx)} className="p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
                                     <X className="w-3.5 h-3.5 text-red-500" />
                                   </button>
                                 </div>
@@ -610,29 +610,29 @@ export default function NutritionPage() {
                           />
                         </div>
                         {filteredFoods.length > 0 && activeMealIndex === mealIdx && (
-                          <div className="absolute z-30 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-64 overflow-y-auto">
+                          <div className="absolute z-30 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-64 overflow-y-auto">
                             {filteredFoods.map((food) => (
                               <button
                                 key={food.id}
                                 onClick={() => addFoodToMeal(mealIdx, food)}
-                                className="w-full text-left px-4 py-3 hover:bg-emerald-50 transition flex items-center justify-between border-b border-gray-50 last:border-0"
+                                className="w-full text-left px-4 py-3 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition flex items-center justify-between border-b border-gray-50 last:border-0"
                               >
                                 <div>
-                                  <p className="text-sm font-medium text-gray-900">{food.name}</p>
+                                  <p className="text-sm font-medium text-gray-900 dark:text-white">{food.name}</p>
                                   <p className="text-xs text-gray-400">
                                     {food.calories} kcal · P:{food.protein}g HC:{food.carbs}g G:{food.fat}g
                                     {food.brand && ` · ${food.brand}`}
                                   </p>
                                 </div>
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                                  food.category === "protein" ? "bg-red-50 text-red-500" :
-                                  food.category === "carbs" ? "bg-yellow-50 text-yellow-600" :
-                                  food.category === "fats" ? "bg-orange-50 text-orange-500" :
-                                  food.category === "vegetables" ? "bg-emerald-50 text-emerald-600" :
-                                  food.category === "fruits" ? "bg-pink-50 text-pink-500" :
-                                  food.category === "dairy" ? "bg-blue-50 text-blue-500" :
-                                  food.category === "supplements" ? "bg-purple-50 text-purple-500" :
-                                  "bg-gray-100 text-gray-500"
+                                  food.category === "protein" ? "bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400" :
+                                  food.category === "carbs" ? "bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400" :
+                                  food.category === "fats" ? "bg-orange-50 text-orange-500 dark:bg-orange-900/20 dark:text-orange-400" :
+                                  food.category === "vegetables" ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400" :
+                                  food.category === "fruits" ? "bg-pink-50 text-pink-500 dark:bg-pink-900/20 dark:text-pink-400" :
+                                  food.category === "dairy" ? "bg-blue-50 text-blue-500 dark:bg-blue-900/20 dark:text-blue-400" :
+                                  food.category === "supplements" ? "bg-purple-50 text-purple-500 dark:bg-purple-900/20 dark:text-purple-400" :
+                                  "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
                                 }`}>
                                   {catLabel[food.category] || food.category}
                                 </span>
@@ -643,9 +643,9 @@ export default function NutritionPage() {
                       </div>
 
                       {meal.foods.length > 0 && (
-                        <div className="bg-emerald-50 rounded-xl p-3 flex items-center justify-between text-sm">
-                          <span className="font-medium text-emerald-800">Total</span>
-                          <span className="text-emerald-600 font-semibold text-xs">
+                        <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-3 flex items-center justify-between text-sm">
+                          <span className="font-medium text-emerald-800 dark:text-emerald-300">Total</span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs">
                             {mealMacros.cal} kcal · P:{mealMacros.prot}g · HC:{mealMacros.carb}g · G:{mealMacros.fat}g
                           </span>
                         </div>
@@ -656,7 +656,7 @@ export default function NutritionPage() {
                   {!isActive && meal.foods.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       {meal.foods.map((mf, i) => (
-                        <span key={i} className="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg">
+                        <span key={i} className="text-[11px] bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-lg">
                           {mf.food.name} ({mf.quantity}{mf.unit})
                         </span>
                       ))}
@@ -666,21 +666,21 @@ export default function NutritionPage() {
               );
             })}
 
-            <div className="card border-2 border-dashed border-gray-200">
-              <p className="text-sm font-medium text-gray-600 mb-3">Adicionar Refeição</p>
+            <div className="card border-2 border-dashed border-gray-200 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Adicionar Refeição</p>
               <div className="flex flex-wrap gap-2">
                 {mealTemplates.map((t) => (
                   <button
                     key={t.name}
                     onClick={() => addMeal(t)}
-                    className="text-xs px-3 py-2 bg-gray-50 hover:bg-emerald-50 hover:text-emerald-600 rounded-lg transition flex items-center gap-1.5"
+                    className="text-xs px-3 py-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 rounded-lg transition flex items-center gap-1.5"
                   >
                     <Clock className="w-3 h-3" /> {t.name} ({t.time})
                   </button>
                 ))}
                 <button
                   onClick={() => addMeal()}
-                  className="text-xs px-3 py-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1.5"
+                  className="text-xs px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-lg transition flex items-center gap-1.5"
                 >
                   <Plus className="w-3 h-3" /> Personalizada
                 </button>
@@ -743,28 +743,28 @@ export default function NutritionPage() {
                   onClick={() => setExpandedPlan(expandedPlan === plan.id ? null : plan.id)}
                 >
                   {expandedPlan === plan.id ? (
-                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                    <ChevronDown className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                   ) : (
-                    <ChevronRight className="w-5 h-5 text-gray-500" />
+                    <ChevronRight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                   )}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{plan.name}</h3>
                     {plan.description && (
-                      <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">{plan.description}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{plan.description}</p>
                     )}
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <button onClick={() => openEditPlan(plan)} className="p-2 hover:bg-gray-100 rounded-lg" title="Editar">
-                    <Edit className="w-4 h-4 text-gray-500" />
+                  <button onClick={() => openEditPlan(plan)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg" title="Editar">
+                    <Edit className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </button>
-                  <button onClick={() => duplicatePlan(plan)} className="p-2 hover:bg-gray-100 rounded-lg" title="Duplicar">
-                    <Copy className="w-4 h-4 text-gray-500" />
+                  <button onClick={() => duplicatePlan(plan)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg" title="Duplicar">
+                    <Copy className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   </button>
-                  <button onClick={() => { setAssignPlanId(plan.id); setShowAssign(true); }} className="p-2 hover:bg-emerald-50 rounded-lg" title="Atribuir">
+                  <button onClick={() => { setAssignPlanId(plan.id); setShowAssign(true); }} className="p-2 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg" title="Atribuir">
                     <UserPlus className="w-4 h-4 text-emerald-600" />
                   </button>
-                  <button onClick={() => handleDelete(plan.id)} className="p-2 hover:bg-red-50 rounded-lg" title="Eliminar">
+                  <button onClick={() => handleDelete(plan.id)} className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg" title="Eliminar">
                     <Trash2 className="w-4 h-4 text-red-600" />
                   </button>
                 </div>
@@ -772,38 +772,38 @@ export default function NutritionPage() {
 
               <div className="flex flex-wrap gap-4 mt-3">
                 {plan.totalCalories && (
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                     <Flame className="w-3.5 h-3.5 text-amber-500" />
                     {Math.round(plan.totalCalories)} kcal
                   </div>
                 )}
-                {plan.totalProtein && <span className="text-xs text-red-600">P: {Math.round(plan.totalProtein)}g</span>}
-                {plan.totalCarbs && <span className="text-xs text-yellow-600">HC: {Math.round(plan.totalCarbs)}g</span>}
-                {plan.totalFat && <span className="text-xs text-orange-600">G: {Math.round(plan.totalFat)}g</span>}
+                {plan.totalProtein && <span className="text-xs text-red-600 dark:text-red-400">P: {Math.round(plan.totalProtein)}g</span>}
+                {plan.totalCarbs && <span className="text-xs text-yellow-600 dark:text-yellow-400">HC: {Math.round(plan.totalCarbs)}g</span>}
+                {plan.totalFat && <span className="text-xs text-orange-600 dark:text-orange-400">G: {Math.round(plan.totalFat)}g</span>}
                 {plan.goal && (
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                  <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                     <Target className="w-3.5 h-3.5" /> {getGoalLabel(plan.goal)}
                   </div>
                 )}
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                   <Apple className="w-3.5 h-3.5" /> {plan.meals.length} refeição(ões)
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                   <Users className="w-3.5 h-3.5" /> {plan._count.assignments} cliente(s)
                 </div>
               </div>
 
               {expandedPlan === plan.id && (
-                <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
                   {plan.meals.length === 0 ? (
                     <p className="text-sm text-gray-400">Nenhuma refeição — clica em editar para adicionar refeições.</p>
                   ) : (
                     plan.meals.map((meal) => {
                       const macros = calcMealMacros(meal);
                       return (
-                        <div key={meal.id} className="bg-gray-50 rounded-xl p-4">
+                        <div key={meal.id} className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
                           <div className="flex items-center justify-between mb-2">
-                            <h4 className="text-sm font-semibold text-gray-900">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                               {meal.name}
                               {meal.time && (
                                 <span className="text-gray-400 font-normal ml-2">
@@ -824,14 +824,14 @@ export default function NutritionPage() {
                           ) : (
                             <div className="space-y-1.5">
                               {meal.foods.map((mf) => (
-                                <div key={mf.id} className="flex items-center justify-between text-xs bg-white rounded-lg px-3 py-2">
+                                <div key={mf.id} className="flex items-center justify-between text-xs bg-white dark:bg-gray-900 rounded-lg px-3 py-2">
                                   <div>
-                                    <span className="text-gray-700 font-medium">{mf.food.name}</span>
+                                    <span className="text-gray-700 dark:text-gray-300 font-medium">{mf.food.name}</span>
                                     {mf.food.brand && (
                                       <span className="text-gray-400 ml-1">({mf.food.brand})</span>
                                     )}
                                   </div>
-                                  <div className="flex items-center gap-3 text-gray-500">
+                                  <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
                                     <span>{mf.quantity}{mf.unit}</span>
                                     <span>{Math.round((mf.food.calories * mf.quantity) / 100)} kcal</span>
                                     <span className="text-red-500">{Math.round((mf.food.protein * mf.quantity) / 100)}g P</span>
@@ -850,7 +850,7 @@ export default function NutritionPage() {
                       <p className="text-xs text-gray-400 mb-2">Clientes atribuídos:</p>
                       <div className="flex flex-wrap gap-2">
                         {plan.assignments.map((a) => (
-                          <span key={a.client.id} className="badge bg-emerald-50 text-emerald-600">
+                          <span key={a.client.id} className="badge bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400">
                             {a.client.name}
                           </span>
                         ))}
@@ -867,7 +867,7 @@ export default function NutritionPage() {
       <Modal isOpen={showAssign} onClose={() => setShowAssign(false)} title="Atribuir Plano de Nutrição">
         <form onSubmit={handleAssign} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Cliente *</label>
+            <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Cliente *</label>
             <select
               value={assignClientId}
               onChange={(e) => setAssignClientId(e.target.value)}

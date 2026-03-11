@@ -77,8 +77,8 @@ const roleColors: Record<string, string> = {
   employee: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   client: "bg-purple-500/10 text-purple-400 border-purple-500/20",
   suspended: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  deleted_client: "bg-gray-500/10 text-gray-500 border-gray-500/20",
-  deleted_admin: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  deleted_client: "bg-gray-500/10 text-gray-500 dark:text-gray-400 border-gray-500/20",
+  deleted_admin: "bg-gray-500/10 text-gray-500 dark:text-gray-400 border-gray-500/20",
 };
 
 type ModalType = "detail" | "edit" | "password" | "delete" | null;
@@ -378,18 +378,18 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <Users className="w-6 h-6 text-blue-400" />
           Gestão de Utilizadores
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
           Administração IT — gestão de contas, passwords, dados e permissões
         </p>
         {pagination && (
           <p className="text-gray-600 text-xs mt-0.5">{pagination.total} utilizador(es) registados</p>
         )}
       </div>
-        <button onClick={exportUsersCSV} className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 rounded-lg text-xs text-gray-300 hover:bg-gray-700 transition">
+        <button onClick={exportUsersCSV} className="flex items-center gap-1.5 px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
           <Download className="w-3.5 h-3.5" /> Exportar CSV
         </button>
       </div>
@@ -407,19 +407,19 @@ export default function AdminUsersPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Pesquisar por nome ou email..."
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-800 rounded-lg text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50"
           />
         </div>
         <select
           value={roleFilter}
           onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-          className="bg-gray-900 border border-gray-800 rounded-lg text-sm text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+          className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg text-sm text-gray-900 dark:text-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500/50"
         >
           <option value="">Todos os roles</option>
           {ROLES.map((r) => (
@@ -429,11 +429,11 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-800 text-gray-500 text-xs uppercase">
+              <tr className="border-b border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 text-xs uppercase">
                 <th className="text-left px-4 py-3 font-medium">Utilizador</th>
                 <th className="text-left px-4 py-3 font-medium hidden sm:table-cell">Email</th>
                 <th className="text-left px-4 py-3 font-medium">Role</th>
@@ -456,21 +456,21 @@ export default function AdminUsersPage() {
                 </tr>
               ) : (
                 users.map((u) => (
-                  <tr key={u.id} className="border-b border-gray-800/50 hover:bg-gray-800/30 cursor-pointer" onClick={() => openDetail(u.id)}>
+                  <tr key={u.id} className="border-b border-gray-200/50 dark:border-gray-800/50 hover:bg-gray-100/30 dark:hover:bg-gray-800/30 cursor-pointer" onClick={() => openDetail(u.id)}>
                     <td className="px-4 py-3">
-                      <span className="text-white font-medium">{u.name}</span>
+                      <span className="text-gray-900 dark:text-white font-medium">{u.name}</span>
                       <p className="text-[11px] text-gray-600 sm:hidden">{u.email}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-400 hidden sm:table-cell">{u.email}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">{u.email}</td>
                     <td className="px-4 py-3">
                       <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${roleColors[u.role] || roleColors.suspended}`}>
                         {u.role}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-center text-gray-400 hidden md:table-cell">
+                    <td className="px-4 py-3 text-center text-gray-500 dark:text-gray-400 hidden md:table-cell">
                       {u._count.managedClients}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs hidden lg:table-cell">
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs hidden lg:table-cell">
                       {new Date(u.createdAt).toLocaleDateString("pt-PT")}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">
@@ -482,10 +482,10 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-0.5">
-                        <button onClick={() => openDetail(u.id)} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white" title="Ver detalhes">
+                        <button onClick={() => openDetail(u.id)} className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white" title="Ver detalhes">
                           <Eye className="w-3.5 h-3.5" />
                         </button>
-                        <button onClick={() => openEdit(u.id)} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white" title="Editar">
+                        <button onClick={() => openEdit(u.id)} className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white" title="Editar">
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={() => openPasswordReset(u.id)} className="p-1.5 rounded-lg text-yellow-400 hover:bg-yellow-500/10" title="Reset password">
@@ -517,22 +517,22 @@ export default function AdminUsersPage() {
 
         {/* Pagination */}
         {pagination && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-800">
-            <span className="text-xs text-gray-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-800">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               Página {pagination.page} de {pagination.totalPages}
             </span>
             <div className="flex gap-1">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={pagination.page === 1}
-                className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-800 disabled:opacity-30"
+                className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                 disabled={pagination.page === pagination.totalPages}
-                className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-800 disabled:opacity-30"
+                className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -544,14 +544,14 @@ export default function AdminUsersPage() {
       {/* ===== DETAIL MODAL ===== */}
       {activeModal === "detail" && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-start justify-center p-4 pt-[10vh] overflow-y-auto">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 w-full max-w-2xl">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-gray-800">
-              <h3 className="text-white font-semibold flex items-center gap-2">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h3 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                 <UserCog className="w-5 h-5 text-blue-400" />
                 Detalhes do Utilizador
               </h3>
-              <button onClick={closeModal} className="p-1 rounded-lg text-gray-400 hover:bg-gray-800">
+              <button onClick={closeModal} className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -577,41 +577,41 @@ export default function AdminUsersPage() {
                   <div className="space-y-3">
                     {selectedUser.bio && (
                       <div>
-                        <span className="text-xs text-gray-500 uppercase font-medium">Bio</span>
-                        <p className="text-sm text-gray-300 mt-1">{selectedUser.bio}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">Bio</span>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{selectedUser.bio}</p>
                       </div>
                     )}
                     {selectedUser.specialties && (
                       <div>
-                        <span className="text-xs text-gray-500 uppercase font-medium">Especialidades</span>
-                        <p className="text-sm text-gray-300 mt-1">{selectedUser.specialties}</p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">Especialidades</span>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{selectedUser.specialties}</p>
                       </div>
                     )}
                   </div>
                 )}
 
                 {/* RGPD Consent */}
-                <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
-                  <h4 className="text-xs text-gray-500 uppercase font-medium flex items-center gap-1.5">
+                <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-4 space-y-2">
+                  <h4 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium flex items-center gap-1.5">
                     <FileText className="w-3.5 h-3.5" />
                     Consentimento RGPD
                   </h4>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-gray-500 text-xs">Data</span>
-                      <p className="text-gray-300">{selectedUser.consentDate ? new Date(selectedUser.consentDate).toLocaleString("pt-PT") : "Não dado"}</p>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">Data</span>
+                      <p className="text-gray-600 dark:text-gray-300">{selectedUser.consentDate ? new Date(selectedUser.consentDate).toLocaleString("pt-PT") : "Não dado"}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500 text-xs">IP</span>
-                      <p className="text-gray-300 font-mono text-xs">{selectedUser.consentIp || "—"}</p>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">IP</span>
+                      <p className="text-gray-600 dark:text-gray-300 font-mono text-xs">{selectedUser.consentIp || "—"}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500 text-xs">Versão</span>
-                      <p className="text-gray-300">{selectedUser.consentVersion || "—"}</p>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">Versão</span>
+                      <p className="text-gray-600 dark:text-gray-300">{selectedUser.consentVersion || "—"}</p>
                     </div>
                     <div>
-                      <span className="text-gray-500 text-xs">Dados de Saúde</span>
-                      <p className={selectedUser.healthDataConsent ? "text-emerald-400" : "text-gray-500"}>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">Dados de Saúde</span>
+                      <p className={selectedUser.healthDataConsent ? "text-emerald-400" : "text-gray-500 dark:text-gray-400"}>
                         {selectedUser.healthDataConsent ? "Autorizado" : "Não autorizado"}
                       </p>
                     </div>
@@ -629,29 +629,29 @@ export default function AdminUsersPage() {
 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold text-white">{selectedUser._count.managedClients}</p>
-                    <p className="text-xs text-gray-500 mt-1">Clientes geridos</p>
+                  <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{selectedUser._count.managedClients}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Clientes geridos</p>
                   </div>
-                  <div className="bg-gray-800/50 rounded-lg p-3 text-center">
-                    <p className="text-2xl font-bold text-white">{selectedUser._count.bookingSlots}</p>
-                    <p className="text-xs text-gray-500 mt-1">Slots de booking</p>
+                  <div className="bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{selectedUser._count.bookingSlots}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Slots de booking</p>
                   </div>
                 </div>
 
                 {/* Managed Clients list */}
                 {selectedUser.managedClients.length > 0 && (
                   <div>
-                    <h4 className="text-xs text-gray-500 uppercase font-medium mb-2">Clientes ({selectedUser.managedClients.length})</h4>
+                    <h4 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium mb-2">Clientes ({selectedUser.managedClients.length})</h4>
                     <div className="space-y-1 max-h-32 overflow-y-auto">
                       {selectedUser.managedClients.map((c) => (
-                        <div key={c.id} className="flex items-center justify-between bg-gray-800/30 rounded-lg px-3 py-2">
+                        <div key={c.id} className="flex items-center justify-between bg-gray-100/30 dark:bg-gray-800/30 rounded-lg px-3 py-2">
                           <div>
-                            <span className="text-sm text-white">{c.name}</span>
-                            <span className="text-xs text-gray-500 ml-2">{c.email}</span>
+                            <span className="text-sm text-gray-900 dark:text-white">{c.name}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">{c.email}</span>
                           </div>
                           <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
-                            c.status === "active" ? "text-emerald-400 border-emerald-500/20" : "text-gray-500 border-gray-600"
+                            c.status === "active" ? "text-emerald-400 border-emerald-500/20" : "text-gray-500 dark:text-gray-400 border-gray-600"
                           }`}>
                             {c.status}
                           </span>
@@ -662,7 +662,7 @@ export default function AdminUsersPage() {
                 )}
 
                 {/* Quick actions */}
-                <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-800">
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
                   <button onClick={() => { closeModal(); openEdit(selectedUser.id); }} className="px-3 py-2 text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 flex items-center gap-1.5">
                     <Edit2 className="w-3 h-3" /> Editar
                   </button>
@@ -694,13 +694,13 @@ export default function AdminUsersPage() {
       {/* ===== EDIT MODAL ===== */}
       {activeModal === "edit" && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-start justify-center p-4 pt-[10vh] overflow-y-auto">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 w-full max-w-lg">
-            <div className="flex items-center justify-between p-5 border-b border-gray-800">
-              <h3 className="text-white font-semibold flex items-center gap-2">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-lg">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h3 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                 <Edit2 className="w-5 h-5 text-blue-400" />
                 Editar Utilizador
               </h3>
-              <button onClick={closeModal} className="p-1 rounded-lg text-gray-400 hover:bg-gray-800">
+              <button onClick={closeModal} className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -718,19 +718,19 @@ export default function AdminUsersPage() {
                 <FormField label="Especialidades" value={editForm.specialties} onChange={(v) => setEditForm(f => ({ ...f, specialties: v }))} />
                 <FormField label="Localização" value={editForm.location} onChange={(v) => setEditForm(f => ({ ...f, location: v }))} />
                 <div>
-                  <label className="text-xs text-gray-500 uppercase font-medium block mb-1.5">Role</label>
+                  <label className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium block mb-1.5">Role</label>
                   <select
                     value={editForm.role}
                     onChange={(e) => setEditForm(f => ({ ...f, role: e.target.value }))}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                    className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"
                   >
                     {["admin", "superadmin", "employee", "client", "suspended"].map((r) => (
                       <option key={r} value={r}>{r}</option>
                     ))}
                   </select>
                 </div>
-                <div className="flex gap-2 justify-end pt-2 border-t border-gray-800">
-                  <button onClick={closeModal} className="px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 rounded-lg">
+                <div className="flex gap-2 justify-end pt-2 border-t border-gray-200 dark:border-gray-800">
+                  <button onClick={closeModal} className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                     Cancelar
                   </button>
                   <button onClick={handleSaveEdit} disabled={actionLoading} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-1.5">
@@ -746,22 +746,22 @@ export default function AdminUsersPage() {
       {/* ===== PASSWORD RESET MODAL ===== */}
       {activeModal === "password" && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 w-full max-w-md">
-            <div className="flex items-center justify-between p-5 border-b border-gray-800">
-              <h3 className="text-white font-semibold flex items-center gap-2">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-md">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h3 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                 <Key className="w-5 h-5 text-yellow-400" />
                 Reset de Password
               </h3>
-              <button onClick={closeModal} className="p-1 rounded-lg text-gray-400 hover:bg-gray-800">
+              <button onClick={closeModal} className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-5 space-y-4">
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Define uma nova password para o utilizador. O utilizador será notificado que a password foi alterada.
               </p>
               <div>
-                <label className="text-xs text-gray-500 uppercase font-medium block mb-1.5">Nova Password</label>
+                <label className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium block mb-1.5">Nova Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
                   <input
@@ -769,12 +769,12 @@ export default function AdminUsersPage() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Mínimo 6 caracteres"
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs text-gray-500 uppercase font-medium block mb-1.5">Confirmar Password</label>
+                <label className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium block mb-1.5">Confirmar Password</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
                   <input
@@ -782,15 +782,15 @@ export default function AdminUsersPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repetir password"
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500/50"
                   />
                 </div>
                 {confirmPassword && newPassword !== confirmPassword && (
                   <p className="text-xs text-red-400 mt-1">As passwords não coincidem</p>
                 )}
               </div>
-              <div className="flex gap-2 justify-end pt-2 border-t border-gray-800">
-                <button onClick={closeModal} className="px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 rounded-lg">
+              <div className="flex gap-2 justify-end pt-2 border-t border-gray-200 dark:border-gray-800">
+                <button onClick={closeModal} className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                   Cancelar
                 </button>
                 <button
@@ -809,13 +809,13 @@ export default function AdminUsersPage() {
       {/* ===== DELETE MODAL ===== */}
       {activeModal === "delete" && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-xl border border-gray-800 w-full max-w-md">
-            <div className="flex items-center justify-between p-5 border-b border-gray-800">
-              <h3 className="text-white font-semibold flex items-center gap-2">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 w-full max-w-md">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h3 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                 <Trash2 className="w-5 h-5 text-red-400" />
                 Eliminar Utilizador
               </h3>
-              <button onClick={closeModal} className="p-1 rounded-lg text-gray-400 hover:bg-gray-800">
+              <button onClick={closeModal} className="p-1 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -826,7 +826,7 @@ export default function AdminUsersPage() {
               </div>
 
               {/* Suspend only */}
-              <label className="flex items-start gap-3 p-3 rounded-lg border border-gray-800 cursor-pointer hover:bg-gray-800/30">
+              <label className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800 cursor-pointer hover:bg-gray-100/30 dark:hover:bg-gray-800/30">
                 <input
                   type="radio"
                   name="deleteType"
@@ -835,8 +835,8 @@ export default function AdminUsersPage() {
                   className="mt-1 accent-orange-500"
                 />
                 <div>
-                  <p className="text-sm text-white font-medium">Suspender conta</p>
-                  <p className="text-xs text-gray-500">Bloqueia o acesso mas mantém todos os dados. Pode ser reativada.</p>
+                  <p className="text-sm text-gray-900 dark:text-white font-medium">Suspender conta</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Bloqueia o acesso mas mantém todos os dados. Pode ser reativada.</p>
                 </div>
               </label>
 
@@ -851,7 +851,7 @@ export default function AdminUsersPage() {
                 />
                 <div>
                   <p className="text-sm text-red-400 font-medium">Eliminar permanentemente</p>
-                  <p className="text-xs text-gray-500">Remove a conta do sistema. Esta ação é irreversível.</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Remove a conta do sistema. Esta ação é irreversível.</p>
                 </div>
               </label>
 
@@ -866,7 +866,7 @@ export default function AdminUsersPage() {
                   />
                   <div>
                     <p className="text-sm text-red-300 font-medium">Purgar todos os dados associados</p>
-                    <p className="text-xs text-gray-500">Elimina alimentos, exercícios, conteúdos, slots de booking, notificações e feedbacks criados por este utilizador.</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Elimina alimentos, exercícios, conteúdos, slots de booking, notificações e feedbacks criados por este utilizador.</p>
                   </div>
                 </label>
               )}
@@ -874,7 +874,7 @@ export default function AdminUsersPage() {
               {/* Confirmation for permanent delete */}
               {deletePermanent && (
                 <div>
-                  <label className="text-xs text-gray-500 block mb-1.5">
+                  <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1.5">
                     Escreva o email do utilizador para confirmar: <span className="text-red-400 font-mono">{users.find(u => u.id === selectedUserId)?.email}</span>
                   </label>
                   <input
@@ -882,13 +882,13 @@ export default function AdminUsersPage() {
                     value={deleteConfirm}
                     onChange={(e) => setDeleteConfirm(e.target.value)}
                     placeholder="email@exemplo.pt"
-                    className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                    className="w-full px-3 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50"
                   />
                 </div>
               )}
 
-              <div className="flex gap-2 justify-end pt-2 border-t border-gray-800">
-                <button onClick={closeModal} className="px-4 py-2 text-sm text-gray-400 hover:bg-gray-800 rounded-lg">
+              <div className="flex gap-2 justify-end pt-2 border-t border-gray-200 dark:border-gray-800">
+                <button onClick={closeModal} className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
                   Cancelar
                 </button>
                 <button
@@ -921,9 +921,9 @@ function InfoField({ icon, label, value, badge, badgeColor }: {
 }) {
   return (
     <div className="flex items-start gap-2">
-      <span className="text-gray-500 mt-0.5">{icon}</span>
+      <span className="text-gray-500 dark:text-gray-400 mt-0.5">{icon}</span>
       <div>
-        <span className="text-xs text-gray-500 uppercase">{label}</span>
+        <span className="text-xs text-gray-500 dark:text-gray-400 uppercase">{label}</span>
         {badge ? (
           <span className={`block text-[11px] font-medium px-2 py-0.5 rounded-full border mt-0.5 w-fit ${badgeColor || ""}`}>
             {value}
@@ -945,20 +945,20 @@ function FormField({ label, value, onChange, type = "text", textarea }: {
 }) {
   return (
     <div>
-      <label className="text-xs text-gray-500 uppercase font-medium block mb-1.5">{label}</label>
+      <label className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium block mb-1.5">{label}</label>
       {textarea ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"
+          className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"
         />
       ) : (
         <input
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+          className="w-full px-3 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500/50"
         />
       )}
     </div>
