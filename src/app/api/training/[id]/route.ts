@@ -34,6 +34,14 @@ export async function GET(
       return NextResponse.json({ error: "Plano não encontrado" }, { status: 404 });
     }
 
+    // Ownership check: PT can only access own plans, athletes can access if assigned
+    if (user.role === "client") {
+      const isAssigned = plan.assignments.some(a => a.clientId === user.id);
+      if (!isAssigned) return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    } else if (plan.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
+
     return NextResponse.json(plan);
   } catch {
     return NextResponse.json({ error: "Erro ao buscar plano" }, { status: 500 });
@@ -51,6 +59,13 @@ export async function PUT(
 
     const { id } = await params;
     const data = await request.json();
+
+    // Ownership check
+    const existing = await prisma.trainingPlan.findUnique({ where: { id }, select: { userId: true } });
+    if (!existing) return NextResponse.json({ error: "Plano não encontrado" }, { status: 404 });
+    if (existing.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
 
     const plan = await prisma.trainingPlan.update({
       where: { id },
@@ -85,6 +100,14 @@ export async function DELETE(
     if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
     const { id } = await params;
+
+    // Ownership check
+    const existing = await prisma.trainingPlan.findUnique({ where: { id }, select: { userId: true } });
+    if (!existing) return NextResponse.json({ error: "Plano não encontrado" }, { status: 404 });
+    if (existing.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
+
     await prisma.trainingPlan.delete({ where: { id } });
 
     logAuditFromRequest(request, "delete_training_plan", {

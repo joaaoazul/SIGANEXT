@@ -10,6 +10,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   const { bookingId } = await params;
   const { status } = await request.json();
 
+  // Validate status enum
+  const validStatuses = ["pending", "confirmed", "cancelled", "completed"];
+  if (!validStatuses.includes(status)) {
+    return NextResponse.json({ error: "Estado inválido" }, { status: 400 });
+  }
+
   // Verify booking's slot belongs to this trainer
   const existing = await prisma.booking.findFirst({
     where: { id: bookingId, bookingSlot: { userId: user.id } },

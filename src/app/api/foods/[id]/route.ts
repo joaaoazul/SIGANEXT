@@ -15,7 +15,7 @@ export async function PUT(
     const data = await request.json();
 
     const food = await prisma.food.update({
-      where: { id },
+      where: { id, userId: user.id },
       data: {
         name: data.name,
         category: data.category,
@@ -49,7 +49,7 @@ export async function DELETE(
     if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
     const { id } = await params;
-    await prisma.food.delete({ where: { id } });
+    await prisma.food.delete({ where: { id, userId: user.id } });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Erro ao eliminar alimento" }, { status: 500 });

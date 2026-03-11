@@ -65,6 +65,22 @@ export async function PUT(request: NextRequest) {
 
   const body = await request.json();
 
+  // Input validation
+  const allowedFields = ["name", "email", "phone"];
+  const extraFields = Object.keys(body).filter(k => !allowedFields.includes(k));
+  if (extraFields.length > 0) {
+    return NextResponse.json({ error: `Campos não permitidos: ${extraFields.join(", ")}` }, { status: 400 });
+  }
+  if (body.name !== undefined && (typeof body.name !== "string" || body.name.length < 1 || body.name.length > 200)) {
+    return NextResponse.json({ error: "Nome inválido" }, { status: 400 });
+  }
+  if (body.email !== undefined && (typeof body.email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email))) {
+    return NextResponse.json({ error: "Email inválido" }, { status: 400 });
+  }
+  if (body.phone !== undefined && body.phone !== null && body.phone !== "" && (typeof body.phone !== "string" || body.phone.length > 30)) {
+    return NextResponse.json({ error: "Telefone inválido" }, { status: 400 });
+  }
+
   if (user.role === "client") {
     const updated = await prisma.client.update({
       where: { id: user.id },

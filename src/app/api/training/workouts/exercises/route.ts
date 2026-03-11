@@ -16,6 +16,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "workoutId e exerciseId são obrigatórios" }, { status: 400 });
     }
 
+    // Ownership check: verify workout's plan belongs to this user
+    const workout = await prisma.workout.findUnique({ where: { id: workoutId }, select: { trainingPlan: { select: { userId: true } } } });
+    if (!workout) return NextResponse.json({ error: "Treino não encontrado" }, { status: 404 });
+    if (workout.trainingPlan.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
+
     // Get current exercise count for ordering
     const count = await prisma.trainingExercise.count({ where: { workoutId } });
 
@@ -53,6 +60,13 @@ export async function PUT(request: NextRequest) {
 
     if (!id) return NextResponse.json({ error: "ID obrigatório" }, { status: 400 });
 
+    // Ownership check
+    const existing = await prisma.trainingExercise.findUnique({ where: { id }, select: { workout: { select: { trainingPlan: { select: { userId: true } } } } } });
+    if (!existing) return NextResponse.json({ error: "Exercício não encontrado" }, { status: 404 });
+    if (existing.workout.trainingPlan.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
+
     const updated = await prisma.trainingExercise.update({
       where: { id },
       data: {
@@ -82,6 +96,13 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID obrigatório" }, { status: 400 });
+
+    // Ownership check
+    const existing = await prisma.trainingExercise.findUnique({ where: { id }, select: { workout: { select: { trainingPlan: { select: { userId: true } } } } } });
+    if (!existing) return NextResponse.json({ error: "Exercício não encontrado" }, { status: 404 });
+    if (existing.workout.trainingPlan.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
 
     await prisma.trainingExercise.delete({ where: { id } });
     return NextResponse.json({ success: true });

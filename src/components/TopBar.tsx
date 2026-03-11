@@ -51,15 +51,18 @@ export default function TopBar() {
       if (d?.id) setUser(d);
     }).catch(() => {});
 
-    // Poll unread notifications
+    // Poll unread notifications (pause when tab is hidden)
     const fetchUnread = () => {
+      if (document.hidden) return;
       fetch("/api/notifications").then(r => r.json()).then(d => {
         if (typeof d.unreadCount === "number") setUnreadNotifs(d.unreadCount);
       }).catch(() => {});
     };
     fetchUnread();
     const interval = setInterval(fetchUnread, 15000);
-    return () => clearInterval(interval);
+    const onVisibilityChange = () => { if (!document.hidden) fetchUnread(); };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => { clearInterval(interval); document.removeEventListener("visibilitychange", onVisibilityChange); };
   }, []);
 
   useEffect(() => {

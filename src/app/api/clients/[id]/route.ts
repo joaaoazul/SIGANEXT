@@ -134,7 +134,13 @@ export async function PUT(
       details: { fields: Object.keys(data) },
     });
 
-    return NextResponse.json(client);
+    return NextResponse.json({
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      phone: client.phone,
+      status: client.status,
+    });
   } catch {
     return NextResponse.json({ error: "Erro ao atualizar cliente" }, { status: 500 });
   }

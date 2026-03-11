@@ -16,6 +16,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "trainingPlanId e name são obrigatórios" }, { status: 400 });
     }
 
+    // Ownership check: verify plan belongs to this user
+    const plan = await prisma.trainingPlan.findUnique({ where: { id: trainingPlanId }, select: { userId: true } });
+    if (!plan) return NextResponse.json({ error: "Plano não encontrado" }, { status: 404 });
+    if (plan.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
+
     // Get current workout count for ordering
     const count = await prisma.workout.count({ where: { trainingPlanId } });
 
@@ -63,6 +70,13 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "ID obrigatório" }, { status: 400 });
+
+    // Ownership check: verify workout's plan belongs to this user
+    const workout = await prisma.workout.findUnique({ where: { id }, select: { trainingPlan: { select: { userId: true } } } });
+    if (!workout) return NextResponse.json({ error: "Treino não encontrado" }, { status: 404 });
+    if (workout.trainingPlan.userId !== user.id && user.role !== "superadmin") {
+      return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
+    }
 
     await prisma.workout.delete({ where: { id } });
     return NextResponse.json({ success: true });

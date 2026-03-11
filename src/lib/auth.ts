@@ -48,7 +48,8 @@ export async function getUser(_request?: unknown): Promise<UserPayload | null> {
         where: { id: payload.id },
         select: { tokenVersion: true },
       });
-      if (client && client.tokenVersion !== (payload.tokenVersion ?? 0)) {
+      if (!client) return null; // Deleted/anonymized user
+      if (client.tokenVersion !== (payload.tokenVersion ?? 0)) {
         return null; // Token was invalidated
       }
     } else {
@@ -56,12 +57,13 @@ export async function getUser(_request?: unknown): Promise<UserPayload | null> {
         where: { id: payload.id },
         select: { tokenVersion: true },
       });
-      if (user && user.tokenVersion !== (payload.tokenVersion ?? 0)) {
+      if (!user) return null; // Deleted user
+      if (user.tokenVersion !== (payload.tokenVersion ?? 0)) {
         return null; // Token was invalidated
       }
     }
   } catch {
-    // If DB check fails, still allow the request (graceful degradation)
+    return null; // DB failure = deny access (fail-closed)
   }
 
   return payload;

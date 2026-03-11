@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       email: payload.email,
       name: payload.name,
       role: payload.role,
+      tokenVersion: payload.tokenVersion ?? 0,
     })
       .setProtectedHeader({ alg: "HS256" })
       .setExpirationTime("7d")

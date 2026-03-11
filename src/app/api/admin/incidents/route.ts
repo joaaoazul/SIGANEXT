@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get("page") || "1");
-    const limit = parseInt(url.searchParams.get("limit") || "20");
+    const limit = Math.min(parseInt(url.searchParams.get("limit") || "20"), 100);
     const status = url.searchParams.get("status") || "";
     const severity = url.searchParams.get("severity") || "";
     const category = url.searchParams.get("category") || "";

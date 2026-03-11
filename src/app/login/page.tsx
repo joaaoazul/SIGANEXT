@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Dumbbell, Eye, EyeOff, Shield, LayoutDashboard } from "lucide-react";
 
 export default function LoginPage() {
@@ -124,17 +125,18 @@ export default function LoginPage() {
           </h2>
 
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg p-3 mb-4">
+            <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg p-3 mb-4">
               <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+              <label htmlFor="login-email" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Email
               </label>
               <input
+                id="login-email"
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -145,11 +147,12 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+              <label htmlFor="login-password" className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Password
               </label>
               <div className="relative">
                 <input
+                  id="login-password"
                   type={showPassword ? "text" : "password"}
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -160,6 +163,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Ocultar password" : "Mostrar password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -189,9 +193,9 @@ export default function LoginPage() {
           © 2026 joaoazuldev. Todos os direitos reservados.
         </p>
         <div className="flex justify-center gap-4 mt-2 text-xs">
-          <a href="/privacy" className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition">Privacidade</a>
-          <a href="/cookies" className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition">Cookies</a>
-          <a href="/termos" className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition">Termos</a>
+          <Link href="/privacy" className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition">Privacidade</Link>
+          <Link href="/cookies" className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition">Cookies</Link>
+          <Link href="/termos" className="text-gray-400 dark:text-gray-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition">Termos</Link>
         </div>
       </div>
     </div>
