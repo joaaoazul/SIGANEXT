@@ -25,94 +25,34 @@ export async function POST(request: NextRequest) {
     const consentIp = getClientIP(request);
     const now = new Date();
 
-    // For clients, JWT id = Client.id (not User.id), so use email to find User
+    const consentData = {
+      consentDate: now,
+      consentIp: consentIp || null,
+      consentVersion: version,
+    };
+
     if (user.role === "client") {
-      // Check if User record is suspended due to consent withdrawal
-      const userRecord = await prisma.user.findFirst({
+      // For clients, JWT id = Client.id, so use email to find+update User record
+      await prisma.user.updateMany({
         where: { email: user.email },
-        select: { id: true, role: true, permissions: true },
+        data: consentData,
       });
 
-      if (userRecord) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const updateData: any = {
-          consentDate: now,
-          consentIp: consentIp || null,
-          consentVersion: version,
-        };
-
-        // Restore role if suspended due to consent withdrawal
-        if (userRecord.role === "suspended") {
-          let previousRole = "client";
-          try {
-            const perms = JSON.parse(userRecord.permissions || "{}");
-            if (perms.previousRole) previousRole = perms.previousRole;
-          } catch { /* ignore */ }
-          updateData.role = previousRole;
-          updateData.permissions = null;
-        }
-
-        await prisma.user.update({
-          where: { id: userRecord.id },
-          data: updateData,
-        });
-      }
-
-      // Update Client record and restore status if inactive
+      // Also update Client record
       try {
         const clientId = await getClientId(user);
-        const clientRecord = await prisma.client.findUnique({
-          where: { id: clientId },
-          select: { status: true },
-        });
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const clientData: any = {
-          consentDate: now,
-          consentIp: consentIp || null,
-          consentVersion: version,
-        };
-
-        // Restore active status if was deactivated by consent withdrawal
-        if (clientRecord?.status === "inactive") {
-          clientData.status = "active";
-        }
-
         await prisma.client.update({
           where: { id: clientId },
-          data: clientData,
+          data: consentData,
         });
       } catch {
         // client record may not exist
       }
     } else {
-      // PT/Admin — update User record directly (user.id = User.id)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const updateData: any = {
-        consentDate: now,
-        consentIp: consentIp || null,
-        consentVersion: version,
-      };
-
-      // Restore role if suspended due to consent withdrawal
-      const userRecord = await prisma.user.findUnique({
-        where: { id: user.id },
-        select: { role: true, permissions: true },
-      });
-
-      if (userRecord?.role === "suspended") {
-        let previousRole = "employee";
-        try {
-          const perms = JSON.parse(userRecord.permissions || "{}");
-          if (perms.previousRole) previousRole = perms.previousRole;
-        } catch { /* ignore */ }
-        updateData.role = previousRole;
-        updateData.permissions = null;
-      }
-
+      // PT/Admin — update User record directly
       await prisma.user.update({
         where: { id: user.id },
-        data: updateData,
+        data: consentData,
       });
     }
 

@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
           consentDate: null,
           consentIp: null,
           consentVersion: null,
+          tokenVersion: { increment: 1 }, // Invalidate all existing JWTs
         },
       });
 
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
           consentDate: null,
           consentIp: null,
           consentVersion: null,
+          tokenVersion: { increment: 1 }, // Invalidate all existing JWTs
           permissions: JSON.stringify({ previousRole: "client" }),
         },
       });
@@ -92,6 +94,7 @@ export async function POST(request: NextRequest) {
           consentDate: null,
           consentIp: null,
           consentVersion: null,
+          tokenVersion: { increment: 1 }, // Invalidate all existing JWTs
           permissions: JSON.stringify({ previousRole: user.role }),
         },
       });

@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
       }
 
-      // Block suspended accounts (but allow consent-withdrawn users to log in for re-consent)
+      // Block ALL suspended accounts — consent-withdrawn users must be reactivated by admin
       if (user.role === "suspended") {
         let isConsentWithdrawal = false;
         try {
@@ -46,25 +46,20 @@ export async function POST(request: NextRequest) {
           if (perms.previousRole) isConsentWithdrawal = true;
         } catch { /* ignore */ }
 
-        if (!isConsentWithdrawal) {
-          return NextResponse.json(
-            { error: "A sua conta está suspensa. Contacte o suporte para mais informações." },
-            { status: 403 }
-          );
-        }
-
-        // Consent-withdrawn user: let them log in with their previous role
-        // so they can see the reconsent banner and re-accept the policy
+        return NextResponse.json(
+          { error: isConsentWithdrawal
+              ? "O seu consentimento foi revogado. A sua conta está suspensa. Contacte o suporte para reativar."
+              : "A sua conta está suspensa. Contacte o suporte para mais informações."
+          },
+          { status: 403 }
+        );
       }
 
       // For client-role users, resolve the Client record so we use Client.id
       // (all athlete APIs key data by clientId, not userId)
       let tokenId = user.id;
       let tokenVersion = user.tokenVersion ?? 0;
-      const effectiveRole = user.role === "suspended"
-        ? (() => { try { return JSON.parse(user.permissions || "{}").previousRole || "client"; } catch { return "client"; } })()
-        : user.role;
-      if (effectiveRole === "client") {
+      if (user.role === "client") {
         const client = await prisma.client.findUnique({ where: { email } });
         if (client) {
           tokenId = client.id;
@@ -77,12 +72,12 @@ export async function POST(request: NextRequest) {
         id: tokenId,
         email: user.email,
         name: user.name,
-        role: effectiveRole,
+        role: user.role,
         tokenVersion,
       });
 
       const response = NextResponse.json({
-        user: { id: tokenId, email: user.email, name: user.name, role: effectiveRole },
+        user: { id: tokenId, email: user.email, name: user.name, role: user.role },
       });
 
       response.cookies.set("token", token, {

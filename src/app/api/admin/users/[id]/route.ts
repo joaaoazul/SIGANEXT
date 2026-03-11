@@ -129,6 +129,17 @@ export async function PUT(
       });
     }
 
+    // When reactivating a suspended account, restore Client status and clear permissions
+    if (body.role && target.role === "suspended" && body.role !== "suspended") {
+      data.permissions = null; // Clear the previousRole metadata
+      await prisma.user.update({ where: { id }, data: { permissions: null } });
+      // Also restore Client record if it was a client
+      await prisma.client.updateMany({
+        where: { email: target.email },
+        data: { status: "active" },
+      });
+    }
+
     logAuditFromRequest(request, "admin_update_user", {
       entity: "User",
       entityId: id,

@@ -10,14 +10,21 @@ export default function ReconsentBanner() {
 
   useEffect(() => {
     fetch("/api/auth/me")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) return null; // Not authenticated or error — don't show banner
+        return r.json();
+      })
       .then((data) => {
-        if (!data.consentVersion) {
-          // Consent was revoked or never given — needs re-consent
-          setUserVersion(null);
-          setShow(true);
-        } else if (data.consentVersion !== CURRENT_POLICY_VERSION) {
+        if (!data) return; // API error or not authenticated
+        if (data.error) return; // Error response
+        // Only show banner if user has an outdated consent version
+        // (not for null/missing — that means account is suspended/revoked)
+        if (data.consentVersion && data.consentVersion !== CURRENT_POLICY_VERSION) {
           setUserVersion(data.consentVersion);
+          setShow(true);
+        } else if (!data.consentVersion && data.role) {
+          // User is logged in but has no consent version — needs to accept
+          setUserVersion(null);
           setShow(true);
         }
       })
@@ -34,11 +41,12 @@ export default function ReconsentBanner() {
       });
       if (res.ok) {
         setShow(false);
-        // Reload page to refresh all data (role may have been restored)
-        window.location.reload();
+        // Force full page reload to refresh auth state and all data
+        setTimeout(() => window.location.reload(), 100);
+        return;
       }
     } catch {
-      // silently fail
+      // Network error
     }
     setAccepting(false);
   };
