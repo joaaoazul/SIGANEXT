@@ -48,6 +48,7 @@ ios/App/Pods/
 ios/App/App/public/
 ios/App/output/
 android/.gradle/
+android/.idea/
 android/app/build/
 android/app/src/main/assets/public/
 android/build/
