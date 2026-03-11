@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { z } from "zod";
 import { logAuditFromRequest } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const user = await getUser(request);
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(plan, { status: 201 });
   } catch (e) {
-    console.error(e);
+    logger.exception("Unexpected error", e);
     return NextResponse.json({ error: "Erro ao criar plano" }, { status: 500 });
   }
 }

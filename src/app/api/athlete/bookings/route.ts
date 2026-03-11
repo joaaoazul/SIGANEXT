@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET /api/athlete/bookings - Get athlete's bookings
 export async function GET(request: NextRequest) {
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ bookings, availableSlots });
   } catch (error) {
-    console.error("Athlete bookings GET error:", error);
+    logger.exception("Athlete bookings GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {
-    console.error("Athlete bookings POST error:", error);
+    logger.exception("Athlete bookings POST error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

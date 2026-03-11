@@ -1,5 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { logger } from "@/lib/logger";
 
 // ============================================================================
 // 1. CLIENTE SUPABASE ORIGINAL (Mantido para não quebrar BD/Auth no resto da app)
@@ -78,6 +79,6 @@ export async function deleteFile(bucket: string, path: string) {
     
     await S3.send(command);
   } catch (error: any) {
-    console.error("Delete file error:", error.message);
+    logger.error("Delete file error", { detail: error.message });
   }
 }

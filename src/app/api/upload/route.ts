@@ -4,6 +4,7 @@ import { uploadFile, BUCKET_NAME } from "@/lib/supabase";
 import sharp from "sharp";
 import { validateUploadFolder } from "@/lib/security";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 const MAX_DIMENSION = 1920;
 const QUALITY = 80;
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     // Validate folder path to prevent path injection
     if (!validateUploadFolder(folder)) {
-      console.error("Upload rejected: invalid folder pattern:", folder);
+      logger.warn("Upload rejected: invalid folder pattern", { folder });
       return NextResponse.json({ error: "Pasta inválida" }, { status: 400 });
     }
 
@@ -77,8 +78,8 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : String(error);
     const errStack = error instanceof Error ? error.stack : undefined;
-    console.error("Upload error:", errMsg);
-    if (errStack) console.error("Upload error stack:", errStack);
+    logger.error("Upload error", { detail: errMsg });
+    if (errStack) logger.error("Upload error stack", { detail: errStack });
     return NextResponse.json({ error: "Erro ao fazer upload" }, { status: 500 });
   }
 }

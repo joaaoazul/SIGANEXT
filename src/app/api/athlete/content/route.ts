@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET /api/athlete/content - Get published content for athletes
 export async function GET(request: NextRequest) {
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       types: types.map((t) => t.type).filter(Boolean),
     });
   } catch (error) {
-    console.error("Athlete content GET error:", error);
+    logger.exception("Athlete content GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

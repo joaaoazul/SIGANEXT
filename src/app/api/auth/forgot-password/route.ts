@@ -5,6 +5,7 @@ import { sendPasswordResetLinkEmail } from "@/lib/email";
 import { normalizeEmail } from "@/lib/security";
 import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
+import { logger } from "@/lib/logger";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
       recipientName: user.name,
       resetUrl,
     }).catch((err) => {
-      console.error("Failed to send password reset email:", err);
+      logger.exception("Failed to send password reset email", err);
     });
 
     return NextResponse.json(
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Forgot password error:", error);
+    logger.exception("Forgot password error", error);
     return NextResponse.json(
       { message: "Se o email existir, receberás um link de recuperação." },
       { status: 200 }

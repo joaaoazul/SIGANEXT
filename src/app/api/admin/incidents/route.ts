@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, isAdmin } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Admin incidents error:", error);
+    logger.exception("Admin incidents error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(incident, { status: 201 });
   } catch (error) {
-    console.error("Create incident error:", error);
+    logger.exception("Create incident error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

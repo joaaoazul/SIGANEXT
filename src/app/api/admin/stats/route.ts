@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, isAdmin } from "@/lib/auth";
 import { cached } from "@/lib/cache";
+import { logger } from "@/lib/logger";
 
 export async function GET() {
   try {
@@ -97,7 +98,7 @@ export async function GET() {
 
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("Admin stats error:", error);
+    logger.exception("Admin stats error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import { getUser, isAdmin } from "@/lib/auth";
 import os from "os";
 import fs from "fs";
 import { execSync } from "child_process";
+import { logger } from "@/lib/logger";
 
 // GET /api/admin/system — Server stats (admin only)
 export async function GET() {
@@ -177,7 +178,7 @@ export async function GET() {
       lastDeploy,
     });
   } catch (error) {
-    console.error("System stats error:", error);
+    logger.exception("System stats error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

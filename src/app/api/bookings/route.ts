@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const bookingSlotSchema = z.object({
   date: z.string().optional(),
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(slots);
   } catch (error) {
-    console.error("Bookings GET error:", error);
+    logger.exception("Bookings GET error", error);
     return NextResponse.json({ error: "Erro ao carregar agendamentos" }, { status: 500 });
   }
 }
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
       await prisma.bookingSlot.createMany({ data: slotsToCreate });
       return NextResponse.json({ created: slotsToCreate.length, message: `${slotsToCreate.length} slots criados` }, { status: 201 });
     } catch (error) {
-      console.error("Bookings recurring create error:", error);
+      logger.exception("Bookings recurring create error", error);
       return NextResponse.json({ error: "Erro ao criar slots recorrentes" }, { status: 500 });
     }
   }
@@ -126,7 +127,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(slot, { status: 201 });
   } catch (error) {
-    console.error("Bookings create error:", error);
+    logger.exception("Bookings create error", error);
     return NextResponse.json({ error: "Erro ao criar agendamento" }, { status: 500 });
   }
 }

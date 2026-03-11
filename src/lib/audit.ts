@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 import { getClientIP } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 interface AuditEntry {
   action: string;
@@ -33,7 +34,7 @@ export function logAudit(entry: AuditEntry) {
       },
     })
     .catch((err) => {
-      console.error("[AuditLog] Failed to write entry:", err);
+      logger.exception("[AuditLog] Failed to write entry", err);
     });
 }
 

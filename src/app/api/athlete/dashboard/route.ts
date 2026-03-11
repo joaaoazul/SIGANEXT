@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET /api/athlete/dashboard - Get athlete's dashboard data
 export async function GET(request: NextRequest) {
@@ -127,7 +128,7 @@ export async function GET(request: NextRequest) {
       recentContent,
     });
   } catch (error) {
-    console.error("Athlete dashboard GET error:", error);
+    logger.exception("Athlete dashboard GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

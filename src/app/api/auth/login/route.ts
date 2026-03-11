@@ -5,6 +5,7 @@ import { signToken } from "@/lib/auth";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { logAuditFromRequest } from "@/lib/audit";
 import { normalizeEmail } from "@/lib/security";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error: unknown) {
     const fullMsg = error instanceof Error ? error.message : String(error);
-    console.error("Login error:", fullMsg);
+    logger.error("Login error", { detail: fullMsg });
     return NextResponse.json(
       { error: "Erro interno do servidor" },
       { status: 500 }

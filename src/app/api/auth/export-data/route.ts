@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeFilename } from "@/lib/security";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -167,7 +168,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Export data error:", error);
+    logger.exception("Export data error", error);
     return NextResponse.json(
       { error: "Erro ao exportar dados" },
       { status: 500 }

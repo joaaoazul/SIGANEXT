@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // PUT /api/athlete/food-log/[id] — Update meal log (notes, photos, time)
 export async function PUT(
@@ -45,7 +46,7 @@ export async function PUT(
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Food log PUT error:", error);
+    logger.exception("Food log PUT error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -73,7 +74,7 @@ export async function DELETE(
     await prisma.foodLog.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Food log DELETE error:", error);
+    logger.exception("Food log DELETE error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

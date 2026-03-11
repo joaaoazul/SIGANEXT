@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // POST - Add workout to a training plan
 export async function POST(request: NextRequest) {
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(workout, { status: 201 });
   } catch (e) {
-    console.error("Error creating workout:", e);
+    logger.exception("Error creating workout", e);
     return NextResponse.json({ error: "Erro ao criar treino" }, { status: 500 });
   }
 }

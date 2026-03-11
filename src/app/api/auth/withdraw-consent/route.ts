@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/auth/withdraw-consent — Withdraw RGPD consent
@@ -120,7 +121,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Withdraw consent error:", error);
+    logger.exception("Withdraw consent error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 // GET /api/notifications
 export async function GET(request: NextRequest) {
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ notifications, unreadCount });
   } catch (error) {
-    console.error("Notifications GET error:", error);
+    logger.exception("Notifications GET error", error);
     return NextResponse.json({ error: "Erro ao carregar notificações" }, { status: 500 });
   }
 }
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(notification, { status: 201 });
   } catch (error) {
-    console.error("Notification create error:", error);
+    logger.exception("Notification create error", error);
     return NextResponse.json({ error: "Erro ao criar notificação" }, { status: 500 });
   }
 }

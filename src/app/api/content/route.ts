@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const contentSchema = z.object({
   title: z.string().min(1, "Título é obrigatório").max(300),
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
       headers: { "X-Total-Count": total.toString() },
     });
   } catch (error) {
-    console.error("Content GET error:", error);
+    logger.exception("Content GET error", error);
     return NextResponse.json([], { status: 200 });
   }
 }

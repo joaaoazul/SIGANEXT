@@ -4,6 +4,7 @@ import { getUser, getClientId } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { logAudit } from "@/lib/audit";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Delete account error:", error);
+    logger.exception("Delete account error", error);
     return NextResponse.json(
       { error: "Erro ao eliminar conta" },
       { status: 500 }

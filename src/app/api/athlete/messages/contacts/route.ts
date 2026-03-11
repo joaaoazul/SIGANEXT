@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET - Get available contacts for athlete (PT + other athletes managed by same PT)
 export async function GET(request: NextRequest) {
@@ -68,7 +69,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(contacts);
   } catch (error) {
-    console.error("Athlete contacts GET error:", error);
+    logger.exception("Athlete contacts GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

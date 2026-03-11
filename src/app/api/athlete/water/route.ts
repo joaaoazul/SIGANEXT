@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 // GET /api/athlete/water?date=2025-03-01
 export async function GET(request: NextRequest) {
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ date: dateStr, entries, totalMl, glasses: entries.length });
   } catch (error) {
-    console.error("Water GET error:", error);
+    logger.exception("Water GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ entry, totalMl, glasses: all.length }, { status: 201 });
   } catch (error) {
-    console.error("Water POST error:", error);
+    logger.exception("Water POST error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -113,7 +114,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ totalMl, glasses: all.length });
   } catch (error) {
-    console.error("Water DELETE error:", error);
+    logger.exception("Water DELETE error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

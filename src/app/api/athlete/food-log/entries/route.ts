@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // POST /api/athlete/food-log/entries — Add entry to a meal log
 export async function POST(request: NextRequest) {
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(entry, { status: 201 });
   } catch (error) {
-    console.error("Food log entry POST error:", error);
+    logger.exception("Food log entry POST error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -85,7 +86,7 @@ export async function DELETE(request: NextRequest) {
     await prisma.foodLogEntry.delete({ where: { id: entryId } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Food log entry DELETE error:", error);
+    logger.exception("Food log entry DELETE error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

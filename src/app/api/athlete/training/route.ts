@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 // GET /api/athlete/training - Get athlete's training plan
 export async function GET(request: NextRequest) {
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(assignments);
   } catch (error) {
-    console.error("Athlete training GET error:", error);
+    logger.exception("Athlete training GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

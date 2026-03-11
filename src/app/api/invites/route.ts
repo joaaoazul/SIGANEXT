@@ -4,6 +4,7 @@ import { getUser } from "@/lib/auth";
 import crypto from "crypto";
 import { sendInviteEmail } from "@/lib/email";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const inviteSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
     });
     emailSent = true;
   } catch (emailErr) {
-    console.error("Invite email failed:", emailErr);
+    logger.exception("Invite email failed", emailErr);
   }
 
   return NextResponse.json({

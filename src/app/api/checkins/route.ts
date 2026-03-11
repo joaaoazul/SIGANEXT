@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const checkinSchema = z.object({
   clientId: z.string().min(1, "clientId é obrigatório"),
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ checkins, total });
   } catch (error) {
-    console.error("CheckIn GET error:", error);
+    logger.exception("CheckIn GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(checkin, { status: 201 });
   } catch (error) {
-    console.error("CheckIn POST error:", error);
+    logger.exception("CheckIn POST error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

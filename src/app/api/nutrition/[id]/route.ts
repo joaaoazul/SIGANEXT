@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const nutritionPlanUpdateSchema = z.object({
   name: z.string().min(1).max(200),
@@ -162,7 +163,7 @@ export async function PUT(
 
     return NextResponse.json(plan);
   } catch (e) {
-    console.error("Error updating nutrition plan:", e);
+    logger.exception("Error updating nutrition plan", e);
     return NextResponse.json({ error: "Erro ao atualizar plano" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET /api/clients/[id]/food-logs?date=2025-03-01&days=7
 // Trainer views a client's food diary
@@ -102,7 +103,7 @@ export async function GET(
 
     return NextResponse.json({ client, days: result });
   } catch (error) {
-    console.error("Client food logs GET error:", error);
+    logger.exception("Client food logs GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

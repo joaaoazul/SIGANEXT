@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET /api/auth/me
 export async function GET(request: NextRequest) {
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
         select: { id: true, name: true, email: true, phone: true, avatar: true, createdAt: true, consentVersion: true },
       });
       if (!data) {
-        console.error("auth/me: Client not found in DB for id:", user.id);
+        logger.error("auth/me: Client not found in DB for id", { userId: user.id });
         return NextResponse.json({ role: "client", id: user.id, name: user.name, email: user.email });
       }
       return NextResponse.json({ ...data, role: "client" });
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error("auth/me GET error:", error);
+    logger.exception("auth/me GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

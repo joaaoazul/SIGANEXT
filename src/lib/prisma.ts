@@ -1,6 +1,7 @@
 import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
+import { logger } from "@/lib/logger";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -21,7 +22,7 @@ function createPrismaClient() {
 
   // Log pool errors to prevent unhandled rejections
   pool.on("error", (err) => {
-    console.error("[PG Pool] Unexpected error on idle client:", err);
+    logger.exception("[PG Pool] Unexpected error on idle client", err);
   });
 
   const adapter = new PrismaPg(pool);

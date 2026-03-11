@@ -3,6 +3,7 @@ import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getUser, getClientId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sanitizeFilePath } from "@/lib/security";
+import { logger } from "@/lib/logger";
 
 const S3 = new S3Client({
   region: "auto",
@@ -100,7 +101,7 @@ export async function GET(
     if (error.name === "NoSuchKey" || error.Code === "NoSuchKey") {
       return NextResponse.json({ error: "Ficheiro não encontrado" }, { status: 404 });
     }
-    console.error("File proxy error:", error?.message || error);
+    logger.exception("File proxy error", error);
     return NextResponse.json({ error: "Erro ao servir ficheiro" }, { status: 500 });
   }
 }

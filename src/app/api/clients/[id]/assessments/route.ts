@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export async function POST(
   request: NextRequest,
@@ -78,7 +79,7 @@ export async function POST(
 
     return NextResponse.json(assessment, { status: 201 });
   } catch (error) {
-    console.error("Assessment create error:", error);
+    logger.exception("Assessment create error", error);
     return NextResponse.json({ error: "Erro ao criar avaliação" }, { status: 500 });
   }
 }

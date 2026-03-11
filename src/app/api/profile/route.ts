@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 // GET /api/profile — full profile with stats
 export async function GET(request: NextRequest) {
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
           prisma.trainingPlanAssignment.count({ where: { clientId, isActive: true } }),
         ]);
       } catch (e) {
-        console.error("profile stats error:", e);
+        logger.exception("profile stats error", e);
       }
 
       logAuditFromRequest(request, "view_profile", {
@@ -140,7 +141,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("profile GET error:", error);
+    logger.exception("profile GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -217,7 +218,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("profile PUT error:", error);
+    logger.exception("profile PUT error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

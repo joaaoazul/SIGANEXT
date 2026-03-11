@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET - Messages in conversation
 export async function GET(request: NextRequest, { params }: { params: Promise<{ conversationId: string }> }) {
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(messages.reverse());
   } catch (error) {
-    console.error("Conversation messages GET error:", error);
+    logger.exception("Conversation messages GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
-    console.error("Send message error:", error);
+    logger.exception("Send message error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

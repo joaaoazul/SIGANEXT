@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { logAuditFromRequest } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Reconsent error:", error);
+    logger.exception("Reconsent error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

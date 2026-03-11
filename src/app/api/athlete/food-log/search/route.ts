@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET /api/athlete/food-log/search?q=frango&limit=20
 // Searches the food catalogue for adding to food logs
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(foods);
   } catch (error) {
-    console.error("Food search error:", error);
+    logger.exception("Food search error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
 import { clientUpdateSchema } from "@/lib/schemas/client";
+import { logger } from "@/lib/logger";
 
 export async function GET(
   request: NextRequest,
@@ -242,7 +243,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Client delete error:", error);
+    logger.exception("Client delete error", error);
     return NextResponse.json({ error: "Erro ao eliminar cliente" }, { status: 500 });
   }
 }

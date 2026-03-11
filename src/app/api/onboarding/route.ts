@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { sendWelcomeEmail } from "@/lib/email";
 import { onboardingSchema } from "@/lib/schemas/client";
 import { getClientIP } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -191,12 +192,12 @@ export async function POST(request: NextRequest) {
         trainerName: trainer?.name || "O teu treinador",
       });
     } catch (emailErr) {
-      console.error("Welcome email failed:", emailErr);
+      logger.exception("Welcome email failed", emailErr);
     }
 
     return NextResponse.json({ message: "Registo completo", clientId: client.id });
   } catch (error) {
-    console.error("Onboarding error:", error);
+    logger.exception("Onboarding error", error);
     const msg = error instanceof Error ? error.message : "";
     if (msg.includes("Unique constraint")) {
       return NextResponse.json({ error: "Email já registado no sistema" }, { status: 400 });

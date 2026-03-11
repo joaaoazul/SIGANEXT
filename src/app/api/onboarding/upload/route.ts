@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { uploadFile, BUCKET_NAME } from "@/lib/supabase";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import sharp from "sharp";
+import { logger } from "@/lib/logger";
 
 const MAX_DIMENSION = 1920;
 const QUALITY = 80;
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url, label: safeLabel, path });
   } catch (error) {
-    console.error("Onboarding upload error:", error);
+    logger.exception("Onboarding upload error", error);
     return NextResponse.json({ error: "Erro ao fazer upload" }, { status: 500 });
   }
 }

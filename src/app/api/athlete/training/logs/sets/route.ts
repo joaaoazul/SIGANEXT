@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // POST /api/athlete/training/logs/sets - Log a completed set
 export async function POST(request: NextRequest) {
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(setLog, { status: 201 });
   } catch (error) {
-    console.error("Set log POST error:", error);
+    logger.exception("Set log POST error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

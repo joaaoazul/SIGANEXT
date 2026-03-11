@@ -5,6 +5,7 @@ import { validatePassword } from "@/lib/schemas/password";
 import { normalizeEmail } from "@/lib/security";
 import { logAuditFromRequest } from "@/lib/audit";
 import bcrypt from "bcryptjs";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/auth/reset-password
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: "Password alterada com sucesso." });
   } catch (error) {
-    console.error("Reset password error:", error);
+    logger.exception("Reset password error", error);
     return NextResponse.json(
       { error: "Erro interno do servidor" },
       { status: 500 }

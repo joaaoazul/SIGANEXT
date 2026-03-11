@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET - List conversations for current user
 export async function GET(request: NextRequest) {
@@ -77,7 +78,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(enriched);
   } catch (error) {
-    console.error("Messages GET error:", error);
+    logger.exception("Messages GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ conversationId: conversation.id }, { status: 201 });
   } catch (error) {
-    console.error("Create conversation error:", error);
+    logger.exception("Create conversation error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

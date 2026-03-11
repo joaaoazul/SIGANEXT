@@ -5,6 +5,7 @@ import { logAuditFromRequest } from "@/lib/audit";
 import { validatePassword } from "@/lib/schemas/password";
 import { sendPasswordResetEmail, sendAccountSuspendedEmail, sendAccountReactivatedEmail } from "@/lib/email";
 import bcrypt from "bcryptjs";
+import { logger } from "@/lib/logger";
 
 export async function GET(
   request: NextRequest,
@@ -300,7 +301,7 @@ export async function DELETE(
       return NextResponse.json({ success: true, action: "suspended" });
     }
   } catch (error) {
-    console.error("Admin delete user error:", error);
+    logger.exception("Admin delete user error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

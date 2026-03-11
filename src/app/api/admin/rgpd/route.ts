@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, isAdmin } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 // GET /api/admin/rgpd — RGPD compliance dashboard (admin only)
 export async function GET() {
@@ -195,7 +196,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("RGPD stats error:", error);
+    logger.exception("RGPD stats error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

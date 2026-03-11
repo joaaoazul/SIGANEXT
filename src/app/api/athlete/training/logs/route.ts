@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 
 // GET /api/athlete/training/logs - Get athlete's workout logs
 export async function GET(request: NextRequest) {
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(logs);
   } catch (error) {
-    console.error("Workout logs GET error:", error);
+    logger.exception("Workout logs GET error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
         where: { clientId },
         select: { id: true, isActive: true, trainingPlan: { select: { id: true, name: true, workouts: { select: { id: true } } } } },
       });
-      console.error("No assignment found for workout start", {
+      logger.error("No assignment found for workout start", {
         clientId,
         workoutId,
         existingAssignments: JSON.stringify(allAssignments),
@@ -129,7 +130,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(log, { status: 201 });
   } catch (error) {
-    console.error("Workout log POST error:", error);
+    logger.exception("Workout log POST error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -160,7 +161,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(log);
   } catch (error) {
-    console.error("Workout log PUT error:", error);
+    logger.exception("Workout log PUT error", error);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
