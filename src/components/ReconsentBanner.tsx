@@ -27,12 +27,16 @@ export default function ReconsentBanner() {
   const handleAccept = async () => {
     setAccepting(true);
     try {
-      await fetch("/api/auth/reconsent", {
+      const res = await fetch("/api/auth/reconsent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ version: CURRENT_POLICY_VERSION }),
       });
-      setShow(false);
+      if (res.ok) {
+        setShow(false);
+        // Reload page to refresh all data (role may have been restored)
+        window.location.reload();
+      }
     } catch {
       // silently fail
     }
