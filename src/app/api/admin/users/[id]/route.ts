@@ -117,6 +117,18 @@ export async function PUT(
       select: { id: true, name: true, email: true, role: true, phone: true },
     });
 
+    // Sync password/tokenVersion changes to Client record (athletes have dual records)
+    if (body.newPassword && target) {
+      const hashedPw = data.password as string;
+      await prisma.client.updateMany({
+        where: { email: target.email },
+        data: {
+          password: hashedPw,
+          tokenVersion: { increment: 1 },
+        },
+      });
+    }
+
     logAuditFromRequest(request, "admin_update_user", {
       entity: "User",
       entityId: id,

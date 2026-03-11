@@ -60,12 +60,17 @@ export async function POST(request: NextRequest) {
       // For client-role users, resolve the Client record so we use Client.id
       // (all athlete APIs key data by clientId, not userId)
       let tokenId = user.id;
+      let tokenVersion = user.tokenVersion ?? 0;
       const effectiveRole = user.role === "suspended"
         ? (() => { try { return JSON.parse(user.permissions || "{}").previousRole || "client"; } catch { return "client"; } })()
         : user.role;
       if (effectiveRole === "client") {
         const client = await prisma.client.findUnique({ where: { email } });
-        if (client) tokenId = client.id;
+        if (client) {
+          tokenId = client.id;
+          // CRITICAL: Use Client.tokenVersion because getUser() checks Client table for athletes
+          tokenVersion = client.tokenVersion ?? 0;
+        }
       }
 
       const token = signToken({
@@ -73,7 +78,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.name,
         role: effectiveRole,
-        tokenVersion: user.tokenVersion ?? 0,
+        tokenVersion,
       });
 
       const response = NextResponse.json({

@@ -48,6 +48,12 @@ export async function PUT(request: NextRequest) {
       data: { password: hashed, tokenVersion: newVersion },
     });
 
+    // Sync password and tokenVersion to User record (athletes have dual records)
+    await prisma.user.updateMany({
+      where: { email: user.email },
+      data: { password: hashed, tokenVersion: newVersion },
+    });
+
     logAuditFromRequest(request, "change_password", {
       entity: "User", userId: user.id, userEmail: user.email, userRole: user.role,
     });
