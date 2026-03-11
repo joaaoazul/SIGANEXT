@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
+import { clientUpdateSchema } from "@/lib/schemas/client";
 
 export async function GET(
   request: NextRequest,
@@ -68,7 +69,17 @@ export async function PUT(
     if (user.role === "client") return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
 
     const { id } = await params;
-    const data = await request.json();
+    const raw = await request.json();
+
+    // Validate input with Zod schema
+    const parsed = clientUpdateSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Dados inválidos", details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+    const data = parsed.data;
 
     // Verify ownership
     const existing = await prisma.client.findFirst({ where: { id, managerId: user.id } });
@@ -79,16 +90,16 @@ export async function PUT(
       data: {
         name: data.name,
         email: data.email,
-        phone: data.phone || null,
+        phone: data.phone ?? null,
         dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
-        gender: data.gender || null,
-        notes: data.notes || null,
-        status: data.status,
-        height: data.height ? parseFloat(data.height) : null,
-        weight: data.weight ? parseFloat(data.weight) : null,
-        bodyFat: data.bodyFat ? parseFloat(data.bodyFat) : null,
-        plan: data.plan || null,
-        paymentStatus: data.paymentStatus,
+        gender: data.gender ?? null,
+        notes: data.notes ?? null,
+        status: data.status ?? undefined,
+        height: data.height ?? null,
+        weight: data.weight ?? null,
+        bodyFat: data.bodyFat ?? null,
+        plan: data.plan ?? null,
+        paymentStatus: data.paymentStatus ?? undefined,
         // Anamnesis - Medical
         medicalConditions: data.medicalConditions ?? undefined,
         medications: data.medications ?? undefined,
@@ -97,29 +108,29 @@ export async function PUT(
         surgeries: data.surgeries ?? undefined,
         familyHistory: data.familyHistory ?? undefined,
         bloodPressure: data.bloodPressure ?? undefined,
-        heartRate: data.heartRate !== undefined ? (data.heartRate ? parseInt(data.heartRate) : null) : undefined,
+        heartRate: data.heartRate ?? undefined,
         // Anamnesis - Lifestyle
         occupation: data.occupation ?? undefined,
-        sleepHours: data.sleepHours !== undefined ? (data.sleepHours ? parseFloat(data.sleepHours) : null) : undefined,
-        stressLevel: data.stressLevel !== undefined ? (data.stressLevel ? parseInt(data.stressLevel) : null) : undefined,
+        sleepHours: data.sleepHours ?? undefined,
+        stressLevel: data.stressLevel ?? undefined,
         smokingStatus: data.smokingStatus ?? undefined,
         alcoholConsumption: data.alcoholConsumption ?? undefined,
         activityLevel: data.activityLevel ?? undefined,
         // Anamnesis - Sports
         trainingExperience: data.trainingExperience ?? undefined,
-        trainingFrequency: data.trainingFrequency !== undefined ? (data.trainingFrequency ? parseInt(data.trainingFrequency) : null) : undefined,
+        trainingFrequency: data.trainingFrequency ?? undefined,
         preferredTraining: data.preferredTraining ?? undefined,
         sportHistory: data.sportHistory ?? undefined,
         // Anamnesis - Goals
         primaryGoal: data.primaryGoal ?? undefined,
         secondaryGoal: data.secondaryGoal ?? undefined,
-        targetWeight: data.targetWeight !== undefined ? (data.targetWeight ? parseFloat(data.targetWeight) : null) : undefined,
+        targetWeight: data.targetWeight ?? undefined,
         motivation: data.motivation ?? undefined,
         // Anamnesis - Nutrition
         dietaryRestrictions: data.dietaryRestrictions ?? undefined,
         foodAllergies: data.foodAllergies ?? undefined,
-        mealsPerDay: data.mealsPerDay !== undefined ? (data.mealsPerDay ? parseInt(data.mealsPerDay) : null) : undefined,
-        waterIntake: data.waterIntake !== undefined ? (data.waterIntake ? parseFloat(data.waterIntake) : null) : undefined,
+        mealsPerDay: data.mealsPerDay ?? undefined,
+        waterIntake: data.waterIntake ?? undefined,
         supplementsUsed: data.supplementsUsed ?? undefined,
       },
     });

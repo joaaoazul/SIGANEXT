@@ -47,7 +47,13 @@ export async function GET(
     if (!targetUser) {
       return NextResponse.json({ error: "Utilizador não encontrado" }, { status: 404 });
     }
-
+    logAuditFromRequest(request, "admin_view_user", {
+      entity: "User",
+      entityId: id,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+    });
     return NextResponse.json(targetUser);
   } catch {
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });

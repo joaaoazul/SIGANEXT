@@ -27,8 +27,9 @@ export const ALLOWED_IMAGE_TYPES = [
 ] as const;
 
 /** JWT / auth */
-export const JWT_EXPIRY = "7d";
-export const JWT_REFRESH_THRESHOLD_SECS = 2 * 24 * 60 * 60; // 2 days
+export const JWT_EXPIRY = "4h";
+export const JWT_COOKIE_MAX_AGE = 4 * 60 * 60; // 4 hours in seconds
+export const JWT_REFRESH_THRESHOLD_SECS = 30 * 60; // 30 minutes
 
 /** Data retention */
 export const DATA_RETENTION_DAYS = 730; // 2 years

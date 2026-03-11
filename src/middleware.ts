@@ -130,8 +130,8 @@ export async function middleware(request: NextRequest) {
     const { payload } = await jwtVerify(token, JWT_SECRET);
     const now = Math.floor(Date.now() / 1000);
     const expiresIn = ((payload.exp as number) || 0) - now;
-    const twoDays = 2 * 24 * 60 * 60;
-    if (expiresIn > 0 && expiresIn < twoDays) {
+    const thirtyMin = 30 * 60;
+    if (expiresIn > 0 && expiresIn < thirtyMin) {
       // Re-sign token (import jose's SignJWT for edge-compatible signing)
       const newToken = await new (await import("jose")).SignJWT({
         id: payload.id,
@@ -141,7 +141,7 @@ export async function middleware(request: NextRequest) {
         tokenVersion: payload.tokenVersion ?? 0,
       })
         .setProtectedHeader({ alg: "HS256" })
-        .setExpirationTime("7d")
+        .setExpirationTime("4h")
         .sign(JWT_SECRET);
 
       response = NextResponse.next();
@@ -149,7 +149,7 @@ export async function middleware(request: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7,
+        maxAge: 4 * 60 * 60,
         path: "/",
       });
     }

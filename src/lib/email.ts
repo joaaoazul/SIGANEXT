@@ -275,3 +275,29 @@ export async function sendAccountReactivatedEmail(params: {
     html,
   });
 }
+
+// ─── Email: Link de recuperação de password ───
+export async function sendPasswordResetLinkEmail(params: {
+  to: string;
+  recipientName: string;
+  resetUrl: string;
+}) {
+  const { to, recipientName, resetUrl } = params;
+
+  const html = wrapHtml(`
+    <h2>Recuperação de Password 🔐</h2>
+    <p>Olá ${recipientName},</p>
+    <p>Recebemos um pedido para redefinir a password da tua conta.</p>
+    <p style="text-align:center;margin:24px 0;"><a href="${resetUrl}" class="btn">Redefinir Password</a></p>
+    <p style="font-size:12px;color:#9ca3af;">Este link expira em <strong>1 hora</strong>. Se não solicitaste esta alteração, ignora este email.</p>
+    <hr class="divider">
+    <p style="font-size:11px;color:#9ca3af;word-break:break-all;">Se o botão não funcionar, copia este link: ${resetUrl}</p>
+  `);
+
+  return getResend().emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `${APP_NAME} — Recuperação de password`,
+    html,
+  });
+}

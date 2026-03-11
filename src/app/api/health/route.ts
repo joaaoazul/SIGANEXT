@@ -28,20 +28,12 @@ export async function GET() {
     {
       status,
       timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      version: process.env.npm_package_version || "unknown",
       checks: {
         database: {
           status: dbHealthy ? "up" : "down",
           latencyMs: dbLatencyMs,
         },
-        memory: {
-          rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
-          heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-          heapTotal: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
-        },
       },
-      responseTimeMs: Date.now() - start,
     },
     { status: httpStatus }
   );

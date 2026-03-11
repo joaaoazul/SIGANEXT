@@ -48,6 +48,14 @@ export async function GET(request: NextRequest) {
         console.error("profile stats error:", e);
       }
 
+      logAuditFromRequest(request, "view_profile", {
+        entity: "Client",
+        entityId: clientId,
+        userId: user.id,
+        userEmail: user.email,
+        userRole: user.role,
+      });
+
       return NextResponse.json({
         ...clientData,
         coverImage: null,
@@ -111,6 +119,14 @@ export async function GET(request: NextRequest) {
         parsedSocialLinks = null;
       }
     }
+
+    logAuditFromRequest(request, "view_profile", {
+      entity: "User",
+      entityId: user.id,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+    });
 
     return NextResponse.json({
       ...userData,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 
 // GET /api/athlete/water?date=2025-03-01
 export async function GET(request: NextRequest) {
@@ -25,6 +26,14 @@ export async function GET(request: NextRequest) {
     });
 
     const totalMl = entries.reduce((sum, e) => sum + e.amountMl, 0);
+
+    logAuditFromRequest(request, "view_water_log", {
+      entity: "WaterLog",
+      entityId: clientId,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+    });
 
     return NextResponse.json({ date: dateStr, entries, totalMl, glasses: entries.length });
   } catch (error) {

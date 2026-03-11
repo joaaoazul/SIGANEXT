@@ -15,7 +15,7 @@ export interface UserPayload {
 }
 
 export function signToken(payload: UserPayload): string {
-  return sign(payload, JWT_SECRET, { expiresIn: "7d" });
+  return sign(payload, JWT_SECRET, { expiresIn: "4h" });
 }
 
 export function verifyToken(token: string): UserPayload | null {
@@ -42,25 +42,28 @@ export async function getUser(_request?: unknown): Promise<UserPayload | null> {
 
   // Validate tokenVersion to ensure JWT hasn't been invalidated
   // (e.g., after password change or account compromise)
+  // Also check suspension status mid-session (GDPR: immediate access revocation)
   try {
     if (payload.role === "client") {
       const client = await prisma.client.findUnique({
         where: { id: payload.id },
-        select: { tokenVersion: true },
+        select: { tokenVersion: true, status: true },
       });
       if (!client) return null; // Deleted/anonymized user
       if (client.tokenVersion !== (payload.tokenVersion ?? 0)) {
         return null; // Token was invalidated
       }
+      if (client.status === "suspended") return null; // Suspended mid-session
     } else {
       const user = await prisma.user.findUnique({
         where: { id: payload.id },
-        select: { tokenVersion: true },
+        select: { tokenVersion: true, role: true },
       });
       if (!user) return null; // Deleted user
       if (user.tokenVersion !== (payload.tokenVersion ?? 0)) {
         return null; // Token was invalidated
       }
+      if (user.role === "suspended") return null; // Suspended mid-session
     }
   } catch {
     return null; // DB failure = deny access (fail-closed)

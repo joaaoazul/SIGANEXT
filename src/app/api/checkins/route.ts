@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 import { z } from "zod";
 
 const checkinSchema = z.object({
@@ -43,6 +44,14 @@ export async function GET(request: NextRequest) {
       }),
       prisma.checkIn.count({ where }),
     ]);
+
+    logAuditFromRequest(request, "view_checkins", {
+      entity: "CheckIn",
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+      details: { count: checkins.length },
+    });
 
     return NextResponse.json({ checkins, total });
   } catch (error) {

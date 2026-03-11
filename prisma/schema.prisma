@@ -714,3 +714,17 @@ model RateLimitEntry {
 
   @@index([resetAt])
 }
+
+// ==================== PASSWORD RESET ====================
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String   // bcrypt hash of the reset token
+  expiresAt DateTime
+  usedAt    DateTime? // null until token is consumed
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
+}

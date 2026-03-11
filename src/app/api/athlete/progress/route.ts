@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 
 // GET /api/athlete/progress - Get athlete's progress data
 export async function GET(request: NextRequest) {
@@ -28,6 +29,14 @@ export async function GET(request: NextRequest) {
         take: 10,
       }),
     ]);
+
+    logAuditFromRequest(request, "view_progress", {
+      entity: "Client",
+      entityId: clientId,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+    });
 
     return NextResponse.json({ client, checkIns, bodyAssessments });
   } catch (error) {

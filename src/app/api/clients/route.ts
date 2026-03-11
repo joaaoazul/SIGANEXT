@@ -54,6 +54,15 @@ export async function GET(request: NextRequest) {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const sanitized = clients.map(({ password, ...rest }) => rest);
+
+    logAuditFromRequest(request, "list_clients", {
+      entity: "Client",
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
+      details: { count: sanitized.length },
+    });
+
     return NextResponse.json(sanitized, {
       headers: { "X-Total-Count": total.toString() },
     });

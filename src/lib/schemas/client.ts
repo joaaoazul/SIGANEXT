@@ -99,4 +99,10 @@ export const onboardingSchema = clientProfileSchema.extend({
 /** Schema for POST /api/clients — password optional (auto-generated if missing) */
 export const clientCreateSchema = clientProfileSchema;
 
+/** Schema for PUT /api/clients/[id] — all fields optional except name/email */
+export const clientUpdateSchema = clientProfileSchema.partial().required({
+  name: true,
+  email: true,
+});
+
 export type ClientProfileData = z.infer<typeof clientProfileSchema>;

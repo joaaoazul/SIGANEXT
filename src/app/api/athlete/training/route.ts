@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser, getClientId } from "@/lib/auth";
+import { logAuditFromRequest } from "@/lib/audit";
 
 // GET /api/athlete/training - Get athlete's training plan
 export async function GET(request: NextRequest) {
@@ -30,6 +31,14 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: { createdAt: "desc" },
+    });
+
+    logAuditFromRequest(request, "view_training", {
+      entity: "Client",
+      entityId: clientId,
+      userId: user.id,
+      userEmail: user.email,
+      userRole: user.role,
     });
 
     return NextResponse.json(assignments);

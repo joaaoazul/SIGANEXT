@@ -3,6 +3,7 @@ import { getUser } from "@/lib/auth";
 import { uploadFile, BUCKET_NAME } from "@/lib/supabase";
 import sharp from "sharp";
 import { validateUploadFolder } from "@/lib/security";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 
 const MAX_DIMENSION = 1920;
 const QUALITY = 80;
@@ -21,6 +22,15 @@ export async function POST(request: NextRequest) {
   try {
     const user = await getUser(request);
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+
+    // Rate limit: 20 uploads per 10 minutes per user
+    const rl = await rateLimit(`upload:${user.id}`, { max: 20, windowSecs: 10 * 60 });
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "Demasiados uploads. Tente novamente mais tarde." },
+        { status: 429, headers: { "Retry-After": Math.ceil((rl.resetAt - Date.now()) / 1000).toString() } }
+      );
+    }
 
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -52,6 +62,7 @@ export async function POST(request: NextRequest) {
     const rawBuffer = Buffer.from(await file.arrayBuffer());
     const compressed = await sharp(rawBuffer)
       .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: "inside", withoutEnlargement: true })
+      .rotate() // auto-rotate based on EXIF orientation before stripping
       .webp({ quality: QUALITY })
       .toBuffer();
 
