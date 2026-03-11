@@ -12,7 +12,11 @@ export default function ReconsentBanner() {
     fetch("/api/auth/me")
       .then((r) => r.json())
       .then((data) => {
-        if (data.consentVersion && data.consentVersion !== CURRENT_POLICY_VERSION) {
+        if (!data.consentVersion) {
+          // Consent was revoked or never given — needs re-consent
+          setUserVersion(null);
+          setShow(true);
+        } else if (data.consentVersion !== CURRENT_POLICY_VERSION) {
           setUserVersion(data.consentVersion);
           setShow(true);
         }
@@ -45,8 +49,10 @@ export default function ReconsentBanner() {
             Política de Privacidade Atualizada
           </p>
           <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
-            A nossa Política de Privacidade foi atualizada (versão {CURRENT_POLICY_VERSION}).
-            A sua versão anterior era {userVersion}. Por favor reveja e aceite para continuar a usar a plataforma.{" "}
+            {userVersion
+              ? `A nossa Política de Privacidade foi atualizada (versão ${CURRENT_POLICY_VERSION}). A sua versão anterior era ${userVersion}. Por favor reveja e aceite para continuar a usar a plataforma.`
+              : `É necessário aceitar a Política de Privacidade (versão ${CURRENT_POLICY_VERSION}) para continuar a usar a plataforma.`
+            }{" "}
             <a href="/privacy" target="_blank" className="underline hover:text-amber-900">
               Ver Política de Privacidade
             </a>

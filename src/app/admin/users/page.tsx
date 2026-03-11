@@ -290,7 +290,24 @@ export default function AdminUsersPage() {
   };
 
   const handleReactivate = async (id: string, currentRole?: string) => {
-    const restoreRole = currentRole === "suspended" ? "employee" : currentRole || "employee";
+    // Try to restore the previous role from permissions (saved during consent withdrawal or suspension)
+    let restoreRole = "employee";
+    if (currentRole === "suspended") {
+      // Check permissions for saved previousRole
+      const userDetail = selectedUser?.id === id ? selectedUser : users.find(u => u.id === id);
+      if (userDetail && (userDetail as UserDetail).permissions) {
+        try {
+          const perms = typeof (userDetail as UserDetail).permissions === "string"
+            ? JSON.parse((userDetail as UserDetail).permissions as string)
+            : (userDetail as UserDetail).permissions;
+          if (perms?.previousRole && perms.previousRole !== "suspended") {
+            restoreRole = perms.previousRole;
+          }
+        } catch { /* ignore parse errors */ }
+      }
+    } else {
+      restoreRole = currentRole || "employee";
+    }
     setActionLoading(true);
     try {
       const res = await fetch(`/api/admin/users/${id}`, {
@@ -299,7 +316,7 @@ export default function AdminUsersPage() {
         body: JSON.stringify({ role: restoreRole }),
       });
       if (res.ok) {
-        showMsg("Conta reativada com sucesso!");
+        showMsg(`Conta reativada com sucesso! (role: ${restoreRole})`);
         closeModal();
         fetchUsers();
       } else {

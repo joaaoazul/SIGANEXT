@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getUser, isAdmin } from "@/lib/auth";
 import { logAuditFromRequest } from "@/lib/audit";
 import { validatePassword } from "@/lib/schemas/password";
+import { sendPasswordResetEmail, sendAccountSuspendedEmail, sendAccountReactivatedEmail } from "@/lib/email";
 import bcrypt from "bcryptjs";
 
 export async function GET(
@@ -94,6 +95,7 @@ export async function PUT(
         return NextResponse.json({ error: pwValidation.errors[0] }, { status: 400 });
       }
       data.password = await bcrypt.hash(body.newPassword, 12);
+      data.tokenVersion = { increment: 1 };
     }
 
     // Consent management
@@ -122,13 +124,38 @@ export async function PUT(
       userEmail: user.email,
       userRole: user.role,
       details: {
-        changes: Object.keys(data).filter(k => k !== "password"),
+        changes: Object.keys(data).filter(k => k !== "password" && k !== "tokenVersion"),
         passwordReset: !!body.newPassword,
         consentReset: !!body.resetConsent,
         targetEmail: target.email,
         previousRole: target.role,
       },
     });
+
+    // Send email notifications
+    try {
+      if (body.newPassword && target.email) {
+        await sendPasswordResetEmail({
+          to: target.email,
+          recipientName: target.name || "Utilizador",
+          newPassword: body.newPassword,
+        });
+      }
+      // Account reactivated (role changed from suspended to active)
+      if (body.role && target.role === "suspended" && body.role !== "suspended" && target.email) {
+        await sendAccountReactivatedEmail({
+          to: target.email,
+          recipientName: target.name || "Utilizador",
+        });
+      }
+      // Account suspended via role change
+      if (body.role === "suspended" && target.role !== "suspended" && target.email) {
+        await sendAccountSuspendedEmail({
+          to: target.email,
+          recipientName: target.name || "Utilizador",
+        });
+      }
+    } catch { /* email is best-effort */ }
 
     return NextResponse.json(updated);
   } catch {
@@ -213,10 +240,13 @@ export async function DELETE(
 
       return NextResponse.json({ success: true, action: "deleted" });
     } else {
-      // Suspend (soft delete)
+      // Suspend (soft delete) — save previous role for potential reactivation
       await prisma.user.update({
         where: { id },
-        data: { role: "suspended" },
+        data: {
+          role: "suspended",
+          permissions: JSON.stringify({ previousRole: target.role }),
+        },
       });
 
       logAuditFromRequest(request, "admin_suspend_user", {
@@ -227,6 +257,16 @@ export async function DELETE(
         userRole: user.role,
         details: { targetEmail: target.email, previousRole: target.role },
       });
+
+      // Send suspension email
+      try {
+        if (target.email) {
+          await sendAccountSuspendedEmail({
+            to: target.email,
+            recipientName: target.name || "Utilizador",
+          });
+        }
+      } catch { /* email is best-effort */ }
 
       return NextResponse.json({ success: true, action: "suspended" });
     }

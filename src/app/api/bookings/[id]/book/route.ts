@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
+import { sendBookingEmail } from "@/lib/email";
 
 // POST /api/bookings/:id/book - book a client into a slot
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -38,6 +39,24 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     },
     include: { client: { select: { id: true, name: true, email: true } } },
   });
+
+  // Send booking confirmation email to client
+  try {
+    if (clientCheck.email) {
+      const bookingDate = slot.date || new Date();
+      const dateStr = bookingDate.toLocaleDateString("pt-PT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+      await sendBookingEmail({
+        to: clientCheck.email,
+        recipientName: clientCheck.name || "Atleta",
+        trainerName: user.name || "O teu treinador",
+        date: dateStr,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        notes: notes || undefined,
+      });
+    }
+  } catch { /* email is best-effort */ }
 
   return NextResponse.json(booking, { status: 201 });
 }

@@ -162,3 +162,116 @@ export async function sendNewMessageEmail(params: {
     html,
   });
 }
+
+// ─── Email: Password redefinida por admin ───
+export async function sendPasswordResetEmail(params: {
+  to: string;
+  recipientName: string;
+  newPassword: string;
+}) {
+  const { to, recipientName, newPassword } = params;
+
+  const html = wrapHtml(`
+    <h2>Password Redefinida 🔑</h2>
+    <p>Olá ${recipientName},</p>
+    <p>A tua password foi redefinida por um administrador.</p>
+    <div class="code-box">
+      <p style="margin:0 0 8px;color:#6b7280;font-size:13px;">A tua nova password:</p>
+      <div class="code" style="font-size:20px;letter-spacing:0.1em;">${newPassword}</div>
+    </div>
+    <p style="color:#ef4444;font-size:13px;"><strong>⚠️ Por segurança, altera a tua password após o primeiro login.</strong></p>
+    <p style="text-align:center;margin-top:20px;"><a href="${APP_URL}/login" class="btn">Iniciar Sessão</a></p>
+    <hr class="divider">
+    <p style="font-size:12px;color:#9ca3af;">Se não solicitaste esta alteração, contacta o suporte imediatamente.</p>
+  `);
+
+  return getResend().emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `${APP_NAME} — Password redefinida`,
+    html,
+  });
+}
+
+// ─── Email: Agendamento de sessão ───
+export async function sendBookingEmail(params: {
+  to: string;
+  recipientName: string;
+  trainerName: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  notes?: string;
+}) {
+  const { to, recipientName, trainerName, date, startTime, endTime, notes } = params;
+
+  const notesHtml = notes
+    ? `<p style="color:#374151;font-size:13px;"><strong>Notas:</strong> ${notes}</p>`
+    : "";
+
+  const html = wrapHtml(`
+    <h2>Sessão Agendada 📅</h2>
+    <p>Olá ${recipientName},</p>
+    <p>O teu treinador <strong>${trainerName}</strong> agendou uma nova sessão para ti:</p>
+    <div class="code-box" style="border:1px solid #e5e7eb;text-align:left;">
+      <p style="color:#374151;margin:0 0 4px;"><strong>📅 Data:</strong> ${date}</p>
+      <p style="color:#374151;margin:0 0 4px;"><strong>🕐 Horário:</strong> ${startTime} — ${endTime}</p>
+      ${notesHtml}
+    </div>
+    <p style="text-align:center;margin-top:20px;"><a href="${APP_URL}/athlete" class="btn">Ver Agendamentos</a></p>
+  `);
+
+  return getResend().emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `${APP_NAME} — Sessão agendada para ${date}`,
+    html,
+  });
+}
+
+// ─── Email: Conta suspensa ───
+export async function sendAccountSuspendedEmail(params: {
+  to: string;
+  recipientName: string;
+}) {
+  const { to, recipientName } = params;
+
+  const html = wrapHtml(`
+    <h2>Conta Suspensa ⚠️</h2>
+    <p>Olá ${recipientName},</p>
+    <p>A tua conta no ${APP_NAME} foi suspensa por um administrador.</p>
+    <p>Se acreditas que isto foi um erro, contacta o suporte:</p>
+    <p style="text-align:center;margin-top:16px;">
+      <a href="mailto:suporte@siga180.pt" class="btn" style="background:#f59e0b;">Contactar Suporte</a>
+    </p>
+  `);
+
+  return getResend().emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `${APP_NAME} — Conta suspensa`,
+    html,
+  });
+}
+
+// ─── Email: Conta reativada ───
+export async function sendAccountReactivatedEmail(params: {
+  to: string;
+  recipientName: string;
+}) {
+  const { to, recipientName } = params;
+
+  const html = wrapHtml(`
+    <h2>Conta Reativada ✅</h2>
+    <p>Olá ${recipientName},</p>
+    <p>A tua conta no ${APP_NAME} foi reativada. Já podes voltar a aceder à plataforma.</p>
+    <p style="text-align:center;margin-top:20px;"><a href="${APP_URL}/login" class="btn">Aceder à Conta</a></p>
+  `);
+
+  return getResend().emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `${APP_NAME} — Conta reativada`,
+    html,
+  });
+}

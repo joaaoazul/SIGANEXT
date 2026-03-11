@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
           consentDate: null,
           consentIp: null,
           consentVersion: null,
+          permissions: JSON.stringify({ previousRole: "client" }),
         },
       });
 
@@ -91,6 +92,7 @@ export async function POST(request: NextRequest) {
           consentDate: null,
           consentIp: null,
           consentVersion: null,
+          permissions: JSON.stringify({ previousRole: user.role }),
         },
       });
 

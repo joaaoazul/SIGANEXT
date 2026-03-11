@@ -38,6 +38,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Credenciais inválidas" }, { status: 401 });
       }
 
+      // Block suspended accounts
+      if (user.role === "suspended") {
+        return NextResponse.json(
+          { error: "A sua conta está suspensa. Contacte o suporte para mais informações." },
+          { status: 403 }
+        );
+      }
+
       // For client-role users, resolve the Client record so we use Client.id
       // (all athlete APIs key data by clientId, not userId)
       let tokenId = user.id;
