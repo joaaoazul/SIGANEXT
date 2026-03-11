@@ -35,8 +35,8 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(), geolocation=(), payment=()",
           },
           {
-            key: "X-XSS-Protection",
-            value: "1; mode=block",
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
           },
           {
             key: "Content-Security-Policy",
@@ -46,7 +46,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co https://*.r2.cloudflarestorage.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.r2.cloudflarestorage.com",
               "worker-src 'self'",
               "manifest-src 'self'",
               "frame-ancestors 'none'",
