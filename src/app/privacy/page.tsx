@@ -101,6 +101,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-disc pl-5 space-y-1">
               <li><strong>O seu Personal Trainer</strong> — que tem acesso aos seus dados para fins de acompanhamento desportivo</li>
               <li><strong>Supabase (PostgreSQL)</strong> — subprocessador para armazenamento de dados, com sede na UE/EEE</li>
+              <li><strong>Cloudflare, Inc.</strong> — subprocessador para CDN/proxy reverso (proteção DDoS, WAF) e armazenamento de ficheiros (Cloudflare R2)</li>
               <li><strong>Resend</strong> — subprocessador para envio de emails transacionais</li>
             </ul>
             <p className="mt-2">

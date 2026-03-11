@@ -54,7 +54,7 @@ export default function DPIAPage() {
             </ul>
 
             <h3 className="font-semibold text-gray-800 mt-4 mb-2">2.3. Contexto</h3>
-            <p>O tratamento ocorre exclusivamente online, em infraestrutura cloud (Supabase/PostgreSQL na UE + Hetzner na Alemanha). O titular fornece dados diretamente à plataforma ou através do PT.</p>
+            <p>O tratamento ocorre exclusivamente online, em infraestrutura cloud (Supabase/PostgreSQL na UE + Hetzner na Alemanha + Cloudflare CDN/R2). O titular fornece dados diretamente à plataforma ou através do PT.</p>
 
             <h3 className="font-semibold text-gray-800 mt-4 mb-2">2.4. Finalidades</h3>
             <table className="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -187,6 +187,7 @@ export default function DPIAPage() {
               <tbody>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Supabase (AWS eu-central-1)</td><td className="py-2 px-3">Base de dados PostgreSQL</td><td className="py-2 px-3">Alemanha (UE)</td><td className="py-2 px-3">SOC2, DPA, RGPD</td></tr>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Hetzner</td><td className="py-2 px-3">Servidor aplicacional</td><td className="py-2 px-3">Alemanha (UE)</td><td className="py-2 px-3">ISO 27001, DPA</td></tr>
+                <tr className="border-t border-gray-100"><td className="py-2 px-3">Cloudflare, Inc.</td><td className="py-2 px-3">CDN/proxy reverso (WAF, DDoS) e armazenamento de ficheiros (R2)</td><td className="py-2 px-3">EUA (SCCs)</td><td className="py-2 px-3">DPA, SCCs, ISO 27001</td></tr>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Resend</td><td className="py-2 px-3">Envio de emails transacionais</td><td className="py-2 px-3">EUA (SCCs)</td><td className="py-2 px-3">DPA, SCCs aplicáveis</td></tr>
               </tbody>
             </table>

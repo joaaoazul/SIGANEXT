@@ -101,8 +101,9 @@ export default function DPAPage() {
           <section>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">6. Transferências Internacionais</h2>
             <p><strong>6.1.</strong> Os dados são armazenados e processados na União Europeia (Supabase — Alemanha; Hetzner — Alemanha).</p>
-            <p className="mt-2"><strong>6.2.</strong> O envio de emails transacionais utiliza o serviço Resend (EUA), sendo aplicáveis Cláusulas Contratuais-Tipo (SCCs) aprovadas pela Comissão Europeia.</p>
-            <p className="mt-2"><strong>6.3.</strong> Não são efetuadas outras transferências para fora do EEE.</p>
+            <p className="mt-2"><strong>6.2.</strong> O serviço Cloudflare (EUA) é utilizado como CDN/proxy reverso e para armazenamento de ficheiros (R2). A Cloudflare dispõe de DPA e cumpre SCCs para transferências internacionais.</p>
+            <p className="mt-2"><strong>6.3.</strong> O envio de emails transacionais utiliza o serviço Resend (EUA), sendo aplicáveis Cláusulas Contratuais-Tipo (SCCs) aprovadas pela Comissão Europeia.</p>
+            <p className="mt-2"><strong>6.4.</strong> Não são efetuadas outras transferências para fora do EEE além das mencionadas.</p>
           </section>
 
           <section>
@@ -112,6 +113,7 @@ export default function DPAPage() {
               <tbody>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Supabase Inc. (AWS eu-central-1)</td><td className="py-2 px-3">Base de dados PostgreSQL gerida</td><td className="py-2 px-3">Frankfurt, Alemanha</td></tr>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Hetzner Online GmbH</td><td className="py-2 px-3">Servidor de aplicação (VPS)</td><td className="py-2 px-3">Nuremberga, Alemanha</td></tr>
+                <tr className="border-t border-gray-100"><td className="py-2 px-3">Cloudflare, Inc.</td><td className="py-2 px-3">CDN/proxy reverso (WAF, DDoS) e armazenamento de ficheiros (R2)</td><td className="py-2 px-3">EUA (SCCs aplicáveis)</td></tr>
                 <tr className="border-t border-gray-100"><td className="py-2 px-3">Resend Inc.</td><td className="py-2 px-3">Envio de emails transacionais</td><td className="py-2 px-3">EUA (SCCs aplicáveis)</td></tr>
               </tbody>
             </table>
